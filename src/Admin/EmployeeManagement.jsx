@@ -76,12 +76,12 @@ function EmployeeManagement() {
     handleCloseModal();
   };
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container ">
       <SideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">Employee Management</div>
         <h3 className="stats-header">Statistical Overview</h3>
-        <div className="dashboard-stats-container">
+        <div className="dashboard-stats-container employee-management">
           <div className="stats-card-container-employee-card">
             <div className="stats-card ">
               <div className="card-header">Total Employees</div>

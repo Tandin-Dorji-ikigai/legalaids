@@ -187,7 +187,7 @@
   align-items: center;
   flex-direction: column;
   height: auto;
-  margin-top: 0;
+  margin-top: 2rem;
 }
 
 .service-topic {
@@ -203,6 +203,7 @@
 
 .service-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 30px;
@@ -307,7 +308,7 @@
 }
 
 .steps-container .steps-content {
-  height: 180px;
+  height: auto;
   width: 100%;
   border-top: 2px solid #000000;
 }
@@ -454,6 +455,10 @@
     height: 400px;
     width: 100%;
   }
+
+ .steps-container {
+  gap: 1rem;
+ }
 
 }
 
@@ -636,8 +641,3 @@
     right: -70%;
   }
 }
-
-
-
-
-
