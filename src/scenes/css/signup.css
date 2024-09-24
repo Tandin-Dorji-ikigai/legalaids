@@ -19,13 +19,14 @@
 }
 
 .signup-wrapper {
-  height: 130vh;
+  height: auto;
   background: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  margin-top: 4rem;
+  margin: 10rem auto;
+  margin-bottom: 5rem;
 }
 
 .signup-form-container {
@@ -267,7 +268,7 @@
 }
 
 .copyright-login {
-  position: fixed;
+  position: relative;
   bottom: 10px;
   width: 100%;
   display: flex;
@@ -276,7 +277,8 @@
 }
 
 .login-wrapper {
-  height: 80vh;
+  height: auto;
+  margin: 10rem auto;
 }
 
 .statistics {
@@ -344,6 +346,3 @@
   margin-top: -5px;
 }
 
-.login-wrapper {
-  height: 95vh;
-}

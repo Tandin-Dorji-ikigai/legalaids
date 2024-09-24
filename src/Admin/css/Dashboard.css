@@ -78,14 +78,13 @@
 }
 
 .stats-card-trend-decrease {
-  color: #FFB49B;
+  color: #ffb49b;
   font-size: 14px;
 }
 
 .stats-card-trend-increase {
-  color: #A5FF9B;
+  color: #a5ff9b;
   font-size: 14px;
-
 }
 
 .graph-legend-container {
@@ -103,7 +102,7 @@
   column-gap: 10px;
 }
 
-.graph-legend> :nth-child(2) {
+.graph-legend > :nth-child(2) {
   font-weight: 600;
   font-size: 14px;
 }
@@ -129,16 +128,16 @@
   border-radius: 50%;
 }
 
-.stats-card-container> :nth-child(1) {
+.stats-card-container > :nth-child(1) {
   background: #595cfc;
 }
 
-.stats-card-container>:nth-child(2) {
-  background: #8486FF;
+.stats-card-container > :nth-child(2) {
+  background: #8486ff;
 }
 
-.stats-card-container>:nth-child(3) {
-  background: #4590CF;
+.stats-card-container > :nth-child(3) {
+  background: #4590cf;
 }
 
 .graph-stats-heading {
@@ -176,6 +175,7 @@
 }
 
 .stats-graph-container {
+  min-width: 400px;
   width: 100%;
   height: 100%;
   border-radius: 10px;
@@ -217,7 +217,7 @@
 
 .chart-container {
   flex: 1;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   border-radius: 10px;
   padding: 15px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
@@ -233,7 +233,6 @@
   position: relative;
 }
 
-/* Adjust the legend styles for the pie chart */
 .pie-chart-container .MuiChartsLegend-root {
   position: absolute !important;
   right: 0 !important;
@@ -243,4 +242,115 @@
 
 .pie-chart-container .MuiChartsLegend-label {
   font-size: 10px !important;
+}
+
+@media (max-width: 1537px) {
+  .dashboard-stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .stats-card-container {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 1493px) {
+  .additional-charts-row {
+    overflow-x: auto;        
+    white-space: nowrap;   
+    width: 100%;             
+    padding: 1rem 0;       
+  }
+  
+  .additional-charts-row::-webkit-scrollbar {
+    height: 0.7rem;          
+  }
+  
+  .additional-charts-row::-webkit-scrollbar-thumb {
+    background-color: green; 
+    border-radius: 10px;     
+  }
+  
+  .additional-charts-row::-webkit-scrollbar-track {
+    background: #f0f0f0;    
+  }
+  
+}
+
+@media (max-width: 1198px) {
+  .additional-charts-row {
+    overflow-x: hidden;
+  }
+  .stats-card-container {
+    height: 11rem;
+    flex-wrap: wrap;
+  }
+
+  .stats-card {
+    height: 100%;
+  }
+
+  .line-graph,
+  .pi-chart,
+  .bar-chart {
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  .line-graph::-webkit-scrollbar,
+  .pi-chart::-webkit-scrollbar,
+  .bar-chart::-webkit-scrollbar {
+    height: 0.7rem;
+  }
+
+  .line-graph::-webkit-scrollbar-thumb,
+  .pi-chart::-webkit-scrollbar-thumb,
+  .bar-chart::-webkit-scrollbar-thumb {
+    background-color: green;
+    border-radius: 10px;
+  }
+
+  .line-graph::-webkit-scrollbar-track,
+  .pi-chart::-webkit-scrollbar-track,
+  .bar-chart::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  }
+
+  .additional-charts-row {
+    flex-direction: column;
+  }
+
+  .pi-chart,
+  .bar-chart {
+    padding: 1rem 0;
+  }
+}
+
+@media (max-width: 805px) {
+  .stats-card-container {
+    /* overflow-x: auto; */
+    white-space: nowrap;
+    width: 100%;
+    height: auto;
+    padding: 1rem 0;
+  }
+
+  /* .stats-card-container::-webkit-scrollbar {
+    height: 0.7rem;
+  }
+
+  .stats-card-container::-webkit-scrollbar-thumb {
+    background-color: green;
+    border-radius: 10px;
+  }
+
+  .stats-card-container::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  } */
 }

@@ -141,66 +141,80 @@ function Dashboard() {
                 <div>Case Negotiation</div>
               </div>
             </div>
-            <LineChart
-              width={900}
-              height={360}
-              series={[
-                {
-                  id: "pv",
-                  data: filteredData.map((d) => d.pData),
-                  curve: "linear",
-                },
-                {
-                  id: "uv",
+            <div className="line-graph">
+              {" "}
+              <LineChart
+                width={900}
+                height={360}
+                series={[
+                  {
+                    id: "pv",
+                    data: filteredData.map((d) => d.pData),
+                    curve: "linear",
+                  },
+                  {
+                    id: "uv",
 
-                  data: filteredData.map((d) => d.uData),
-                  curve: "linear",
-                },
-                {
-                  id: "zv",
+                    data: filteredData.map((d) => d.uData),
+                    curve: "linear",
+                  },
+                  {
+                    id: "zv",
 
-                  data: filteredData.map((d) => d.xData),
-                  curve: "linear",
-                },
-              ]}
-              xAxis={[{ scaleType: "point", data: xAxis, line: true }]}
-            />
+                    data: filteredData.map((d) => d.xData),
+                    curve: "linear",
+                  },
+                ]}
+                xAxis={[{ scaleType: "point", data: xAxis, line: true }]}
+              />
+            </div>
           </div>
         </div>
         <div className="additional-charts-row">
-    <div className="chart-container pie-chart-container">
-      <div className="chart-header"> Total Case Distribution</div>
-      <PieChart
-        series={[
-          {
-            data: pieData,
-            highlightScope: { faded: 'global', highlighted: 'item' },
-            faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-          },
-        ]}
-        height={300}
-        width={700}
-        legend={{
-          position: { vertical: 'middle', horizontal: 'right' },
-          itemMarkWidth: 20,
-          itemMarkHeight: 20,
-          markShape: 'circle',
-        }}
-        
-      />
-    </div>
-    
-    <div className="chart-container bar-chart-container">
-      <div className="chart-header">Yearly Comparison</div>
-      <BarChart
-        xAxis={[{ scaleType: 'band', data: ['2022', '2023', '2024'] }]}
-        series={[{ data: [8, 3, 5] }, { data: [20, 15, 3] }, { data: [2, 9, 6] }]}
-        width={400}
-        height={300}
-        barLabel="value"
-      />
-    </div>
-  </div>
+          <div className="chart-container pie-chart-container">
+            <div className="chart-header"> Total Case Distribution</div>
+            <div className="pi-chart">
+              <PieChart
+                series={[
+                  {
+                    data: pieData,
+                    highlightScope: { faded: "global", highlighted: "item" },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: "gray",
+                    },
+                  },
+                ]}
+                height={300}
+                width={590}
+                legend={{
+                  position: { vertical: "middle", horizontal: "right" },
+                  itemMarkWidth: 20,
+                  itemMarkHeight: 20,
+                  markShape: "circle",
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="chart-container bar-chart-container">
+            <div className="chart-header">Yearly Comparison</div>
+            <div className="bar-chart">
+              <BarChart
+                xAxis={[{ scaleType: "band", data: ["2022", "2023", "2024"] }]}
+                series={[
+                  { data: [8, 3, 5] },
+                  { data: [20, 15, 3] },
+                  { data: [2, 9, 6] },
+                ]}
+                width={400}
+                height={300}
+                barLabel="value"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

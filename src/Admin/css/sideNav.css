@@ -15,7 +15,7 @@
 
 .sidenav-container {
   height: 100vh;
-  width: 320px;
+  width: 300px;
   background: #15605c;
   /* padding: 20px; */
   overflow-y: hidden;
@@ -30,13 +30,13 @@
 
 .logo-word-header {
   font-weight: 600;
-  font-size: 17px;
+  font-size: 1.1rem;
   color: #ffffff;
 }
 
 .logo-word {
   color: #f1ece4;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 .dashboard-navLogo {
@@ -51,8 +51,6 @@
 
 .side-nav-item-container {
   padding: 1.1rem 0;
-
-
 }
 
 .nav-item-name {
@@ -149,4 +147,15 @@
 .user-detail-name {
   font-size: 16px;
   color: #ffffff;
+}
+
+
+@media (max-width: 1024px) {
+  .side-nav-logo-container {
+    flex-direction: column;
+  }
+  
+  .logo-word-container {
+    text-align: center;
+  }
 }
