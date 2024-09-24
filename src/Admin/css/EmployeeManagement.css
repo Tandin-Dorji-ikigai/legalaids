@@ -1,5 +1,5 @@
 .dashboard-stats-container {
-  display: flex;
+  display: block !important;
   margin-bottom: 20px;
 }
 
@@ -8,23 +8,22 @@
 }
 
 .stats-card-container-employee-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
-
 }
 
-.stats-card-container-employee-card>:nth-child(1) {
-  background: #595CFC;
+.stats-card-container-employee-card > div:nth-child(1) {
+  background: #595cfc;
 }
 
-.stats-card-container-employee-card>:nth-child(2) {
-  background: #8486FF;
+.stats-card-container-employee-card >div:nth-child(2) {
+  background: #8486ff;
 }
 
-.stats-card-container-employee-card>:nth-child(3) {
-  background: #4590CF;
+.stats-card-container-employee-card >div:nth-child(3) {
+  background: #4590cf;
 }
-
 
 .users-header {
   font-size: 18px;
@@ -32,6 +31,7 @@
 }
 
 .stats-card {
+  width: 100% !important;
   background: #f0f0f0;
   padding: 20px;
   border-radius: 8px;
@@ -49,7 +49,7 @@
 .employee-details {
   flex: 1;
   min-width: 300px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   border-radius: 10px;
   overflow: hidden;
   padding: 1rem 0;
@@ -64,7 +64,7 @@
 .lawyer-details {
   width: 50%;
   min-width: 300px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   border-radius: 10px;
   overflow: hidden;
   padding: 1rem 0;
@@ -85,8 +85,8 @@ table {
 
 thead th {
   background: #fff;
-  color: #15605C;
-  font-size: 14px; 
+  color: #15605c;
+  font-size: 14px;
   font-weight: 500;
   padding: 10px;
   border-top: 1px solid #ddd;
@@ -99,17 +99,16 @@ tbody td {
   border: none;
   font-size: 14px;
   text-align: left;
-
 }
 
-tbody tr:hover{
-  background: #15605C !important;
+tbody tr:hover {
+  background: #15605c !important;
   color: #fff;
   cursor: pointer;
 }
 
 tbody tr:nth-child(odd) {
-  background: #F4FFFC;
+  background: #f4fffc;
 }
 
 table tr:last-child td {
@@ -127,13 +126,11 @@ table tr:last-child td {
   overflow: hidden;
 }
 
-
-
 .search-bar input {
   width: 100%;
   border-radius: 6px;
   margin-left: 2px;
-  color: #ACACAC;
+  color: #acacac;
   height: 40px;
 }
 
@@ -146,7 +143,7 @@ table tr:last-child td {
 .search-bar-icon {
   width: 40px;
   height: 100%;
-  background: #15605C;
+  background: #15605c;
   position: absolute;
   right: -3px;
   top: 0;
@@ -156,7 +153,6 @@ table tr:last-child td {
   align-items: center;
   justify-content: center;
   z-index: 2;
-
 }
 
 .search-bar input[type="text"] {
@@ -177,7 +173,7 @@ table tr:last-child td {
   display: flex;
   width: 160px;
   height: 40px;
-  background: #15605C;
+  background: #15605c;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -186,7 +182,7 @@ table tr:last-child td {
 }
 
 .edit-btn {
-  background-color: #15605C;
+  background-color: #15605c;
   /* Different color for Edit button */
 }
 
@@ -210,7 +206,7 @@ table tr:last-child td {
 .admin-details,
 .employee-details {
   flex: 1;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   border-radius: 10px;
   overflow: hidden;
   padding: 1rem 0;
@@ -268,7 +264,7 @@ table tr:last-child td {
 }
 
 .modal-btn-primary {
-  background-color: #15605C;
+  background-color: #15605c;
   color: white;
 }
 
@@ -286,3 +282,5 @@ table tr:last-child td {
   font-size: 12px;
   margin-top: 5px;
 }
+
+

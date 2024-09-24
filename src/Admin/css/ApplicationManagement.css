@@ -17,6 +17,7 @@
   }
   
   .stats-card {
+    width: 200px;
     background: #d46f6f; /* Card background color */
     border-radius: 8px; /* Rounded corners */
     padding: 20px; /* Padding inside the card */
