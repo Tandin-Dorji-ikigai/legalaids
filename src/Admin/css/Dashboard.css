@@ -65,7 +65,10 @@
 }
 
 .stats-card {
-  width: 280px;
+  min-width: 280px;
+  width: 100%;
+  min-height: 142px;
+  height: 100%;
   height: fit-content;
   border-radius: 10px;
   border: 1px solid #e5e5e5;
@@ -286,9 +289,11 @@
   .additional-charts-row {
     overflow-x: hidden;
   }
+
   .stats-card-container {
     height: 11rem;
     flex-wrap: wrap;
+    height: auto;
   }
 
   .stats-card {
@@ -331,6 +336,13 @@
     padding: 1rem 0;
   }
 }
+
+@media (min-width: 881px) and (max-width: 1004px) {
+  .stats-card {
+    height: 12rem;
+  }
+}
+
 
 @media (max-width: 805px) {
   .stats-card-container {

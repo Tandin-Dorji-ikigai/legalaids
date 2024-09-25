@@ -14,10 +14,12 @@
     display: flex; /* Flexbox for horizontal layout */
     gap: 16px;
     width: 100%;
+    flex-wrap: wrap;
   }
   
   .stats-card {
-    width: 200px;
+    min-width: 200px;
+    width: 100%;
     background: #d46f6f; /* Card background color */
     border-radius: 8px; /* Rounded corners */
     padding: 20px; /* Padding inside the card */

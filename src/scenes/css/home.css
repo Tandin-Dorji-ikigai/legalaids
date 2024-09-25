@@ -337,6 +337,7 @@
 .steps-des-topic,
 .steps-des-subdes {
   text-align: end;
+  padding: 1rem 0;
 }
 
 .steps-des-topic {
