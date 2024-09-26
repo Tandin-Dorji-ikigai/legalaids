@@ -74,7 +74,7 @@ function ApplicationManagement() {
           <div className="applications-filters">
             <div className="search-bar case-management-search">
               <div className="search-bar-container">
-                <input type="text" placeholder="Search" />
+                <input type="text" placeholder="Search" style={{width:"100%"}}/>
                 <div className="search-bar-icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -88,73 +88,71 @@ function ApplicationManagement() {
                 </div>
               </div>
             </div>
-            <div className="filter-card case-management-filter">
-              <div>Filter</div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="#9A9A9A"
-              >
-                <path d="M456.18-192Q446-192 439-198.9t-7-17.1v-227L197-729q-9-12-2.74-25.5Q200.51-768 216-768h528q15.49 0 21.74 13.5Q772-741 763-729L528-443v227q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88ZM480-498l162-198H317l163 198Zm0 0Z" />
-              </svg>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select className="filter-select case-management-filter-select">
-                <option value="2023">Dzongkhag</option>
-                <option value="2023">Thimphu</option>
-                <option value="2024">Gase</option>
-                <option value="2025">Paro</option>
-                <option value="2027">Haa</option>
-              </select>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select className="filter-select case-management-filter-select">
-                <option value="2023">All Case Type</option>
-                <option value="2023">Walk-In</option>
-                <option value="2024">Walk-In</option>
-              </select>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select className="filter-select case-management-filter-select case-nature">
-                <option value="2023">All Case Nature</option>
-                <option value="2023">Criminal</option>
-                <option value="2024">Civil</option>
-                <option value="2025">Criminal</option>
-                <option value="2027">Civil</option>
-              </select>
+            <div className="filter-section">
+              <div className="filter-card case-management-filter">
+                <div>Filter</div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#9A9A9A"
+                >
+                  <path d="M456.18-192Q446-192 439-198.9t-7-17.1v-227L197-729q-9-12-2.74-25.5Q200.51-768 216-768h528q15.49 0 21.74 13.5Q772-741 763-729L528-443v227q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88ZM480-498l162-198H317l163 198Zm0 0Z" />
+                </svg>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select className="filter-select case-management-filter-select">
+                  <option value="2023">Dzongkhag</option>
+                  <option value="2023">Thimphu</option>
+                  <option value="2024">Gase</option>
+                  <option value="2025">Paro</option>
+                  <option value="2027">Haa</option>
+                </select>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select className="filter-select case-management-filter-select">
+                  <option value="2023">All Case Type</option>
+                  <option value="2023">Walk-In</option>
+                  <option value="2024">Walk-In</option>
+                </select>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select className="filter-select case-management-filter-select case-nature">
+                  <option value="2023">All Case Nature</option>
+                  <option value="2023">Criminal</option>
+                  <option value="2024">Civil</option>
+                  <option value="2025">Criminal</option>
+                  <option value="2027">Civil</option>
+                </select>
+              </div>
             </div>
           </div>
           <div className="case-status-container">
             <div
-              className={`case-status-btn ${
-                activeStatus === "All Application" ? "status-active" : ""
-              }`}
+              className={`case-status-btn ${activeStatus === "All Application" ? "status-active" : ""
+                }`}
               onClick={() => handleStatusClick("All Application")}
             >
               All Cases
             </div>
             <div
-              className={`case-status-btn ${
-                activeStatus === "Pending" ? "status-active" : ""
-              }`}
+              className={`case-status-btn ${activeStatus === "Pending" ? "status-active" : ""
+                }`}
               onClick={() => handleStatusClick("Pending")}
             >
               Pending
             </div>
             <div
-              className={`case-status-btn ${
-                activeStatus === "Reviewed" ? "status-active" : ""
-              }`}
+              className={`case-status-btn ${activeStatus === "Reviewed" ? "status-active" : ""
+                }`}
               onClick={() => handleStatusClick("Reviewed")}
             >
               Reviewed
             </div>
             <div
-              className={`case-status-btn ${
-                activeStatus === "Dismissed" ? "status-active" : ""
-              }`}
+              className={`case-status-btn ${activeStatus === "Dismissed" ? "status-active" : ""
+                }`}
               onClick={() => handleStatusClick("Dismissed")}
             >
               Dismissed

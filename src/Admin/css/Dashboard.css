@@ -352,17 +352,4 @@
     height: auto;
     padding: 1rem 0;
   }
-
-  /* .stats-card-container::-webkit-scrollbar {
-    height: 0.7rem;
-  }
-
-  .stats-card-container::-webkit-scrollbar-thumb {
-    background-color: green;
-    border-radius: 10px;
-  }
-
-  .stats-card-container::-webkit-scrollbar-track {
-    background: #f0f0f0;
-  } */
 }

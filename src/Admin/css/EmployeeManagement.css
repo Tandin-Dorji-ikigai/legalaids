@@ -17,11 +17,11 @@
   background: #595cfc;
 }
 
-.stats-card-container-employee-card >div:nth-child(2) {
+.stats-card-container-employee-card > div:nth-child(2) {
   background: #8486ff;
 }
 
-.stats-card-container-employee-card >div:nth-child(3) {
+.stats-card-container-employee-card > div:nth-child(3) {
   background: #4590cf;
 }
 
@@ -56,7 +56,7 @@
 }
 
 .lawyer-details-container {
-  width: 98%;
+  width: 100%;
   display: flex;
   justify-content: flex-start;
 }
@@ -283,4 +283,30 @@ table tr:last-child td {
   margin-top: 5px;
 }
 
+.lawyer-details-sm,
+.employee-details,
+.admin-details {
+  overflow-x: auto;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.lawyer-details-sm::-webkit-scrollbar,
+.employee-details::-webkit-scrollbar,
+.admin-details::-webkit-scrollbar {
+  height: 0.7rem;
+}
+
+.lawyer-details-sm::-webkit-scrollbar-thumb,
+.employee-details::-webkit-scrollbar-thumb,
+.admin-details::-webkit-scrollbar-thumb {
+  background-color: green;
+  border-radius: 10px;
+}
+
+.lawyer-details-sm::-webkit-scrollbar-track,
+.employee-details::-webkit-scrollbar-track,
+.admin-details::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
 

@@ -90,6 +90,7 @@ function CaseManagement() {
               </div>
              
             </div>
+            <div className="filter-section">
             <div className="filter-card case-management-filter">
               <div>Filter</div>
               <svg
@@ -126,6 +127,7 @@ function CaseManagement() {
                 <option value="2025">Criminal</option>
                 <option value="2027">Civil</option>
               </select>
+            </div>
             </div>
           </div>
           <div className="case-status-container">
