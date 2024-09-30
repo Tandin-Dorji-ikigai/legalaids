@@ -4,8 +4,8 @@ import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react";
 import { usePostCaseMutation } from "../slices/caseApiSlice";
 import axios from "axios";
 import "./css/DataManagement.css";
-import Loader from "../components/Loader";
 import Swal from "sweetalert2";
+import Loader from "../components/Loader";
 
 // Google Cloud Vision API Key
 const apiKey = "AIzaSyByQ1Wg14idjxFbWdEaiB80y35wWWSrYHY";
@@ -31,14 +31,15 @@ const DocumentItem = ({ label, filename }) => (
 
 // DataManagement Component
 function DataManagement() {
-  const [postCase] = usePostCaseMutation();
+  const [loading, setLoading] = useState(false);
+  const [postCase, { isLoading }] = usePostCaseMutation();
   const [files, setFiles] = useState([]);
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: true,
     institutions: true,
     documents: true,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [extractedText, setExtractedText] = useState("");
 
   const [applicantInfo, setApplicantInfo] = useState({
@@ -82,7 +83,7 @@ function DataManagement() {
     }
   };
 
-  const processImage = async (imageUri, setIsLoading, setExtractedText) => {
+  const processImage = async (imageUri, setExtractedText) => {
     try {
       // setIsLoading(true);
 
@@ -118,8 +119,6 @@ function DataManagement() {
       updateStateWithExtractedData(extractedText); // Update state with extracted data
     } catch (error) {
       console.error("Error processing image:", error.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -260,7 +259,6 @@ function DataManagement() {
     });
 
     try {
-      console.log(formData);
       await postCase(formData).unwrap();
 
       // Display success alert
@@ -293,7 +291,7 @@ function DataManagement() {
     // Process the image using OCR for image files only
     if (selectedFile.type.startsWith("image/")) {
       const imageUri = URL.createObjectURL(selectedFile);
-      processImage(imageUri, setIsLoading, setExtractedText);
+      processImage(imageUri, setExtractedText);
     }
   };
 
@@ -311,6 +309,7 @@ function DataManagement() {
 
   return (
     <div className="dashboard-container">
+      {isLoading && <Loader />}
       {/* {isLoading && <Loader />}  */}
       {/* <Loader/> */}
       <SideNav />
@@ -622,8 +621,12 @@ function DataManagement() {
           </div>
         </div>
         <div className="lawyer-action-buttons">
-          <button onClick={handleConfirm} className="lawyer-confirm-button">
-            Confirm
+          <button
+            onClick={handleConfirm}
+            className="lawyer-confirm-button"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Submitting...' : 'Confirm'}
           </button>
           <button onClick={handleCancel} className="lawyer-cancel-button">
             Cancel

@@ -22,7 +22,7 @@ function SideNav() {
     try{
       await logoutCall().unwrap();
       dispatch(logout());
-      navigate('/logout');
+      navigate('/home');
     }catch(err) {
       console.log(err);
     }

@@ -1,11 +1,19 @@
 // src/components/Loader.js
 import React from "react";
-import "./loader.css"; // Make sure to create this CSS file for loader styling
-
+import { Grid } from 'react-loader-spinner'
 const Loader = () => {
   return (
     <div className="loader">
-      <div className="spinner"></div>
+      <Grid
+        visible={true}
+        height="80"
+        width="80"
+        color="#4fa94d"
+        ariaLabel="grid-loading"
+        radius="12.5"
+        wrapperStyle={{}}
+        wrapperClass="grid-wrapper"
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./css/LawyerSideNav.css";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../assets/logo.png";
@@ -12,7 +12,7 @@ import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 function LawyerSideNav() {
   const location = useLocation();
 
-  const {data: lawyers, error} = useGetAllLawyerQuery();
+  const { data: lawyers, error } = useGetAllLawyerQuery();
   const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,15 +20,15 @@ function LawyerSideNav() {
   const [user, setUser] = useState();
 
   const logOutHandler = async () => {
-    try{
+    try {
       await logoutCall().unwrap();
       dispatch(logout());
       navigate('/logout');
-    }catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
- 
+
   useEffect(() => {
     if (error) {
       console.log(error)
@@ -55,34 +55,32 @@ function LawyerSideNav() {
         <div className="lawyer-side-nav-header">Main Menu</div>
         <div className="lawyer-nav-items">
           <Link
-            to=""
-            className={`nav-link ${
-              location.pathname === "/currentcases" ? "nav-active" : ""
-            }`}
+            to="/currentcases"
+            className={`nav-link ${location.pathname === "/currentcases" ? "nav-active" : ""
+              }`}
           >
             <div className="lawyer-nav-item-container">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="28px"
-                viewBox="0 -960 960 960"  
+                viewBox="0 -960 960 960"
                 width="28px"
                 fill={
                   location.pathname === "/currentcases" ? "#15605C" : "#F1ECE4"
                 }
               >
                 <path d="M160-120v-80h480v80H160Zm226-194L160-540l84-86 228 226-86 86Zm254-254L414-796l86-84 226 226-86 86Zm184 408L302-682l56-56 522 522-56 56Z" />
-                </svg>
+              </svg>
               <div className="lawyer-nav-item-name">Current Cases</div>
             </div>
           </Link>
           <Link
-            to=""
-            className={`nav-link ${
-              location.pathname === "/history" ? "nav-active" : ""
-            }`}
+            to="/history"
+            className={`nav-link ${location.pathname === "/history" ? "nav-active" : ""
+              }`}
           >
             <div className="lawyer-nav-item-container">
-            <svg
+              <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="28px"
                 viewBox="0 -960 960 960"
@@ -91,7 +89,7 @@ function LawyerSideNav() {
                   location.pathname === "" ? "#15605C" : "#F1ECE4"
                 }
               >
-                <path d="M80-200v-80h400v80H80Zm0-200v-80h200v80H80Zm0-200v-80h200v80H80Zm744 400L670-354q-24 17-52.5 25.5T560-320q-83 0-141.5-58.5T360-520q0-83 58.5-141.5T560-720q83 0 141.5 58.5T760-520q0 29-8.5 57.5T726-410l154 154-56 56ZM560-400q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/></svg>
+                <path d="M80-200v-80h400v80H80Zm0-200v-80h200v80H80Zm0-200v-80h200v80H80Zm744 400L670-354q-24 17-52.5 25.5T560-320q-83 0-141.5-58.5T360-520q0-83 58.5-141.5T560-720q83 0 141.5 58.5T760-520q0 29-8.5 57.5T726-410l154 154-56 56ZM560-400q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" /></svg>
               <div className="lawyer-nav-item-name">History</div>
             </div>
           </Link>
@@ -112,10 +110,12 @@ function LawyerSideNav() {
               <div className="user-detail-name">Tshering Dorji</div>
             </div>
           </div>
-          <button className="admin-logout-btn">Logout</button>
+          <Link to="/home">
+            <button className="admin-logout-btn">Logout</button>
+          </Link>
         </div>
       </div>
-      
+
     </div>
   );
 }

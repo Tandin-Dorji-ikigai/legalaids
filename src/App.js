@@ -24,6 +24,7 @@ import DetailsPopup from './components/DetailsPopup';
 import CurrentCases from './Lawyer/CurrentCases';
 import History from './Lawyer/History';
 import AdminLogin from './scenes/AdminLogin';
+import Loader from './components/Loader';
 
 function App() {
   const location = useLocation();
@@ -63,6 +64,7 @@ function App() {
           <Route path="/apply1" element={<Apply1 />} />
           <Route path="/apply2" element={<Apply2 />} />
           <Route path="/apply3" element={<Apply3 />} />
+          <Route path="/loader" element={<Loader />} />
 
           {/* admin route */}
           <Route path='/adminLogin' element={<AdminLogin />} />
