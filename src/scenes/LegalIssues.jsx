@@ -34,7 +34,7 @@ function LegalIssues() {
         </div>
       </div>
 
-      <div className="service-wrapper legal-service-wrapper">
+      <div className="service-wrapper legal-service-wrapper legal-issue-legal-service">
         <p className="service-topic">Our Legal Services</p>
         <p className="service-subtopic">Comprehensive and Tailored Legal Solutions for Every Unique Need</p>
 

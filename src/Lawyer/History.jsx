@@ -40,52 +40,54 @@ const History = () => {
                 </div>
               </div>
             </div>
-            <div className="filter-card case-management-filter">
-              <div>Filter</div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="http://www.w3.org/2000/svg"
-                width="20px"
-                fill="#9A9A9A"
-              >
-                <path d="M456.18-192Q446-192 439-198.9t-7-17.1v-227L197-729q-9-12-2.74-25.5Q200.51-768 216-768h528q15.49 0 21.74 13.5Q772-741 763-729L528-443v227q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88ZM480-498l162-198H317l163 198Zm0 0Z" />
-              </svg>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select
-                className="filter-select calse-management-filter-select"
-                onChange={(e) => handleStatusClick(e.target.value)}
-                value={activeStatus}
-              >
-                <option value="2023">Dzongkhag</option>
-                <option value="Thimphu">Thimphu</option>
-                <option value="Gase">Gase</option>
-                <option value="Paro">Paro</option>
-                <option value="Haa">Haa</option>
-              </select>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select
-                className="filter-select calse-management-filter-select"
-                onChange={(e) => handleStatusClick(e.target.value)}
-                value={activeStatus}
-              >
-                <option value="All Case Type">All Case Type</option>
-                <option value="Walk-In">Walk-In</option>
-                <option value="Online">Online</option>
-              </select>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select
-                className="filter-select calse-management-filter-select case-nature"
-                onChange={(e) => handleStatusClick(e.target.value)}
-                value={activeStatus}
-              >
-                <option value="All Case Nature">All Case Nature</option>
-                <option value="Criminal">Criminal</option>
-                <option value="Civil">Civil</option>
-              </select>
+            <div className="filter-section">
+              <div className="filter-card case-management-filter">
+                <div>Filter</div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="http://www.w3.org/2000/svg"
+                  width="20px"
+                  fill="#9A9A9A"
+                >
+                  <path d="M456.18-192Q446-192 439-198.9t-7-17.1v-227L197-729q-9-12-2.74-25.5Q200.51-768 216-768h528q15.49 0 21.74 13.5Q772-741 763-729L528-443v227q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88ZM480-498l162-198H317l163 198Zm0 0Z" />
+                </svg>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select
+                  className="filter-select calse-management-filter-select"
+                  onChange={(e) => handleStatusClick(e.target.value)}
+                  value={activeStatus}
+                >
+                  <option value="2023">Dzongkhag</option>
+                  <option value="Thimphu">Thimphu</option>
+                  <option value="Gase">Gase</option>
+                  <option value="Paro">Paro</option>
+                  <option value="Haa">Haa</option>
+                </select>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select
+                  className="filter-select calse-management-filter-select"
+                  onChange={(e) => handleStatusClick(e.target.value)}
+                  value={activeStatus}
+                >
+                  <option value="All Case Type">All Case Type</option>
+                  <option value="Walk-In">Walk-In</option>
+                  <option value="Online">Online</option>
+                </select>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select
+                  className="filter-select calse-management-filter-select case-nature"
+                  onChange={(e) => handleStatusClick(e.target.value)}
+                  value={activeStatus}
+                >
+                  <option value="All Case Nature">All Case Nature</option>
+                  <option value="Criminal">Criminal</option>
+                  <option value="Civil">Civil</option>
+                </select>
+              </div>
             </div>
           </div>
 

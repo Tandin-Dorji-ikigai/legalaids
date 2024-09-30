@@ -39,6 +39,7 @@ function SideNav() {
 
   return (
     <div className="sidenav-container">
+      <div>
       <div className="side-nav-logo-container">
         <div className="dashboard-navLogo">
           <Link to="/dashboard">
@@ -172,8 +173,9 @@ function SideNav() {
             </div>
           </Link>
         </div>
-
-        <div className="admin-logout-container">
+      </div>
+      </div>
+      <div className="admin-logout-container" style={{marginBottom: "1vh"}}>
           <div className="user-icon-container">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +195,6 @@ function SideNav() {
           </div>
           <button onClick={logOutHandler} className="admin-logout-btn">Logout</button>
         </div>
-      </div>
     </div>
   );
 }

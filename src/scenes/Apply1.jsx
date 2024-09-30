@@ -234,7 +234,7 @@ function Apply1() {
                                 </select>
                             </div>
 
-                            <div className="legal-form-row">
+                            <div className="legal-form-row" >
                                 <select
                                     className='form-input'
                                     name="pvillage"

@@ -1,141 +1,240 @@
-body{
-    overflow-x: hidden;
+body {
+  overflow-x: hidden;
 }
 
 .about-banner-wrapper {
-    height: 110vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 50px;
+  height: 110vh;
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  gap: 5%;
+  margin: 2% 5%;
 }
 
 .about-banner,
 .about-des {
-    flex: 1;
-    height: 100%;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+}
 
+.about-des,
+.about-des p {
+  width: 100%;
 }
 
 .about-banner {
-    align-items: center;
-    display: flex;
-    justify-content: flex-end;
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .about-img-wrapper {
-    width: 700px;
-    height: 450px;
-    border-radius: 20px;
-    overflow: hidden;
+  width: 90%;
+  height: auto;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-
 .about-img-wrapper img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .about-des {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex-direction: column;
-    color: #000000;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  color: #000000;
+  gap: 10px;
 }
 
 .about-des :nth-child(1) {
-    font-size: clamp(40px, 3vw, 50px);
-    font-weight: bolder;
-    line-height: 1.1em;
-    width: 70%;
+  font-size: clamp(40px, 3vw, 50px);
+  font-weight: bolder;
+  line-height: 1.1em;
+  width: 100%;
 }
 
 .about-des :nth-child(2) {
-    color: #15605C;
-    font-size: clamp(16px, 3vw, 20px);
-    font-weight: bold;
+  color: #15605c;
+  font-size: clamp(16px, 3vw, 20px);
+  font-weight: bold;
 }
 
 .about-motto {
-    height: 600px;
-    border: 1px solid black;
-    margin-top: -120px;
-    position: relative;
+  height: 600px;
+  border: 1px solid black;
+  margin-top: -120px;
+  position: relative;
 }
 
 .about-motto img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .about-motto p {
-    font-size: clamp(24px, 3vw, 40px);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: bold;
-    color: #FFFFFF;
-    z-index: 3;
-    width: 70%;
-    text-align: center;
+  font-size: clamp(24px, 3vw, 40px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  color: #ffffff;
+  z-index: 3;
+  width: 70%;
+  text-align: center;
 }
 
 .whitespace {
-    height: 50px;
+  height: 50px;
 }
 
 .Inauguration-container {
-    display: flex;
-    width: 100%;
-    padding: 0 50px;
-    gap: 50px;
+  display: flex;
+  width: 100%;
+  padding: 0 50px;
+  gap: 50px;
 }
 
-.Inauguration-title{
-    font-weight: bolder;
-    font-size: clamp(35px, 3vw, 48px);
-    text-align: center;
+.Inauguration-title {
+  font-weight: bolder;
+  font-size: clamp(35px, 3vw, 48px);
+  text-align: center;
 }
 
 .Inauguration-image,
 .Inauguration-text {
-    flex: 1;
+  flex: 1;
 }
 
-
 .Inauguration-image {
-    position: sticky;
-    top: 40px;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1.2;
+  position: sticky;
+  top: 40px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1.2;
 }
 
 .Inauguration-image img {
-    width: 100%;
-    height: 90%;
-    object-fit: cover;
-    border-radius: 20px;
-
+  width: 100%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 20px;
 }
 
 .Inauguration-text {
-    padding-right: 20px;
-    font-size: clamp(22px,3vw,26px);
-    font-weight: lighter;
-    margin: 40px 0;
+  padding-right: 20px;
+  font-size: clamp(22px, 3vw, 26px);
+  font-weight: lighter;
+  margin: 40px 0;
 }
 
-.Inauguration-text p{
-    width: 80%;
-    margin: 20px 0;
-    line-height: 1.5em;
-    letter-spacing: 1px;
+.Inauguration-text p {
+  width: 80%;
+  margin: 20px 0;
+  line-height: 1.5em;
+  letter-spacing: 1px;
+}
+
+.statistics {
+  display: flex;
+  flex-direction: row;
+  padding: 2rem;
+  height: auto;
+}
+
+.stats-num {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem; 
+}
+
+.stats1,
+.stats2 {
+  flex: 1;
+  min-width: 150px; 
+}
+
+@media (max-width: 1080px) {
+  .about-banner-wrapper {
+    flex-direction: column;
+    gap: 2rem;
+    margin: 10rem 2rem;
+    height: auto;
+  }
+
+  .about-img-wrapper {
+    width: 100%;
+  }
+
+  .Inauguration-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .Inauguration-title {
+    margin: 2rem 0;
+  }
+  .Inauguration-image {
+    position: static;
+  }
+
+  .Inauguration-image img {
+    width: 100%;
+  }
+
+  .Inauguration-text {
+    padding-right: 0;
+    width: 100%;
+  }
+  .Inauguration-text p {
+    width: 100%;
+  }
+
+  .statistics {
+    flex-direction: column;
+    height: auto !important; 
+    gap: 2rem;
+  }
+
+  .stats-num {
+    flex-direction: row;
+    align-items: center !important;
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 520px) {
+  .about-des :nth-child(1) {
+    font-size: clamp(30px, 3vw, 50px);
+    text-align: center;
+  }
+
+  .Inauguration-title {
+    padding: 0 1rem;
+  }
+  .about-des :nth-child(2) {
+    text-align: center;
+  }
+
+  .stats-num {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .stats-des {
+    padding: 0 !important;
+  }
+
+  .stats1 :nth-child(1),  .stats2 :nth-child(1) {
+    font-size: 65px !important;
+  }
 }

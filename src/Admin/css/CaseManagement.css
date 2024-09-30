@@ -98,3 +98,33 @@
     margin-bottom: 5px;
     padding-left: 10px;
 }
+
+
+@media (max-width: 1055px) {
+    .applications-filters {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        row-gap: 10px;
+    }
+
+    .application-details::-webkit-scrollbar-thumb {
+        background-color: green;
+        border-radius: 10px;
+    }
+
+    .filter-container {
+        width: 100%;
+        align-items: start;
+
+    }
+
+
+}
+
+@media (max-width: 10px) {
+    .filter-container {
+        align-items: start;
+
+    }
+}

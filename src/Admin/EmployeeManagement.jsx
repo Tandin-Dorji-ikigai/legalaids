@@ -76,21 +76,22 @@ function EmployeeManagement() {
     handleCloseModal();
   };
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container ">
       <SideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">Employee Management</div>
         <h3 className="stats-header">Statistical Overview</h3>
-        <div className="dashboard-stats-container">
+        <div className="dashboard-stats-container employee-management">
           <div className="stats-card-container-employee-card">
             <div className="stats-card ">
               <div className="card-header">Total Employees</div>
               {employees ? (
-                <div className="card-stat-num">{employees.length} Employee(s)</div>
+                <div className="card-stat-num">
+                  {employees.length} Employee(s)
+                </div>
               ) : (
                 <div className="card-stat-num">0 Employee</div>
               )}
-              
             </div>
             <div className="stats-card">
               <div className="card-header">Total Admins</div>
@@ -191,7 +192,7 @@ function EmployeeManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                {employees &&
+                  {employees &&
                     employees.map((employee) => {
                       return (
                         <tr key={employee.cid}>
@@ -206,7 +207,7 @@ function EmployeeManagement() {
             </div>
           </div>
           <div className="details-container lawyer-details-container">
-              <div className="lawyer-details lawyer-details-sm">
+            <div className="lawyer-details lawyer-details-sm">
               <h3>Lawyer Details</h3>
               <table>
                 <thead>
