@@ -18,7 +18,7 @@ function Signup() {
   const [cPassword, setCPassword] = useState("");
   const navigate = useNavigate();
   const enabled = true;
-  const roles = [{ id: 2 }];
+  const roles = [{ id: 3 }];
 
   const [errors, setErrors] = useState({
     mobile: "",

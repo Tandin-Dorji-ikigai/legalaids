@@ -3,6 +3,8 @@ import { X, Trash2, Plus, Minus } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const DocumentItem = ({ label, filename }) => (
   <div className="document-item">
@@ -24,9 +26,11 @@ const DocumentItem = ({ label, filename }) => (
 
 const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError } = useGetCaseQuery(caseId);
+  const navigate = useNavigate();
+
   const [updateCase] = useUpdateCaseMutation();
 
-  if(fetchError){
+  if (fetchError) {
     console.log(fetchError);
   }
 
@@ -63,7 +67,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     { label: "CID or Valid Passport", filename: "passport.pdf" },
     { label: "Details of Household members", filename: "passport.pdf" },
     { label: "Attachment for household income", filename: "passport.pdf" },
-    {label: "Attachment for household disposable capital", filename: "passport.pdf"},
+    { label: "Attachment for household disposable capital", filename: "passport.pdf" },
     { label: "Brief Background of the Case*", filename: "passport.pdf" },
     { label: "Evidence of any form of disability.", filename: "passport.pdf" },
   ]);
@@ -88,7 +92,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
         dzongkhagPermanent: cas.pdzongkhag,
         // add other fields as needed from cas
       });
-  
+
       // Update institutionInfo
       setInstitutionInfo({
         ...institutionInfo,
@@ -97,7 +101,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
         officialContact: cas.officialcNumber,
         officialEmail: cas.officialEmail,
       });
-  
+
       // Update documents
       if (Array.isArray(cas.documentFilenames)) {
         setDocuments((prevDocuments) =>
@@ -116,7 +120,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const handleConfirm = async() => {
+  const handleConfirm = async () => {
     const cid = applicantInfo.cidNumber;
     const occupation = applicantInfo.occupation;
     const name = applicantInfo.name;
@@ -134,16 +138,54 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     const officialName = institutionInfo.officialName;
     const officialcNumber = institutionInfo.officialContact;
     const officialEmail = institutionInfo.officialEmail;
-    const status = "In Progress"
-    try{
-      const id= caseId;
-      await updateCase({id, cid, occupation, name, contactNo, income, member,
-        cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber, 
-        officialEmail, status}).unwrap();
-    }catch(err){
-      console.log(err)
+    const status = "In Progress";
+
+    try {
+      const id = caseId; // Assuming caseId is defined in your component
+      await updateCase({
+        id,
+        cid,
+        occupation,
+        name,
+        contactNo,
+        income,
+        member,
+        cdzongkhag,
+        village,
+        gewog,
+        dzongkhag,
+        pvillage,
+        pgewog,
+        pdzongkhag,
+        institutionName,
+        officialName,
+        officialcNumber,
+        officialEmail,
+        status
+      }).unwrap();
+
+      // Display success alert
+      Swal.fire({
+        title: "Success!",
+        text: "The case has been updated successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+      navigate("/caseManagement")
+
+    } catch (err) {
+      console.log(err);
+
+      // Optionally, you can display an error alert here
+      Swal.fire({
+        title: "Error!",
+        text: "There was an error updating the case.",
+        icon: "error",
+        confirmButtonText: "Try Again",
+      });
     }
   };
+
 
   const handleCancel = () => {
     // Add your cancellation logic here

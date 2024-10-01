@@ -7,10 +7,7 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../slices/authApiSlice";
-import NavBar from "../components/Nav";
-import Footer from "../components/Footer";
 import Swal from "sweetalert2";
-import { Nav } from "rsuite";
 
 function Login() {
   const [cid, setCID] = useState("");
@@ -35,14 +32,15 @@ function Login() {
 
       // Check user role and display corresponding alert
       if (res.user.authorities[0].authority === "User") {
+        localStorage.setItem("verified", JSON.stringify(res));
         Swal.fire({
           icon: "success",
-          title: "OTP Sent",
-          text: "OTP has been successfully sent to your registered mobile number.",
+          title: "Login",
+          text: "Login Successful",
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate("/otp");
+        navigate("/");
       } else {
         Swal.fire({
           icon: "success",
@@ -72,12 +70,11 @@ function Login() {
 
   return (
     <>
-      {/* <div className="signup-nav">
+      <div className="signup-nav">
         <Link to="/home">
           <img src={Logo} alt="Logo" />
         </Link>
-      </div> */}
-      <NavBar />
+      </div>
       <div className="signup-wrapper login-wrapper">
         <div className="signup-form-container">
           <form onSubmit={handleSubmit}>
@@ -131,7 +128,6 @@ function Login() {
         </div>
       </div>
       <p className="copyright-login">&copy; 2024 Bhutan Legal Aid Center</p>
-      <Footer />
     </>
   );
 }

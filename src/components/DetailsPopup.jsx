@@ -3,6 +3,7 @@ import { X, Trash2, Plus, Minus } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
+import Swal from "sweetalert2";
 
 const DocumentItem = ({ label, filename, onDelete }) => (
   <div className="document-item">
@@ -26,7 +27,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError } = useGetCaseQuery(caseId);
   const [updateCase] = useUpdateCaseMutation();
 
-  if(fetchError){
+  if (fetchError) {
     console.log(fetchError);
   }
 
@@ -41,8 +42,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     email: "",
     contactNo: "",
     caseStatus: "",
-    caseType: "",
-    natureOfCase: "",
+    caseType: "Walk-in",
+    natureOfCase: "Civil Case", 
     remarks: "",
     cidNumber: "",
     name: "",
@@ -70,7 +71,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     { label: "CID or Valid Passport", filename: "passport.pdf" },
     { label: "Details of Household members", filename: "passport.pdf" },
     { label: "Attachment for household income", filename: "passport.pdf" },
-    {label: "Attachment for household disposable capital", filename: "passport.pdf"},
+    { label: "Attachment for household disposable capital", filename: "passport.pdf" },
     { label: "Brief Background of the Case*", filename: "passport.pdf" },
     { label: "Evidence of any form of disability.", filename: "passport.pdf" },
   ]);
@@ -100,7 +101,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         dzongkhagPermanent: cas.pdzongkhag,
         // add other fields as needed from cas
       });
-  
+
       // Update institutionInfo
       setInstitutionInfo({
         ...institutionInfo,
@@ -109,7 +110,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         officialContact: cas.officialcNumber,
         officialEmail: cas.officialEmail,
       });
-  
+
       // Update documents
       if (Array.isArray(cas.documentFilenames)) {
         setDocuments((prevDocuments) =>
@@ -123,13 +124,13 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
       }
     }
   }, [cas]);
-  
+
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const handleConfirm = async() => {
+  const handleConfirm = async () => {
     const cid = applicantInfo.cidNumber;
     const occupation = applicantInfo.occupation;
     const name = applicantInfo.name;
@@ -152,16 +153,34 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     const aLawyer = applicantInfo.email
     const caseType = applicantInfo.caseType
     const natureOfCase = applicantInfo.natureOfCase
-    try{
-      const id= caseId;
-      await updateCase({id, cid, occupation, name, contactNo, income, member,
-        cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber, 
-        officialEmail, remarks, status, aLawyer, caseType, natureOfCase}).unwrap();
-    }catch(err){
-      console.log(err)
-    }
-  };
+    try {
+      const id = caseId;
+      await updateCase({
+        id, cid, occupation, name, contactNo, income, member,
+        cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
+        officialEmail, remarks, status, aLawyer, caseType, natureOfCase
+      }).unwrap();
 
+      // Show success message using SweetAlert2
+      Swal.fire({
+        title: 'Success!',
+        text: 'Case details have been updated successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+
+      onClose(); // Close the popup after successful update
+    } catch (err) {
+      console.log(err);
+      // Show error message using SweetAlert2
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to update case details. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
+  }
   const handleCancel = () => {
     console.log("Cancelled");
     onClose();
@@ -215,7 +234,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       }
                     />
                   </div>
-                  
+
                 </div>
 
                 <h4>Case Status and Documents</h4>
@@ -237,7 +256,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                     <label>Case Type</label>
                     <select
                       className="case-type-select"
-                      value={applicantInfo.caseType}
+                      value={applicantInfo.caseType || "Walk-in"}
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -257,7 +276,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                     <div className="document-list">
                       <div className="document-item">
                         <div>
-     
+
                           <span className="document-filename">asdf</span>
                         </div>
                         <div className="document-actions">
@@ -276,7 +295,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                     <label>Nature of Case</label>
                     <select
                       className="case-type-select"
-                      value={applicantInfo.natureOfCase}
+                      value={applicantInfo.natureOfCase || "Civil Case"}
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
