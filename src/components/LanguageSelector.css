@@ -1,0 +1,33 @@
+.dropdown-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  
+  .language-dropdown {
+    padding: 9px 35px 9px 20px; 
+    font-size: 16px;
+    border-radius: 30px;
+    color: #15605c;
+    border: 2px solid #15605c; 
+    cursor: pointer;
+    transition: border-color 0.3s;
+    outline: none; 
+    appearance: none; 
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="%2315605c" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="feather feather-chevron-down" viewBox="0 0 24 24"%3E%3Cpath d="M6 9l6 6 6-6"/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 15px center; 
+    background-size: 16px;
+  }
+  
+  /* .language-dropdown:focus, .language-dropdown:hover {
+    border-color: #15605c; 
+  } */
+  
+  @media (max-width: 600px) {
+    .language-dropdown {
+      font-size: 14px;
+      padding: 8px 25px 8px 8px; 
+    }
+  }
+  

@@ -5,6 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { MdExpandMore } from "react-icons/md";
 import { dzongkhags, gewogs, villages } from '../Data/LocationData';
 import Footer from '../components/Footer';
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
 
 function Apply1() {
     const navigate = useNavigate();
@@ -38,7 +40,7 @@ function Apply1() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData,"passed from 1");
+        console.log(formData, "passed from 1");
         navigate('/apply2', { state: formData });
     };
 
@@ -80,26 +82,61 @@ function Apply1() {
         }
     }, [formData.pgewog]);
 
+
+    const { t } = useTranslation();
+    const [currentLang, setCurrentLang] = useState(i18n.language);
+
+    useEffect(() => {
+        const handleLanguageChange = () => {
+            setCurrentLang(i18n.language);
+        };
+
+        i18n.on("languageChanged", handleLanguageChange); // Listen for language changes
+
+        return () => {
+            i18n.off("languageChanged", handleLanguageChange); // Clean up
+        };
+    }, []);
+
+
     return (
         <>
             <NavBar currentPage="apply1" className="apply-page" />
             <div className="navheight"></div>
             <div className="apply-wrapper">
-                <p className='apply-title-main'>Application form for legal aid.</p>
-                <p className="apply-sub">We provide accessible, expert legal aid to ensure justice and equality.</p>
+                <p className={`apply-title-main ${currentLang === "dz" ? "font-medium-dz" : ""}`}>{t("applyTitleMain")}</p>
+                <p className={`apply-sub ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t("applySub")}</p>
 
                 <div className="apply-tab">
-                    <Link className='tab-current' to="#">Applicant Information and Details</Link>
-                    <Link className='mid-tab' to="#">Institutions facilitating legal aid applications</Link>
-                    <Link to="#">Check List of Documents</Link>
+                    <Link
+                        style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }}
+                        className={`tab-current ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}
+                        to="#"
+                    >
+                        {t("tabCurrent")}
+                    </Link>
+                    <Link
+                        style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }}
+                        className={`tab ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}
+                        to="#"
+                    >
+                        {t("midTab")}
+                    </Link>
+                    <Link
+                        style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }}
+                        className={`tab ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}
+                        to="#"
+                    >
+                        {t("lastTab")}
+                    </Link>
                 </div>
 
                 <div className="form-wrapper">
                     <form className='apply-form' onSubmit={handleSubmit}>
-                        <p className='apply-title'>Personal Information and Details of Applicant</p>
+                        <p className={`apply-title ${currentLang === "dz" ? "font-xsmall-dz" : ""}`} >{t("applyTitle")}</p>
                         <div className="category-wrapper">
 
-                            <label className="legal-label">Applicant Details</label>
+                            <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`} >{t("legalLabelApplicationDetails")}</label>
                             <div className="legal-form-row legal-form-row-first">
                                 <input
                                     className='form-input'
@@ -107,7 +144,7 @@ function Apply1() {
                                     name="cid"
                                     value={formData.cid}
                                     onChange={handleChange}
-                                    placeholder='CID Number'
+                                    placeholder={t('cidPlaceholder')}
                                     required
                                 />
 
@@ -117,7 +154,7 @@ function Apply1() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    placeholder='Name'
+                                    placeholder={t('namePlaceholder')}
                                     required
                                 />
                             </div>
@@ -129,7 +166,7 @@ function Apply1() {
                                     name="occupation"
                                     value={formData.occupation}
                                     onChange={handleChange}
-                                    placeholder='Occupation'
+                                    placeholder={t('occupationPlaceholder')}
                                     required
                                 />
 
@@ -139,14 +176,14 @@ function Apply1() {
                                     name="contactNo"
                                     value={formData.contactNo}
                                     onChange={handleChange}
-                                    placeholder='Contact Number'
+                                    placeholder={t('contactNumberPlaceholder')}
                                     required
                                 />
                             </div>
                         </div>
 
                         <div className="category-wrapper category-wrapper-selector">
-                            <label className="legal-label">Current Address</label>
+                            <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("legalLabelCurrentAddress")}</label>
                             <div className="legal-form-row legal-form-row-first">
                                 <select
                                     className='form-input'
@@ -155,7 +192,7 @@ function Apply1() {
                                     onChange={handleChange}
                                     required
                                 >
-                                    <option value="">Select Dzongkhag</option>
+                                    <option value="">{t('selectDzongkhag')}</option>
                                     {dzongkhags.map((dzongkhag) => (
                                         <option key={dzongkhag} value={dzongkhag}>
                                             {dzongkhag}
@@ -171,7 +208,7 @@ function Apply1() {
                                     required
                                     disabled={!formData.dzongkhag}
                                 >
-                                    <option value="">Select Gewog</option>
+                                    <option value="">{t('selectGewog')}</option>
                                     {gewogs[formData.dzongkhag]?.map((gewog) => (
                                         <option key={gewog} value={gewog}>
                                             {gewog}
@@ -189,7 +226,7 @@ function Apply1() {
                                     required
                                     disabled={!formData.gewog}
                                 >
-                                    <option value="">Select Village</option>
+                                    <option value="">{t('selectVillage')}</option>
                                     {villages[formData.gewog]?.map((village) => (
                                         <option key={village} value={village}>
                                             {village}
@@ -200,7 +237,7 @@ function Apply1() {
                         </div>
 
                         <div className="category-wrapper category-wrapper-selector">
-                            <label className="legal-label">Permanent Address</label>
+                            <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("legalLabelPermanentAddress")}</label>
                             <div className="legal-form-row legal-form-row-first">
                                 <select
                                     className='form-input'
@@ -209,7 +246,7 @@ function Apply1() {
                                     onChange={handleChange}
                                     required
                                 >
-                                    <option value="">Select Dzongkhag</option>
+                                    <option value="">{t('selectDzongkhag')}</option>
                                     {dzongkhags.map((dzongkhag) => (
                                         <option key={dzongkhag} value={dzongkhag}>
                                             {dzongkhag}
@@ -225,7 +262,7 @@ function Apply1() {
                                     required
                                     disabled={!formData.pdzongkhag}
                                 >
-                                    <option value="">Select Gewog</option>
+                                    <option value="">{t('selectGewog')}</option>
                                     {gewogs[formData.pdzongkhag]?.map((gewog) => (
                                         <option key={gewog} value={gewog}>
                                             {gewog}
@@ -234,7 +271,7 @@ function Apply1() {
                                 </select>
                             </div>
 
-                            <div className="legal-form-row" >
+                            <div className="legal-form-row">
                                 <select
                                     className='form-input'
                                     name="pvillage"
@@ -243,7 +280,7 @@ function Apply1() {
                                     required
                                     disabled={!formData.pgewog}
                                 >
-                                    <option value="">Select Village</option>
+                                    <option value="">{t('selectVillage')}</option>
                                     {villages[formData.pgewog]?.map((village) => (
                                         <option key={village} value={village}>
                                             {village}
@@ -255,7 +292,7 @@ function Apply1() {
 
                         <div className="category-wrapper">
 
-                            <label className="legal-label">Household Details</label>
+                            <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("legalLabelHouseholdDetails")}</label>
                             <div className="legal-form-row legal-form-row-first">
                                 <input
                                     className='form-input'
@@ -263,7 +300,7 @@ function Apply1() {
                                     name="income"
                                     value={formData.income}
                                     onChange={handleChange}
-                                    placeholder='Total Household Income (Nu.)'
+                                    placeholder={t('totalHouseholdIncomePlaceholder')}
                                     required
                                 />
 
@@ -273,7 +310,7 @@ function Apply1() {
                                     name="member"
                                     value={formData.member}
                                     onChange={handleChange}
-                                    placeholder='Total Household Member'
+                                    placeholder={t('totalHouseholdMemberPlaceholder')}
                                     required
                                 />
                             </div>
@@ -286,7 +323,7 @@ function Apply1() {
                                     onChange={handleChange}
                                     required
                                 >
-                                    <option value="">Select Dzongkhag</option>
+                                    <option value="">{t('selectDzongkhag')}</option>
                                     {dzongkhags.map((dzongkhag) => (
                                         <option key={dzongkhag} value={dzongkhag}>
                                             {dzongkhag}
@@ -296,8 +333,8 @@ function Apply1() {
                             </div>
                         </div>
                         <button type="submit" className='banner-cta-wrapper apply-cta-wrapper'>
-                            <div className="banner-cta">
-                                Proceed
+                            <div className="banner-cta " style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+                                {t("proceed")}
                                 <div className="icon-container">
                                     <MdExpandMore className='exapnd-more' />
                                 </div>
@@ -306,7 +343,7 @@ function Apply1() {
 
                     </form>
                 </div>
-            </div>
+            </div >
             <div className="whitespace"></div>
             <Footer />
         </>

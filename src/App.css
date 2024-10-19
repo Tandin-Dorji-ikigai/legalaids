@@ -43,3 +43,8 @@ body,
   width: 100%;
   z-index: 1000;
 }
+
+
+.dz-font {
+  font-size: em !important; /* Adjust as needed */
+}

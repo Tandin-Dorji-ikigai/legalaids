@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Home from './scenes/Home';
 import About from './scenes/AboutUs';
 import Eligibity from './scenes/Eligibility';
@@ -25,8 +25,24 @@ import CurrentCases from './Lawyer/CurrentCases';
 import History from './Lawyer/History';
 import AdminLogin from './scenes/AdminLogin';
 import Loader from './components/Loader';
+import i18n from './i18n';
 
 function App() {
+
+  const [currentLang, setCurrentLang] = useState(i18n.language);
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      setCurrentLang(i18n.language);
+    };
+
+    i18n.on('languageChanged', handleLanguageChange); // Listen for language changes
+
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange); // Clean up
+    };
+  }, []);
+
   const location = useLocation();
   const isAdminRoute = (pathname) => {
     const adminRoutes = ['/dashboard', '/employeeManagement', '/caseManagement', '/applicationManagement', '/dataManagement', "/history", "/currentcases"];
@@ -45,7 +61,7 @@ function App() {
   }
 
   return (
-    <div className={`app ${showCursor ? 'custom-cursor' : ''}`}>
+    <div className={`app ${showCursor ? 'custom-cursor' : ''}`} >
       <ScrollToTop />
       {showCursor && <Cursor />}
       <CssBaseline />

@@ -238,3 +238,70 @@ body {
     font-size: 65px !important;
   }
 }
+
+
+
+.font-large-dz {
+  font-size: 5em !important;
+}
+
+.font-medium-dz {
+  font-size: 3.5em !important;
+}
+
+.font-small-dz {
+  font-size: 2.2em !important;
+}
+
+.font-xsmall-dz {
+  font-size: 1.6em !important;
+}
+
+.font-xxsmall-dz {
+  font-size: 1.45em !important;
+}
+
+@media (max-width: 1138px) {
+  .font-large-dz {
+    font-size: 3em !important;
+  }
+
+  .font-medium-dz {
+    font-size: 2.5em !important;
+  }
+
+  .font-small-dz {
+    font-size: 1.8em !important;
+  }
+
+  .font-xsmall-dz {
+    font-size: 1.4em !important;
+  }
+
+  .font-xxsmall-dz {
+    font-size: 1.2em !important;
+  }
+}
+
+@media (max-width: 495px) {
+  .font-large-dz {
+    font-size: 2.5em !important;
+  }
+
+  .font-medium-dz {
+    font-size: 2em !important;
+  }
+
+  .font-small-dz {
+    font-size: 1.5em !important;
+  }
+
+  .font-xsmall-dz {
+    font-size: 1.2em !important;
+  }
+
+  .font-xxsmall-dz {
+    font-size: 1.2em !important;
+  }
+
+}

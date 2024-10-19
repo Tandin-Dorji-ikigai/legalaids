@@ -1,12 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "../components/Nav";
 import "./css/apply.css";
 import { MdExpandMore } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
 import { useGetCaseQuery } from "../slices/caseApiSlice";
 import Footer from "../components/Footer";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
+
+
 
 function TrackApplication() {
+  const { t } = useTranslation();
+  const [currentLang, setCurrentLang] = useState(i18n.language);
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      setCurrentLang(i18n.language);
+    };
+
+    i18n.on("languageChanged", handleLanguageChange); 
+
+    return () => {
+      i18n.off("languageChanged", handleLanguageChange);
+    };
+  }, []);
+
+
   const [ID, setID] = useState("");
   const [formData, setFormData] = useState({
     applicationId: "",
@@ -26,25 +46,42 @@ function TrackApplication() {
   );
 
   const handleSearch = (e) => {
+
     e.preventDefault();
     if (!ID.startsWith("APPID")) {
-      setError("Invalid ID. ID should begin with APPID.");
-      return;
-    }
-    if (!ID) {
-      setError("Please enter a valid Application ID.");
-      return;
+      setError(
+        <span className={`${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+          {t('invalidId')}
+        </span>
+      );
+    return;
     }
 
-    if (fetchError) {
-      setError("Error fetching case details. Please try again.");
+    if (!ID) {
+      setError(
+        <span className={`${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+          {t('validId')}
+        </span>
+      );
       return;
     }
+    if (fetchError) {
+      setError(
+        <span className={`${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+          {t('errorThrow')}
+        </span>
+      );
+      return;
+    }
+    
 
     if (ID && !cas) {
-      setError("No application found with the applicationID " + `${ID}`);
+      const errorMessage = t('noApplication') + `${ID}`;
+      const errorClass = currentLang === "dz" ? "font-xsmall-dz" : "";
+      setError(<span className={errorClass}>{errorMessage}</span>);
       return;
     }
+    
 
     if (cas) {
       setFormData({
@@ -68,7 +105,7 @@ function TrackApplication() {
       case "In Progress":
         return "#15605C";
       default:
-        return "#8A8A8A"; // Color for "PENDING" as the default case
+        return "#8A8A8A";
     }
   };
 
@@ -85,10 +122,8 @@ function TrackApplication() {
 
       <div>
         <div className="navheight"></div>
-        <p className="apply-title-main">Track your application</p>
-        <p className="apply-sub">
-          We provide accessible, expert legal aid to ensure justice and equality
-          for all.
+        <p className={`apply-title-main ${currentLang === "dz" ? "font-medium-dz" : ""}`}>{t('applicationTrack')}</p>
+        <p className={`apply-sub ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('justice')}
         </p>
 
         <form onSubmit={handleSearch} className="search-form-container">
@@ -96,12 +131,13 @@ function TrackApplication() {
             type="text"
             value={ID}
             onChange={(e) => setID(e.target.value)}
-            placeholder="Enter Application ID..."
+            placeholder={t("institutionNamePlaceholder")}
           />
           <button type="submit">
-            <FaSearch />
+          <FaSearch />
           </button>
         </form>
+
 
         {error && <p className="error-message">{error}</p>}
 
@@ -109,20 +145,22 @@ function TrackApplication() {
           <div className="apply-wrapper">
             <div className="form-wrapper">
               <form className="apply-form">
-                <p className="apply-title">Application Details</p>
+                <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('applicationDetails')}</p>
                 <div className="category-wrapper">
                   <div
                     className="application-status"
                     style={{
                       backgroundColor: getStatusColor(applicationStatus),
+                   
                     }}
                   >
-                    {applicationStatus ? applicationStatus : "PENDING"}
+                    <p style={{marginTop: currentLang === "dz" ? "-1em" : ""}}>{applicationStatus ? applicationStatus : (<span className={`${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t('pending')}</span>
+                    )}</p>
                   </div>
 
                   <div className="track-form-row">
-                    <label className="legal-label">
-                      Application ID
+                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+                      {t('applicationId')}
                       <input
                         className="form-input"
                         type="text"
@@ -132,8 +170,8 @@ function TrackApplication() {
                       />
                     </label>
 
-                    <label className="legal-label">
-                      CID
+                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+                      {t('userCid')}
                       <input
                         className="form-input"
                         type="text"
@@ -143,8 +181,8 @@ function TrackApplication() {
                       />
                     </label>
 
-                    <label className="legal-label">
-                      Name
+                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+                      {t('userName')}
                       <input
                         className="form-input"
                         type="text"
@@ -156,8 +194,8 @@ function TrackApplication() {
                   </div>
 
                   <div className="track-form-row">
-                    <label className="legal-label">
-                      Case Type
+                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+                      {t('caseType')}
                       <input
                         className="form-input"
                         type="text"
@@ -167,8 +205,8 @@ function TrackApplication() {
                       />
                     </label>
 
-                    <label className="legal-label">
-                      Contact Number
+                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+                      {t('contactNumber')}
                       <input
                         className="form-input"
                         type="text"
@@ -178,8 +216,8 @@ function TrackApplication() {
                       />
                     </label>
 
-                    <label className="legal-label">
-                      Assigned Lawyer
+                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+                      {t('assignedLawyer')}
                       <input
                         className="form-input"
                         type="text"
@@ -194,7 +232,7 @@ function TrackApplication() {
             </div>
           </div>
         )}
-        <p className="copyright-sigup">&copy; 2024 Bhutan Legal Aid Center</p>
+        <p className={`copyright-sigup ${currentLang === "dz" ? "font-xxsmall-dz" : ""}`} style={{marginBottom: "1em"}}>&copy; {t('copyRight')}</p>
       </div>
       <Footer />
     </main>
