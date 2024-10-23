@@ -26,6 +26,8 @@ import History from './Lawyer/History';
 import AdminLogin from './scenes/AdminLogin';
 import Loader from './components/Loader';
 import i18n from './i18n';
+import CouncilDashboard from './BarCouncil/CouncilDashboard';
+import LawyerRegistered from './BarCouncil/LawyerRegistered';
 
 function App() {
 
@@ -94,6 +96,11 @@ function App() {
           {/* lawyer route */}
           <Route path='/currentcases' element={<CurrentCases />} />
           <Route path='/history' element={<History />} />
+
+          {/* Bar council route */}
+
+          <Route path='/barcouncil' element={<CouncilDashboard />} />
+          <Route path='/lawyerRegistered' element={<LawyerRegistered />} />
         </Routes>
       </main>
     </div>
