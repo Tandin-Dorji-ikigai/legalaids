@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import NavBar from "../components/Nav";
 import { MdExpandMore } from "react-icons/md";
 import "./css/apply.css";
@@ -6,7 +6,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import { usePostCaseMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
-import Loader from "../components/Loader";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
 
 function Apply3() {
   const location = useLocation();
@@ -90,7 +91,7 @@ function Apply3() {
           <div className="file-input-placeholder">
             <FiUpload className="upload-icon" />
             <span>
-              {files[fieldName] ? files[fieldName].name : "Browse Files"}
+              {files[fieldName] ? files[fieldName].name : t("browseFiles")}
             </span>
           </div>
         </div>
@@ -99,60 +100,73 @@ function Apply3() {
     [files, handleFileChange]
   );
 
+  const { t } = useTranslation();
+  const [currentLang, setCurrentLang] = useState(i18n.language);
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      setCurrentLang(i18n.language);
+    };
+
+    i18n.on("languageChanged", handleLanguageChange); // Listen for language changes
+
+    return () => {
+      i18n.off("languageChanged", handleLanguageChange); // Clean up
+    };
+  }, []);
+
+
   return (
     <>
       {isLoading && <Loader />}
       <NavBar currentPage="apply1" className="apply-page" />
       <div className="navheight"></div>
       <div className="apply-wrapper">
-        <p className="apply-title-main">Application form for legal aid.</p>
-        <p className="apply-sub">
-          We provide accessible, expert legal aid to ensure justice and
-          equality.
-        </p>
+        <p className={`apply-title-main ${currentLang === "dz" ? "font-medium-dz" : ""}`}>{t("applyTitleMain")}</p>
+        <p className={`apply-sub ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t("applySub")}</p>
 
         <div className="apply-tab">
-          <Link to="#">Applicant Information and Details</Link>
-          <Link className="mid-tab" to="#">
-            Institutions facilitating legal aid applications
+          <Link
+            style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }}
+            className={`tab ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}
+            to="#"
+          >
+            {t("tabCurrent")}
           </Link>
-          <Link to="#" className="tab-current">
-            Check List of Documents
-          </Link>
+          <Link style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }} className={`tab ${currentLang === "dz" ? "font-xsmall-dz" : ""}`} to="#">{t("midTab")}</Link>
+          <Link style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }} className={`tab-current ${currentLang === "dz" ? "font-xsmall-dz" : ""}`} to="#">{t("lastTab")}</Link>
         </div>
 
         <div className="form-wrapper">
           <form className="apply-form" onSubmit={handleSubmit}>
-            <p className="apply-title">Required Documents</p>
-            <div className="category-wrapper-third">
-              {renderFileInput("cidDoc", "CID or Valid Passport")}
-              {renderFileInput("hMemberDoc", "Details of Household members")}
+            <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('requiredDocument')}</p>
+            <div className="category-wrapper-third" style={{fontSize: currentLang === "dz"?'1.5rem':""}}>
+              {renderFileInput("cidDoc", t('cidorValidPassport'))} 
+              {renderFileInput("hMemberDoc", t('detailsofHouse'))}
             </div>
-            <div className="category-wrapper-third">
-              {renderFileInput("hIncomeDoc", "Attachment for household income")}
+            <div className="category-wrapper-third" style={{fontSize: currentLang === "dz"?'1.5rem':""}}>
+              {renderFileInput("hIncomeDoc", t('attachmentforHouse'))}
               {renderFileInput(
                 "hCapitalDoc",
-                "Attachment for household disposable capital"
+                t('attachmentofDisposable')
               )}
             </div>
-            <div className="category-wrapper-third">
+            <div className="category-wrapper-third" style={{fontSize: currentLang === "dz"?'1.5rem':""}}>
               {renderFileInput(
                 "cBackgroundDoc",
-                "Brief Background of the Case"
+                t('briefBackgroundCase')
               )}
               {renderFileInput(
                 "disabilityDoc",
-                "Evidence of any form of disability"
+                t('evidenceofDisability')
               )}
             </div>
             <button
               type="submit"
               className="banner-cta-wrapper apply-cta-wrapper"
             >
-              <div className="banner-cta"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Submitting...' : 'Submit'}
+              <div className="banner-cta" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+                {t('apply3apply')}
                 <div className="icon-container">
                   <MdExpandMore className="expand-more" />
                 </div>

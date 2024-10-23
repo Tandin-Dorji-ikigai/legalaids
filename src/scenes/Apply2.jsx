@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NavBar from '../components/Nav';
 import "./css/apply.css"
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MdExpandMore } from "react-icons/md";
 import Footer from '../components/Footer';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 function Apply2() {
     const location = useLocation();
@@ -33,26 +35,58 @@ function Apply2() {
         navigate('/apply3', { state: formData });
     };
 
+    const { t } = useTranslation();
+    const [currentLang, setCurrentLang] = useState(i18n.language);
+
+    useEffect(() => {
+        const handleLanguageChange = () => {
+            setCurrentLang(i18n.language);
+        };
+
+        i18n.on("languageChanged", handleLanguageChange); // Listen for language changes
+
+        return () => {
+            i18n.off("languageChanged", handleLanguageChange); // Clean up
+        };
+    }, []);
+
     return (
         <>
             <NavBar currentPage="apply1" className="apply-page" />
             <div className="navheight"></div>
             <div className="apply-wrapper">
-                <p className='apply-title-main'>Application form for legal aid.</p>
-                <p className="apply-sub">We provide accessible, expert legal aid to ensure justice and equality.</p>
+                <p className={`apply-title-main ${currentLang === "dz" ? "font-medium-dz" : ""}`}>{t("applyTitleMain")}</p>
+                <p className={`apply-sub ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t("applySub")}</p>
 
                 <div className="apply-tab">
-                    <Link to="#">Applicant Information and Details</Link>
-                    <Link className='mid-tab tab-current' to="#">Institutions facilitating legal aid applications</Link>
-                    <Link to="#">Check List of Documents</Link>
+                    <Link
+                        style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }}
+                        className={`tab ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}
+                        to="#"
+                    >
+                        {t("tabCurrent")}
+                    </Link>
+                    <Link
+                        style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }}
+                        className={`tab-current ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}
+                        to="#"
+                    >
+                        {t("midTab")}
+                    </Link>
+                    <Link
+                        style={{ paddingBottom: currentLang === "dz" ? '1rem' : '' }}
+                        className={`tab ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}
+                        to="#"
+                    >
+                        {t("lastTab")}
+                    </Link>
                 </div>
                 <div className="form-wrapper">
                     <form className='apply-form' onSubmit={handleSubmit}>
-                        <p className='apply-title'>Public institutions and other relevant institutions, which facilitates the
-                            application for legal aid (if any)</p>
+                        <p className={`apply-title ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("applyTitle2")}</p>
                         <div className="category-wrapper">
 
-                            <label className="legal-label">Institution & Dealing Official/Staff Details</label>
+                            <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("legalLabelInstitution")}</label>
                             <div className="legal-form-row legal-form-row-first">
                                 <input
                                     className='form-input'
@@ -60,7 +94,7 @@ function Apply2() {
                                     name="institutionName"
                                     value={formData.institutionName}
                                     onChange={handleChange}
-                                    placeholder='Institution Name'
+                                    placeholder={t('institutionNamePlaceholder')}
                                     required
                                 />
 
@@ -70,7 +104,7 @@ function Apply2() {
                                     name="officialName"
                                     value={formData.officialName}
                                     onChange={handleChange}
-                                    placeholder='Name Of dealing officer'
+                                    placeholder={t('officialNamePlaceholder')}
                                     required
                                 />
                             </div>
@@ -83,7 +117,7 @@ function Apply2() {
                                     name="officialcNumber"
                                     value={formData.officialcNumber}
                                     onChange={handleChange}
-                                    placeholder='Contact Number'
+                                    placeholder={t('contactNumberPlaceholder')}
                                     required
                                 />
                                 <input
@@ -92,14 +126,14 @@ function Apply2() {
                                     name="officialEmail"
                                     value={formData.officialEmail}
                                     onChange={handleChange}
-                                    placeholder='Email'
+                                    placeholder={t('emailPlaceholder')}
                                     required
                                 />
                             </div>
                         </div>
                         <button type="submit" className='banner-cta-wrapper apply-cta-wrapper'>
-                            <div className="banner-cta">
-                                Proceed
+                            <div className="banner-cta" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+                                {t("proceed")}
                                 <div className="icon-container">
                                     <MdExpandMore className='exapnd-more' />
                                 </div>
