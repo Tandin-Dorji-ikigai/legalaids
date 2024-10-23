@@ -6,12 +6,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import { usePostCaseMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
+import Loader from "../components/Loader";
 
 function Apply3() {
   const location = useLocation();
   const formDataPassed2 = location.state || {};
   const navigate = useNavigate();
-  const [postCase] = usePostCaseMutation();
+  const [postCase, { isLoading }] = usePostCaseMutation();
 
   const [files, setFiles] = useState({
     cidDoc: null,
@@ -100,6 +101,7 @@ function Apply3() {
 
   return (
     <>
+      {isLoading && <Loader />}
       <NavBar currentPage="apply1" className="apply-page" />
       <div className="navheight"></div>
       <div className="apply-wrapper">
@@ -147,8 +149,10 @@ function Apply3() {
               type="submit"
               className="banner-cta-wrapper apply-cta-wrapper"
             >
-              <div className="banner-cta">
-                Apply
+              <div className="banner-cta"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Submitting...' : 'Submit'}
                 <div className="icon-container">
                   <MdExpandMore className="expand-more" />
                 </div>
