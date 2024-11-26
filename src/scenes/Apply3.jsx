@@ -8,6 +8,7 @@ import { usePostCaseMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
+import Loader from "../components/Loader";
 
 function Apply3() {
   const location = useLocation();
