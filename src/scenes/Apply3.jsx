@@ -51,15 +51,13 @@ function Apply3() {
       });
 
       try {
-        await postCase(formData).unwrap();
-
+        const res = await postCase(formData).unwrap();
+        console.log(res);
         // Success alert
         Swal.fire({
           icon: "success",
           title: "Application Submitted",
-          text: "Your application has been successfully submitted.",
-          showConfirmButton: false,
-          timer: 1500,
+          text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
         });
 
         navigate("/home");

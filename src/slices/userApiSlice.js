@@ -1,4 +1,5 @@
 import { USER_URL } from "../constants";
+import { ROLE_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 export const adminApiSlice = apiSlice.injectEndpoints({
@@ -15,7 +16,12 @@ export const adminApiSlice = apiSlice.injectEndpoints({
                 url: USER_URL,
             }),
         }),
+        getAllRole: builder.query({
+            query: () => ({
+                url: ROLE_URL,
+            }),
+        })
     })
 })
 
-export const { usePostUserMutation, useGetAllUserQuery } = adminApiSlice;
+export const { usePostUserMutation, useGetAllUserQuery, useGetAllRoleQuery } = adminApiSlice;

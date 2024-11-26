@@ -44,8 +44,8 @@ function Login() {
       } else {
         Swal.fire({
           icon: "success",
-          title: "Login Successful",
-          text: "Welcome!",
+          title: "Login",
+          text: "Login Successful",
           showConfirmButton: false,
           timer: 1500,
         });

@@ -41,9 +41,7 @@ function TrackApplication() {
   const [applicationStatus, setApplicationStatus] = useState("");
   const [error, setError] = useState("");
 
-  const { data: cas, error: fetchError } = useGetCaseQuery(
-    ID && ID.charAt(ID.length - 1)
-  );
+  const { data: cas, error: fetchError } = useGetCaseQuery(ID);
 
   const handleSearch = (e) => {
 
@@ -85,7 +83,7 @@ function TrackApplication() {
 
     if (cas) {
       setFormData({
-        applicationId: "APPID" + cas.id,
+        applicationId: cas.appid,
         cid: cas.cid,
         name: cas.name,
         caseType: cas.caseType,
@@ -200,7 +198,7 @@ function TrackApplication() {
                         className="form-input"
                         type="text"
                         name="caseType"
-                        value={formData.caseType}
+                        value={formData.caseType ? formData.caseType : "Case Type Not Defined"}
                         readOnly
                       />
                     </label>
@@ -222,7 +220,7 @@ function TrackApplication() {
                         className="form-input"
                         type="text"
                         name="assignedLawyer"
-                        value={formData.assignedLawyer}
+                        value={formData.assignedLawyer ? formData.assignedLawyer : "Lawyer Not Assigned"}
                         readOnly
                       />
                     </label>

@@ -17,7 +17,7 @@ export const caseApiSlice = apiSlice.injectEndpoints({
         }),
         getCase: builder.query({
             query: (id) => ({
-                url: CASE_URL + `/${id}`,
+                url: CASE_URL + `/appid/${id}`,
             }),
         }),
         updateCase: builder.mutation({
