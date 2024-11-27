@@ -35,7 +35,7 @@ function NavBar({ currentPage }) {
   };
 
   useEffect(() => {}, [userInfo]);
-  console.log(userInfo);
+  // console.log(userInfo);
   const toggleMenu = () => {
     setIsMenuOpen((prevState) => !prevState);
   };

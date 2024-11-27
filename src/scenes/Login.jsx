@@ -63,9 +63,6 @@ function Login() {
         }
       }
     } catch (err) {
-      console.log(err);
-
-      // Error alert
       Swal.fire({
         icon: "error",
         title: "Login Failed",
