@@ -172,7 +172,7 @@ function ApplicationManagement() {
                 </tr>
               </thead>
               <tbody>
-              {/* <tr
+              <tr
                             key={11410008138}
                             onClick={() => handleOpen(11410008138)}
                           >
@@ -182,7 +182,7 @@ function ApplicationManagement() {
                 <td>Thimphu</td>
                 <td>Pending</td>
                 <td>Walk-In</td>
-                </tr> */}
+                </tr>
 
                 {cases && (
                   <>
