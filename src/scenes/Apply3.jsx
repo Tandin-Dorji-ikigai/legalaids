@@ -8,7 +8,7 @@ import { usePostCaseMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
-import { Loader } from "lucide-react";
+import Loader from "../components/Loader";
 
 function Apply3() {
   const location = useLocation();
@@ -51,15 +51,13 @@ function Apply3() {
       });
 
       try {
-        await postCase(formData).unwrap();
-
+        const res = await postCase(formData).unwrap();
+        console.log(res);
         // Success alert
         Swal.fire({
           icon: "success",
           title: "Application Submitted",
-          text: "Your application has been successfully submitted.",
-          showConfirmButton: false,
-          timer: 1500,
+          text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
         });
 
         navigate("/home");

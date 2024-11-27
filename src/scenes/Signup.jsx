@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./css/signup.css";
 import { Link } from "react-router-dom";
 import Ndi from "../assets/ndi.jpeg";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import NavBar from '../components/Nav';
 import Footer from "../components/Footer";
+import { useGetAllRoleQuery } from "../slices/userApiSlice";
 
 function Signup() {
   const [postUser] = usePostUserMutation();
@@ -18,7 +19,18 @@ function Signup() {
   const [cPassword, setCPassword] = useState("");
   const navigate = useNavigate();
   const enabled = true;
-  const roles = [{ id: 3 }];
+  // const roles = [{ id: 3 }];
+  const { data: rolesData} = useGetAllRoleQuery();
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    if (rolesData) {
+      const userRole = rolesData.find((role) => role.name === "User");
+      if (userRole) {
+        setRoles([{ id: userRole.id }]);
+      }
+    }
+  }, [rolesData]);
 
   const [errors, setErrors] = useState({
     mobile: "",
@@ -62,7 +74,7 @@ function Signup() {
     e.preventDefault();
     if (!errors.mobile && cPassword === password) {
       try {
-        await postUser({
+        const res = await postUser({
           cid,
           contact_no: `+975${contact_no}`,
           dob,
@@ -70,21 +82,27 @@ function Signup() {
           enabled,
           roles,
         });
-
-        // Success alert
-        Swal.fire({
-          icon: "success",
-          title: "Registration Successful",
-          text: "Your account has been created successfully!",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-
-        navigate("/login");
+        if(res.error){
+          Swal.fire({
+            icon: "error",
+            title: "Registration Failed",
+            text:
+              res.error.data?.message ||
+              "An error occurred during registration. Please try again.",
+          });
+        }else{
+          Swal.fire({
+            icon: "success",
+            title: "Registration Successful",
+            text: "Your account has been created successfully!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+  
+          navigate("/login");
+        }
+        
       } catch (err) {
-        console.log(err);
-
-        // Error alert
         Swal.fire({
           icon: "error",
           title: "Registration Failed",
