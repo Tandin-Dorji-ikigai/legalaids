@@ -211,7 +211,26 @@ table tr:last-child td {
   overflow: hidden;
   padding: 1rem 0;
 }
+.modal-content form{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.modal-content{
+min-width: 400px;
+}
+.modal-content form div{
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
 
+.modal-buttons .add-user-btn{
+  width: 100%;
+}
+.modal-content form input, .modal-content form select{
+  padding: 0.5rem;
+}
 /* pop css add user */
 .modal-overlay {
   position: fixed;
@@ -232,7 +251,14 @@ table tr:last-child td {
   border-radius: 5px;
   width: 300px;
 }
-
+.modal-buttons button{
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none
+}
+.modal-buttons .cancelBtn:hover{
+  background-color: #cfcfcf;
+}
 .modal-close-btn {
   float: right;
   border: none;

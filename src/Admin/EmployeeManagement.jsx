@@ -21,6 +21,7 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
+
 // Email validation function
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,6 +29,13 @@ const isValidEmail = (email) => {
 };
 
 function EmployeeManagement() {
+  // Move the useState calls inside the component function
+  const [cid, setCid] = useState("");
+  const [username, setUsername] = useState("");
+  const [contactNo, setContactNo] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+
   const { data: admins, error } = useGetAllAdminQuery();
   const { data: employees, error1 } = useGetAllEmployeeQuery();
   const { data: lawyers, error2 } = useGetAllLawyerQuery();
@@ -79,10 +87,25 @@ function EmployeeManagement() {
     }
     // Here you would typically integrate with a backend API to send the invitation
     console.log(`Inviting user with email: ${email}`);
-    // For demonstration, we'll just show an alert
     alert(`Invitation sent to ${email}`);
     handleCloseModal();
   };
+
+  // const handleInviteUser = () => {
+  //   if (!email) {
+  //     setEmailError("Email is required");
+  //     return;
+  //   }
+  //   if (!isValidEmail(email)) {
+  //     setEmailError("Please enter a valid email address");
+  //     return;
+  //   }
+  //   // Here you would typically integrate with a backend API to send the invitation
+  //   console.log(`Inviting user with email: ${email}`);
+  //   // For demonstration, we'll just show an alert
+  //   alert(`Invitation sent to ${email}`);
+  //   handleCloseModal();
+  // };
   return (
     <div className="dashboard-container ">
       <SideNav />
@@ -150,28 +173,93 @@ function EmployeeManagement() {
             <button className="edit-btn">Edit</button>
           </div>
           <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-            <h2>Invite New User</h2>
-            <input
-              type="email"
-              placeholder="Enter email address"
-              value={email}
-              onChange={handleEmailChange}
-              className={`modal-input ${emailError ? "input-error" : ""}`}
-            />
-            {emailError && <div className="error-message">{emailError}</div>}
-            <div className="modal-buttons">
-              <button onClick={handleCloseModal} className="modal-btn">
-                Cancel
-              </button>
-              <button
-                onClick={handleInviteUser}
-                disabled={!email || !!emailError}
-                className="modal-btn modal-btn-primary"
-              >
-                Invite
-              </button>
-            </div>
-          </Modal>
+  <div>
+    <h2>Invite User</h2>
+    <form>
+      {/* CID Field */}
+      <div>
+        <label>CID</label>
+        <input
+          type="text"
+          placeholder="Enter CID"
+          value={cid}
+          onChange={(e) => setCid(e.target.value)}
+        />
+      </div>
+
+      {/* Username Field */}
+      <div>
+        <label>Username</label>
+        <input
+          type="text"
+          placeholder="Enter username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+
+      {/* Contact Number Field */}
+      <div>
+        <label>Contact No</label>
+        <input
+          type="text"
+          placeholder="Enter contact number"
+          value={contactNo}
+          onChange={(e) => setContactNo(e.target.value)}
+        />
+      </div>
+
+      {/* Email Field */}
+      <div>
+        <label>Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={handleEmailChange}
+          placeholder="Enter email"
+        />
+        {emailError && <p className="error-message">{emailError}</p>}
+      </div>
+
+      {/* Password Field */}
+      <div>
+        <label>Password</label>
+        <input
+          type="password"
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+
+      {/* Role Dropdown */}
+      <div>
+        <label>Role</label>
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="" disabled>
+            Select role
+          </option>
+          <option value="Admin">Admin</option>
+          <option value="Employee">Employee</option>
+        </select>
+      </div>
+
+      {/* Submit and Cancel Buttons */}
+      <div className="modal-buttons">
+        <button type="button" class = "add-user-btn" onClick={handleInviteUser}>
+         Add 
+        </button>
+        <button type="button"  class = "cancelBtn" onClick={handleCloseModal}>
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</Modal>
+
           <div className="details-container">
             <div className="admin-details">
               <h3>Admin Details</h3>
