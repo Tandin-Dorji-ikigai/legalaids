@@ -6,9 +6,10 @@ import Logo from "../assets/logo.png";
 import { usePostUserMutation } from "../slices/userApiSlice";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import NavBar from '../components/Nav';
+import NavBar from "../components/Nav";
 import Footer from "../components/Footer";
 import { useGetAllRoleQuery } from "../slices/userApiSlice";
+import { Eye, EyeOff } from "lucide-react";
 
 function Signup() {
   const [postUser] = usePostUserMutation();
@@ -17,10 +18,13 @@ function Signup() {
   const [contact_no, setContact] = useState("");
   const [password, setPassword] = useState("");
   const [cPassword, setCPassword] = useState("");
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [isCPasswordVisible, setCPasswordVisible] = useState(false);
+
   const navigate = useNavigate();
   const enabled = true;
-  // const roles = [{ id: 3 }];
-  const { data: rolesData} = useGetAllRoleQuery();
+
+  const { data: rolesData } = useGetAllRoleQuery();
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
@@ -70,6 +74,14 @@ function Signup() {
     setCPassword(e.target.value);
   };
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!isPasswordVisible);
+  };
+
+  const toggleCPasswordVisibility = () => {
+    setCPasswordVisible(!isCPasswordVisible);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!errors.mobile && cPassword === password) {
@@ -82,7 +94,7 @@ function Signup() {
           enabled,
           roles,
         });
-        if(res.error){
+        if (res.error) {
           Swal.fire({
             icon: "error",
             title: "Registration Failed",
@@ -90,7 +102,7 @@ function Signup() {
               res.error.data?.message ||
               "An error occurred during registration. Please try again.",
           });
-        }else{
+        } else {
           Swal.fire({
             icon: "success",
             title: "Registration Successful",
@@ -98,10 +110,9 @@ function Signup() {
             showConfirmButton: false,
             timer: 1500,
           });
-  
+
           navigate("/login");
         }
-        
       } catch (err) {
         Swal.fire({
           icon: "error",
@@ -125,11 +136,6 @@ function Signup() {
 
   return (
     <>
-      {/* <div className="signup-nav">
-        <Link to="/home">
-          <img src={Logo} alt="" />
-        </Link>
-      </div> */}
       <NavBar currentPage="Sign-up" />
       <div className="signup-wrapper">
         <div className="signup-form-container">
@@ -193,29 +199,57 @@ function Signup() {
             <div>
               <label className="form-label">
                 Password
-                <input
-                  className="form-input number-form"
-                  type="password"
-                  name="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  placeholder="Enter Password"
-                  required
-                />
+                <div className="password-container" style={{ position: "relative" }}>
+                  <input
+                    className="form-input number-form"
+                    type={isPasswordVisible ? "text" : "password"}
+                    name="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    placeholder="Enter Password"
+                    required
+                  />
+                  <span
+                    onClick={togglePasswordVisibility}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {isPasswordVisible ? <EyeOff size = {16}/> : <Eye size = {16}/>}
+                  </span>
+                </div>
               </label>
             </div>
             <div>
               <label className="form-label">
                 Confirm Password
-                <input
-                  className="form-input number-form"
-                  type="password"
-                  name="confirmPassword"
-                  value={cPassword}
-                  onChange={handleCpasswordChange}
-                  placeholder="Confirm Password"
-                  required
-                />
+                <div className="password-container" style={{ position: "relative" }}>
+                  <input
+                    className="form-input number-form"
+                    type={isCPasswordVisible ? "text" : "password"}
+                    name="confirmPassword"
+                    value={cPassword}
+                    onChange={handleCpasswordChange}
+                    placeholder="Confirm Password"
+                    required
+                  />
+                  <span
+                    onClick={toggleCPasswordVisibility}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {isCPasswordVisible ? <EyeOff size = {16}/> : <Eye size = {16}/>}
+                  </span>
+                </div>
                 {password !== cPassword && (
                   <span className="error-msg" style={{ color: "red" }}>
                     Passwords do not match
@@ -233,7 +267,7 @@ function Signup() {
           <p className="copyright-sigup">&copy; 2024 Bhutan Legal Aid Center</p>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }

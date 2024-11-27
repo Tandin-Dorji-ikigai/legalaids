@@ -51,7 +51,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   if (fetchError) {
     console.log(fetchError)
   }
-
+  
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: false,
     caseDetails: true,
