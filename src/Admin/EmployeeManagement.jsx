@@ -3,6 +3,8 @@ import SideNav from "./DashboardNav";
 import "./css/EmployeeManagement.css";
 import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
+import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
+import { useGetAllUserQuery } from "../slices/userApiSlice";
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
@@ -36,15 +38,20 @@ function EmployeeManagement() {
 
   const { data: admins, error } = useGetAllAdminQuery();
   const { data: employees, error1 } = useGetAllEmployeeQuery();
+  const { data: lawyers, error2 } = useGetAllLawyerQuery();
+  const { data: users, error3} = useGetAllUserQuery();
 
   useEffect(() => {
     if (error) {
       console.log(error);
     } else if (error1) {
       console.log(error1);
+    }else if(error2){
+      console.log(error2)
+    }else if(error3){
+      console.log(error3)
     }
-  }, [error, error1, employees, admins]);
-
+  }, [error, error1, error2, error3, employees, admins, lawyers, users]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -127,11 +134,19 @@ function EmployeeManagement() {
             </div>
             <div className="stats-card">
               <div className="card-header">Total Lawyers</div>
-              <div className="card-stat-num">5 Lawyers</div>
+              {lawyers ? (
+                <div className="card-stat-num">{lawyers.length} Lawyer(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Lawyer</div>
+              )}
             </div>
             <div className="stats-card">
-              <div className="card-header">Total Lawyers</div>
-              <div className="card-stat-num">5 Lawyers</div>
+              <div className="card-header">Total Users</div>
+              {users ? (
+                <div className="card-stat-num">{users.length} User(s)</div>
+              ) : (
+                <div className="card-stat-num">0 User</div>
+              )}
             </div>
           </div>
         </div>
@@ -307,26 +322,16 @@ function EmployeeManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>11410009899</td>
-                    <td>Kinley Wangmo</td>
-                    <td>kinley@gmail.com</td>
-                  </tr>
-                  <tr>
-                    <td>11410009899</td>
-                    <td>Kinley Wangmo</td>
-                    <td>kinley@gmail.com</td>
-                  </tr>
-                  <tr>
-                    <td>11410009899</td>
-                    <td>Kinley Wangmo</td>
-                    <td>kinley@gmail.com</td>
-                  </tr>
-                  <tr>
-                    <td>11210009898</td>
-                    <td>Tshering Dhendup</td>
-                    <td>tshering@gmail.com</td>
-                  </tr>
+                  {lawyers &&
+                    lawyers.map((lawyer) => {
+                      return (
+                        <tr key={lawyer.cid}>
+                          <td>{lawyer.cid}</td>
+                          <td>{lawyer.userName}</td>
+                          <td>{lawyer.email}</td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
