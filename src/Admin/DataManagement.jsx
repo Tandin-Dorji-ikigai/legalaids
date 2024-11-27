@@ -38,8 +38,13 @@ function DataManagement() {
     applicantInfo: true,
     institutions: true,
     documents: true,
+    caseDetails: true
   });
   // const [isLoading, setIsLoading] = useState(false);
+  const [caseInfo, setCaseInfo] = useState({
+    caseType :"",
+    natureOfCase : ""
+  })
   const [extractedText, setExtractedText] = useState("");
 
   const [applicantInfo, setApplicantInfo] = useState({
@@ -310,7 +315,7 @@ function DataManagement() {
       <div className="dashboard-content">
         <div className="dashboard-header">Data Management</div>
         <div className="lawyer-case-details-container">
-          <div className="excel-header">Automated Case Data Entry</div>
+          {/* <div className="excel-header">Automated Case Data Entry</div>
           <div className="file-btn-container">
             <div className="file-upload-btn-container">
               <button
@@ -348,8 +353,61 @@ function DataManagement() {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="excel-header">Add Case Form</div>
+          <div className="lawyer-section">
+            <button
+              className="lawyer-section-header"
+              onClick={() => toggleSection("caseDetails")}
+            >
+              <span>Case Information and Details</span>
+              {expandedSections.caseDetails ? <ChevronUp /> : <ChevronDown />}
+            </button>
+            {expandedSections.caseDetails && (
+              <div className="lawyer-section-content">
+                <h3>Case Information</h3>
+                <div className="form-grid">
+                  <div className="form-field">
+                    <label>Case Type</label>
+                    <select
+                      value={caseInfo.caseType}
+                      onChange={(e) =>
+                        setCaseInfo({
+                          ...caseInfo,
+                          caseType: e.target.value,
+                        })
+                      }
+
+                      class = "selectFields"
+                    >
+                      
+                      <option value="criminal">Walk In</option>
+                      <option value="civil">Referral</option>
+                    </select>
+
+                  </div>
+                  <div className="form-field">
+                    <label>Nature Of Case</label>
+                    <select
+                      value={caseInfo.natureOfCase}
+                      onChange={(e) =>
+                        setCaseInfo({
+                          ...caseInfo,
+                          natureOfCase: e.target.value,
+                        })
+                      }
+                      class = "selectFields"
+                    >
+                     
+                      <option value="criminal">Criminal</option>
+                      <option value="civil">Civil</option>
+                    </select>
+
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
           <div className="lawyer-section">
             <button
               className="lawyer-section-header"
