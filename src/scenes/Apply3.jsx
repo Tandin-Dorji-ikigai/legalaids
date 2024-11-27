@@ -75,13 +75,15 @@ function Apply3() {
       <div className="file-input-container" key={fieldName}>
         <label htmlFor={fieldName}>{label}</label>
         <div className="file-input-wrapper">
-          <input
-            type="file"
-            id={fieldName}
-            className="file-input"
-            onChange={handleFileChange(fieldName)}
-            required
-          />
+        <input
+          type="file"
+          id={fieldName}
+          className="file-input"
+          accept="application/pdf"
+          onChange={handleFileChange(fieldName)}
+          required
+        />
+
           <div className="file-input-placeholder">
             <FiUpload className="upload-icon" />
             <span>
