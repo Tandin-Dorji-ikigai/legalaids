@@ -36,10 +36,12 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   }
 
   const [expandedSections, setExpandedSections] = useState({
-    applicantInfo: true,
+    applicantInfo: false,
+    caseDetails: true,
     institutions: false,
     documents: false,
   });
+  
 
   const [applicantInfo, setApplicantInfo] = useState({
     cidNumber: "",
@@ -72,6 +74,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     { label: "Brief Background of the Case*", filename: "passport.pdf" },
     { label: "Evidence of any form of disability.", filename: "passport.pdf" },
   ]);
+
+  const [caseInfo, setCaseInfo] = useState({
+    caseType: "",
+    natureOfCase: ""
+  })
 
   useEffect(() => {
     if (cas) {
@@ -213,6 +220,68 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
         </div>
 
         <div className="popup-content">
+          <div className="section">
+            <button
+              className="section-header"
+              aria-expanded={expandedSections.caseDetails}
+              onClick={() => toggleSection("caseDetails")}
+            >
+              <span>Case Details and Information</span>
+              <div className="section-btn-container">
+                {expandedSections.caseDetails ? (
+                  <Minus color="#15605C" />
+                ) : (
+                  <Plus color="#15605C" />
+                )}
+              </div>
+            </button>
+            {expandedSections.caseDetails && (
+              <div className="section-content">
+                <h3>Case Information</h3>
+                <div className="form-grid">
+                  <div className="form-field">
+                    <label>Case Type</label>
+                    <select
+                      value={caseInfo.caseType}
+                      onChange={(e) =>
+                        setCaseInfo({
+                          ...caseInfo,
+                          caseType: e.target.value,
+                        })
+                      }
+
+                      class = "selectFields"
+                    >
+                     
+                      <option value="criminal">Walk In</option>
+                      <option value="civil">Referral</option>
+                    </select>
+
+                  </div>
+                  <div className="form-field">
+                    <label>Nature Of Case</label>
+                    <select
+                      value={caseInfo.natureOfCase}
+                      onChange={(e) =>
+                        setCaseInfo({
+                          ...caseInfo,
+                          natureOfCase: e.target.value,
+                        })
+                      }
+                      class = "selectFields"
+                    >
+                     
+                      <option value="criminal">Criminal</option>
+                      <option value="civil">Civil</option>
+                    </select>
+
+                  </div>
+                </div>
+
+                
+              </div>
+            )}
+          </div>
           <div className="section">
             <button
               className="section-header"

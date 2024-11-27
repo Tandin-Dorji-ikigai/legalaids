@@ -8,10 +8,12 @@ import { setCredentials } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../slices/authApiSlice";
 import Swal from "sweetalert2";
+import { Eye, EyeOff } from "lucide-react";
 
 function Login() {
   const [cid, setCID] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for toggling password visibility
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
   const navigate = useNavigate();
@@ -22,6 +24,10 @@ function Login() {
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
+  };
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleSubmit = async (e) => {
@@ -105,15 +111,33 @@ function Login() {
             <div>
               <label className="form-label">
                 Password
-                <input
-                  className="form-input"
-                  type="password"
-                  name="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  placeholder="Password"
-                  required
-                />
+                <div className="password-container" style={{ position: "relative", height: "50px"}}>
+                  <input
+                    className="form-input"
+                    type={isPasswordVisible ? "text" : "password"}
+                    name="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    placeholder="Password"
+                    required
+                  />
+                  <span
+                    onClick={togglePasswordVisibility}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {isPasswordVisible ? (
+                      <EyeOff size={16} /> // Smaller size for the eye icon
+                    ) : (
+                      <Eye size={16} /> // Smaller size for the eye icon
+                    )}
+                  </span>
+                </div>
               </label>
             </div>
 
