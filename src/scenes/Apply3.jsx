@@ -52,8 +52,6 @@ function Apply3() {
 
       try {
         const res = await postCase(formData).unwrap();
-        console.log(res);
-        // Success alert
         Swal.fire({
           icon: "success",
           title: "Application Submitted",
@@ -62,9 +60,6 @@ function Apply3() {
 
         navigate("/home");
       } catch (err) {
-        console.log(err);
-
-        // Error alert
         Swal.fire({
           icon: "error",
           title: "Submission Failed",

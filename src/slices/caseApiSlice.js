@@ -20,6 +20,11 @@ export const caseApiSlice = apiSlice.injectEndpoints({
                 url: CASE_URL + `/appid/${id}`,
             }),
         }),
+        getCaseId: builder.query({
+            query: (id) => ({
+                url: CASE_URL + `/${id}`,
+            }),
+        }),
         updateCase: builder.mutation({
             query: ({ id, ...data }) => ({
               url: CASE_URL + `/${id}`,
@@ -30,4 +35,4 @@ export const caseApiSlice = apiSlice.injectEndpoints({
     })
 })
 
-export const { usePostCaseMutation, useGetAllCaseQuery, useGetCaseQuery, useUpdateCaseMutation } = caseApiSlice;
+export const { usePostCaseMutation, useGetAllCaseQuery, useGetCaseQuery, useUpdateCaseMutation, useGetCaseIdQuery } = caseApiSlice;

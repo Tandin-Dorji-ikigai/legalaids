@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useEffect } from "react";
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import "./DetailsPopup.css";
-import { useGetCaseQuery } from "../slices/caseApiSlice";
+import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,8 @@ const DocumentItem = ({ label, filename }) => (
 );
 
 const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
-  const { data: cas, error: fetchError } = useGetCaseQuery(caseId);
+  const { data: cas, error: fetchError } = useGetCaseIdQuery(caseId);
+  console.log(cas)
   const navigate = useNavigate();
 
   const [updateCase] = useUpdateCaseMutation();

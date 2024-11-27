@@ -259,19 +259,13 @@ function DataManagement() {
     });
 
     try {
-      await postCase(formData).unwrap();
-
-      // Display success alert
+      const res = await postCase(formData).unwrap();
       Swal.fire({
-        title: "Success!",
-        text: "The case data has been submitted successfully.",
-        icon: "success",
-        confirmButtonText: "OK",
-      });
+          icon: "success",
+          title: "Application Submitted",
+          text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
+        });
     } catch (err) {
-      console.log(err);
-
-      // Display error alert
       Swal.fire({
         title: "Error!",
         text: "There was an error submitting the case data.",
