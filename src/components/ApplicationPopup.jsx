@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useEffect } from "react";
-import { X, Trash2, Plus, Minus } from "lucide-react";
+import { X, Trash2, Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
@@ -13,12 +13,12 @@ const DocumentItem = ({ label, filename }) => (
       <span className="document-filename">{filename}</span>
     </div>
     <div className="document-actions">
-      <button className="icon-button delete">
+      {/* <button className="icon-button delete">
         <Trash2 size={18} />
-      </button>
+      </button> */}
       {/* Only include add button if needed */}
       <button className="icon-button add">
-        <Plus size={18} />
+        <EyeIcon size={18} />
       </button>
     </div>
   </div>

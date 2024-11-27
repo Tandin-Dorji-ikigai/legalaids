@@ -172,10 +172,23 @@ function ApplicationManagement() {
                 </tr>
               </thead>
               <tbody>
+              <tr
+                            key={11410008138}
+                            onClick={() => handleOpen(11410008138)}
+                          >
+              <td>11410001838</td>
+                <td>17707335</td>
+                <td>Civil</td>
+                <td>Thimphu</td>
+                <td>Pending</td>
+                <td>Walk-In</td>
+                </tr>
+
                 {cases && (
                   <>
                     {(() => {
                       if (activeStatus === "All Application") {
+                        
                         return selectedCases.map((caseItem) => (
                           <tr
                             key={caseItem.cid}

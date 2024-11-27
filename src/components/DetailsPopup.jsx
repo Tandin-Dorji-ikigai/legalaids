@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useEffect } from "react";
-import { X, Trash2, Plus,Eye, Minus } from "lucide-react";
+import { X, Trash2, Plus, Minus, EyeIcon} from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
@@ -12,12 +12,12 @@ const DocumentItem = ({ label, filename, onDelete }) => (
       <span className="document-filename">{filename}</span>
     </div>
     <div className="document-actions">
-      <button className="icon-button delete">
-        <Trash2 size={18} />
-      </button>
+      {/* <button className="icon-button delete">
+        <Eye size={18} />
+      </button> */}
       {/* Only include add button if needed */}
       <button className="icon-button add">
-        <Plus size={18} />
+        <EyeIcon size={18} />
       </button>
     </div>
   </div>
@@ -280,10 +280,13 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                           <span className="document-filename">asdf</span>
                         </div>
                         <div className="document-actions">
+                          {/* <button className="icon-button delete">
+                            <Trash2 size={18} />
+                          </button> */}
+                          {/* Only include add button if needed */}
                           <button className="icon-button add">
-                            <Eye size={18} />
+                            <EyeIcon size={18} />
                           </button>
-                          
                         </div>
                       </div>
                     </div>
