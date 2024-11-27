@@ -191,8 +191,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       navigate("/caseManagement");
 
     } catch (err) {
-      console.log(err);
-
       Swal.fire({
         title: "Error!",
         text: "There was an error updating the case.",
