@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useEffect } from "react";
 import { X, Trash2, Plus, Minus, EyeIcon} from "lucide-react";
 import "./DetailsPopup.css";
-import { useGetCaseQuery } from "../slices/caseApiSlice";
+import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
 
@@ -24,7 +24,7 @@ const DocumentItem = ({ label, filename, onDelete }) => (
 );
 
 const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
-  const { data: cas, error: fetchError } = useGetCaseQuery(caseId);
+  const { data: cas, error: fetchError } = useGetCaseIdQuery(caseId);
   const [updateCase] = useUpdateCaseMutation();
 
   if (fetchError) {
@@ -42,8 +42,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     email: "",
     contactNo: "",
     caseStatus: "",
-    caseType: "Walk-in",
-    natureOfCase: "Civil Case", 
+    caseType: "",
+    natureOfCase: "", 
     remarks: "",
     cidNumber: "",
     name: "",
@@ -78,6 +78,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (cas) {
+      console.log(cas)
       // Update applicantInfo
       setApplicantInfo({
         ...applicantInfo,
@@ -264,7 +265,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                         })
                       }
                     >
-                      <option value="Walk-in">Walk-in</option>
+                      <option value="Walk In">Walk In</option>
                       <option value="Referral">Referral</option>
                     </select>
                   </div>
@@ -303,8 +304,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                         })
                       }
                     >
-                      <option value="Civil Case">Civil Case</option>
-                      <option value="Criminal Case">Criminal Case</option>
+                      <option value="Civil">Civil</option>
+                      <option value="Criminal">Criminal</option>
                     </select>
                   </div>
                   <div className="form-field add-doc-btn-container">

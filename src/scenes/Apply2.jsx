@@ -17,8 +17,9 @@ function Apply2() {
         institutionName: '',
         officialName: '',
         officialcNumber: '',
-        officialEmail: ''
-
+        officialEmail: '',
+        caseType: null,
+        natureOfCase: null
     });
 
     const handleChange = (e) => {

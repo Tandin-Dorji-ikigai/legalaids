@@ -125,6 +125,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
           filename: cas[doc.docKey] || null
         }))
       );
+
+      setCaseInfo({
+        caseType: cas.caseType,
+        natureOfCase: cas.natureOfCase
+      })
     }
   }, [cas]);
 
@@ -156,51 +161,69 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       officialEmail
     } = institutionInfo;
 
+    const { 
+      caseType,
+      natureOfCase
+    } = caseInfo;
+
     const status = "In Progress";
 
-    try {
-      await updateCase({
-        id: caseId,
-        cid,
-        occupation,
-        name,
-        contactNo,
-        income,
-        member,
-        cdzongkhag,
-        village,
-        gewog,
-        dzongkhag,
-        pvillage,
-        pgewog,
-        pdzongkhag,
-        institutionName,
-        officialName,
-        officialcNumber,
-        officialEmail,
-        status
-      }).unwrap();
-
-      Swal.fire({
-        title: "Success!",
-        text: "The case has been updated successfully.",
-        icon: "success",
-        confirmButtonText: "OK",
-      });
-      navigate("/caseManagement");
-
-    } catch (err) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error updating the case.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
-    }
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to update this case?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await updateCase({
+            id: caseId,
+            cid,
+            occupation,
+            name,
+            contactNo,
+            income,
+            member,
+            cdzongkhag,
+            village,
+            gewog,
+            dzongkhag,
+            pvillage,
+            pgewog,
+            pdzongkhag,
+            institutionName,
+            officialName,
+            officialcNumber,
+            officialEmail,
+            caseType,
+            natureOfCase,
+            status
+          }).unwrap();
+    
+          Swal.fire({
+            title: "Success!",
+            text: "The case has been updated successfully.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+          navigate("/caseManagement");
+    
+        } catch (err) {
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error updating the case.",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      }
+    });
   };
 
   const handleCancel = () => {
-    console.log("Cancelled");
     onClose();
   };
 
@@ -262,8 +285,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         class="selectFields"
                       >
 
-                        <option value="criminal">Walk In</option>
-                        <option value="civil">Referral</option>
+                        <option value="Walk In">Walk In</option>
+                        <option value="Referral">Referral</option>
                       </select>
 
                     </div>
@@ -280,8 +303,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         class="selectFields"
                       >
 
-                        <option value="criminal">Criminal</option>
-                        <option value="civil">Civil</option>
+                        <option value="Criminal">Criminal</option>
+                        <option value="Civil">Civil</option>
                       </select>
 
                     </div>
