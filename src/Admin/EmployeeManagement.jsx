@@ -5,6 +5,10 @@ import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 import { useGetAllUserQuery } from "../slices/userApiSlice";
+import { useGetAllRoleQuery } from "../slices/userApiSlice";
+import { usePostEmployeeMutation } from "../slices/employeeSlice";
+import { usePostLawyerMutation } from "../slices/lawyerSlice";
+import Swal from "sweetalert2";
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
@@ -21,7 +25,6 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
-
 // Email validation function
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,27 +34,44 @@ const isValidEmail = (email) => {
 function EmployeeManagement() {
   // Move the useState calls inside the component function
   const [cid, setCid] = useState("");
-  const [username, setUsername] = useState("");
+  const [userName, setUsername] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [roleName, setRoleName] = useState("");
+  const [postEmployee] = usePostEmployeeMutation();
+  const [postLawyer] = usePostLawyerMutation();
 
   const { data: admins, error } = useGetAllAdminQuery();
   const { data: employees, error1 } = useGetAllEmployeeQuery();
   const { data: lawyers, error2 } = useGetAllLawyerQuery();
-  const { data: users, error3} = useGetAllUserQuery();
+  const { data: users, error3 } = useGetAllUserQuery();
+  const { data: roles, error4 } = useGetAllRoleQuery();
 
   useEffect(() => {
     if (error) {
       console.log(error);
     } else if (error1) {
       console.log(error1);
-    }else if(error2){
-      console.log(error2)
-    }else if(error3){
-      console.log(error3)
+    } else if (error2) {
+      console.log(error2);
+    } else if (error3) {
+      console.log(error3);
+    } else if (error4) {
+      console.log(error4);
     }
-  }, [error, error1, error2, error3, employees, admins, lawyers, users]);
+  }, [
+    error,
+    error1,
+    error2,
+    error3,
+    error4,
+    employees,
+    admins,
+    lawyers,
+    users,
+    roles,
+  ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -85,27 +105,67 @@ function EmployeeManagement() {
       setEmailError("Please enter a valid email address");
       return;
     }
-    // Here you would typically integrate with a backend API to send the invitation
-    console.log(`Inviting user with email: ${email}`);
-    alert(`Invitation sent to ${email}`);
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to register this user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const enabled = true;
+          const roles = [{id : role}]
+          console.log(roleName)
+          console.log(role)
+          if(roleName === "Employee"){
+            await postEmployee({
+              cid,
+              userName,
+              contactNo,
+              email,
+              password,
+              enabled,
+              roles
+            })
+            Swal.fire({
+              title: "Success!",
+              text: "The user has been registered successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          }else if(roleName === "Lawyer"){
+            await postLawyer({
+              cid,
+              userName,
+              contactNo,
+              email,
+              password,
+              enabled,
+              roles
+            })
+            Swal.fire({
+              title: "Success!",
+              text: "The user has been registered successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          }
+        } catch (err) {
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error registering the user.",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      }
+    });
     handleCloseModal();
   };
 
-  // const handleInviteUser = () => {
-  //   if (!email) {
-  //     setEmailError("Email is required");
-  //     return;
-  //   }
-  //   if (!isValidEmail(email)) {
-  //     setEmailError("Please enter a valid email address");
-  //     return;
-  //   }
-  //   // Here you would typically integrate with a backend API to send the invitation
-  //   console.log(`Inviting user with email: ${email}`);
-  //   // For demonstration, we'll just show an alert
-  //   alert(`Invitation sent to ${email}`);
-  //   handleCloseModal();
-  // };
   return (
     <div className="dashboard-container ">
       <SideNav />
@@ -173,92 +233,115 @@ function EmployeeManagement() {
             <button className="edit-btn">Edit</button>
           </div>
           <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-  <div>
-    <h2>Invite User</h2>
-    <form>
-      {/* CID Field */}
-      <div>
-        <label>CID</label>
-        <input
-          type="text"
-          placeholder="Enter CID"
-          value={cid}
-          onChange={(e) => setCid(e.target.value)}
-        />
-      </div>
+            <div>
+              <h2>Add User</h2>
+              <form>
+                {/* CID Field */}
+                <div>
+                  <label>CID</label>
+                  <input
+                    type="text"
+                    placeholder="Enter CID"
+                    value={cid}
+                    onChange={(e) => setCid(e.target.value)}
+                  />
+                </div>
 
-      {/* Username Field */}
-      <div>
-        <label>Username</label>
-        <input
-          type="text"
-          placeholder="Enter username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
+                {/* Username Field */}
+                <div>
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    placeholder="Enter username"
+                    value={userName}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
 
-      {/* Contact Number Field */}
-      <div>
-        <label>Contact No</label>
-        <input
-          type="text"
-          placeholder="Enter contact number"
-          value={contactNo}
-          onChange={(e) => setContactNo(e.target.value)}
-        />
-      </div>
+                {/* Contact Number Field */}
+                <div>
+                  <label>Contact No</label>
+                  <input
+                    type="text"
+                    placeholder="Enter contact number"
+                    value={contactNo}
+                    onChange={(e) => setContactNo(e.target.value)}
+                  />
+                </div>
 
-      {/* Email Field */}
-      <div>
-        <label>Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={handleEmailChange}
-          placeholder="Enter email"
-        />
-        {emailError && <p className="error-message">{emailError}</p>}
-      </div>
+                {/* Email Field */}
+                <div>
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                    placeholder="Enter email"
+                  />
+                  {emailError && <p className="error-message">{emailError}</p>}
+                </div>
 
-      {/* Password Field */}
-      <div>
-        <label>Password</label>
-        <input
-          type="password"
-          placeholder="Enter password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+                {/* Password Field */}
+                <div>
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
 
-      {/* Role Dropdown */}
-      <div>
-        <label>Role</label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          <option value="" disabled>
-            Select role
-          </option>
-          <option value="Admin">Admin</option>
-          <option value="Employee">Employee</option>
-        </select>
-      </div>
+                {/* Role Dropdown */}
+                <div>
+                  <label>Role</label>
+                  <select
+                    value={role}
+                    onChange={(e) => {
+                      const selectedRole = roles.find(
+                        (role) => role.id === Number(e.target.value)
+                      );
+                      setRole(e.target.value);
+                      setRoleName(selectedRole?.name || ""); // Update role name if needed
+                    }}
+                  >
+                    <option value="" disabled>
+                      Select role
+                    </option>
+                    {roles &&
+                      roles
+                        .filter(
+                          (role) =>
+                            role.name !== "Admin" && role.name !== "User"
+                        )
+                        .map((role) => (
+                          <option key={role.id} value={role.id}>
+                            {role.name}
+                          </option>
+                        ))}
+                  </select>
+                </div>
 
-      {/* Submit and Cancel Buttons */}
-      <div className="modal-buttons">
-        <button type="button" class = "add-user-btn" onClick={handleInviteUser}>
-         Add 
-        </button>
-        <button type="button"  class = "cancelBtn" onClick={handleCloseModal}>
-          Cancel
-        </button>
-      </div>
-    </form>
-  </div>
-</Modal>
+                {/* Submit and Cancel Buttons */}
+                <div className="modal-buttons">
+                  <button
+                    type="button"
+                    class="add-user-btn"
+                    onClick={handleInviteUser}
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    class="cancelBtn"
+                    onClick={handleCloseModal}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Modal>
 
           <div className="details-container">
             <div className="admin-details">

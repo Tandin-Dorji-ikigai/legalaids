@@ -170,7 +170,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
     Swal.fire({
       title: "",
-      text: "Are you sure you want to update this case?",
+      text: "Are you sure you want to accept this case?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#1E306D",
@@ -224,6 +224,89 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   };
 
   const handleCancel = () => {
+    const {
+      cidNumber: cid,
+      name,
+      occupation,
+      contactNumber: contactNo,
+      householdIncome: income,
+      householdMembers: member,
+      dzongkhag: cdzongkhag,
+      villageCurrent: village,
+      gewogCurrent: gewog,
+      dzongkhagCurrent: dzongkhag,
+      villagePermanent: pvillage,
+      gewogPermanent: pgewog,
+      dzongkhagPermanent: pdzongkhag
+    } = applicantInfo;
+
+    const {
+      institutionName,
+      officialName,
+      officialContact: officialcNumber,
+      officialEmail
+    } = institutionInfo;
+
+    const { 
+      caseType,
+      natureOfCase
+    } = caseInfo;
+
+    const status = "Dismissed";
+
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to decline this case?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await updateCase({
+            id: caseId,
+            cid,
+            occupation,
+            name,
+            contactNo,
+            income,
+            member,
+            cdzongkhag,
+            village,
+            gewog,
+            dzongkhag,
+            pvillage,
+            pgewog,
+            pdzongkhag,
+            institutionName,
+            officialName,
+            officialcNumber,
+            officialEmail,
+            caseType,
+            natureOfCase,
+            status
+          }).unwrap();
+    
+          Swal.fire({
+            title: "Success!",
+            text: "The case has been updated successfully.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+          navigate("/applicationManagement");
+    
+        } catch (err) {
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error updating the case.",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      }
+    });
     onClose();
   };
 

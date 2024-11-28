@@ -8,7 +8,15 @@ export const employeeApiSlice = apiSlice.injectEndpoints({
                 url: EMPLOYEE_URL,
             }),
         }),
+        postEmployee: builder.mutation({
+            query: (data) => ({
+                url: EMPLOYEE_URL,
+                method: 'POST',
+                body: data
+            })
+        })
+
     })
 })
 
-export const { useGetAllEmployeeQuery } = employeeApiSlice;
+export const { useGetAllEmployeeQuery, usePostEmployeeMutation } = employeeApiSlice;
