@@ -17,13 +17,10 @@ function DataManagement() {
     caseDetails: true
   });
 
-  // const [isLoading, setIsLoading] = useState(false);
   const [caseInfo, setCaseInfo] = useState({
     caseType: "",
     natureOfCase: ""
   })
-
-
 
   const [applicantInfo, setApplicantInfo] = useState({
     cidNumber: "",
@@ -110,10 +107,10 @@ function DataManagement() {
         try {
           const res = await postCase(formData).unwrap();
           Swal.fire({
-              icon: "success",
-              title: "Application Submitted",
-              text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
-            });
+            icon: "success",
+            title: "Application Submitted",
+            text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
+          });
         } catch (err) {
           Swal.fire({
             title: "Error!",
@@ -128,10 +125,41 @@ function DataManagement() {
 
   const handleFileUpload = (event, docName) => {
     const selectedFile = event.target.files[0];
-    setFiles((prevFiles) => ({
-      ...prevFiles,
-      [docName]: selectedFile,
-    }));
+
+    // Check file size (5MB = 5 * 1024 * 1024 bytes)
+    const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+
+    if (selectedFile) {
+      if (selectedFile.size > maxFileSize) {
+        Swal.fire({
+          icon: 'error',
+          title: 'File Too Large',
+          text: 'Please upload a PDF file smaller than 5MB',
+          confirmButtonText: 'OK'
+        });
+        // Clear the file input
+        event.target.value = '';
+        return;
+      }
+
+      // Optional: Additional file type check
+      if (selectedFile.type !== 'application/pdf') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid File Type',
+          text: 'Please upload a PDF file',
+          confirmButtonText: 'OK'
+        });
+        // Clear the file input
+        event.target.value = '';
+        return;
+      }
+
+      setFiles((prevFiles) => ({
+        ...prevFiles,
+        [docName]: selectedFile,
+      }));
+    }
   };
 
   const handleCancel = () => {
@@ -141,8 +169,6 @@ function DataManagement() {
   return (
     <div className="dashboard-container">
       {isLoading && <Loader />}
-      {/* {isLoading && <Loader />}  */}
-      {/* <Loader/> */}
       <SideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">Data Management</div>
@@ -170,14 +196,12 @@ function DataManagement() {
                           caseType: e.target.value,
                         })
                       }
-
-                      class="selectFields"
+                      className="selectFields"
                     >
-                      
+                      <option value="" disabled>Select Case Type</option>
                       <option value="Walk In">Walk In</option>
                       <option value="Referral">Referral</option>
                     </select>
-
                   </div>
                   <div className="form-field">
                     <label>Nature Of Case</label>
@@ -191,7 +215,7 @@ function DataManagement() {
                       }
                       class="selectFields"
                     >
-                     
+                      <option value="" disabled>Select Nature Of Case</option>
                       <option value="Criminal">Criminal</option>
                       <option value="Civil">Civil</option>
                     </select>
@@ -219,6 +243,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.cidNumber}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -232,6 +257,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.name}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -244,6 +270,7 @@ function DataManagement() {
                     <label>Occupation</label>
                     <input
                       type="text"
+                      required
                       value={applicantInfo.occupation}
                       onChange={(e) =>
                         setApplicantInfo({
@@ -256,8 +283,9 @@ function DataManagement() {
                   <div className="lawyer-form-field">
                     <label>Contact Number</label>
                     <input
-                      type="text"
+                      type="number"
                       value={applicantInfo.contactNumber}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -274,8 +302,9 @@ function DataManagement() {
                   <div className="lawyer-form-field">
                     <label>Total Household Income (Nu.)</label>
                     <input
-                      type="text"
+                      type="number"
                       value={applicantInfo.householdIncome}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -287,8 +316,9 @@ function DataManagement() {
                   <div className="lawyer-form-field">
                     <label>Total Household Members</label>
                     <input
-                      type="text"
+                      type="number"
                       value={applicantInfo.householdMembers}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -302,6 +332,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.dzongkhag}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -319,6 +350,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.villageCurrent}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -332,6 +364,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.gewogCurrent}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -345,6 +378,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.dzongkhagCurrent}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -362,6 +396,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.villagePermanent}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -375,6 +410,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.gewogPermanent}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -388,6 +424,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.dzongkhagPermanent}
+                      required
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -420,6 +457,7 @@ function DataManagement() {
                       </label>
                       <input
                         type="text"
+                        required
                         placeholder={`Enter ${key
                           .replace(/([A-Z])/g, " $1")
                           .toLowerCase()}`}
@@ -456,7 +494,11 @@ function DataManagement() {
                       <input
                         type="file"
                         name={doc.name}
+                        accept=".pdf, application/pdf"
+                        required
                         onChange={(e) => handleFileUpload(e, doc.name)}
+                        maxsize={5 * 1024 * 1024
+                        }
                       />
                     </div>
                   ))}
