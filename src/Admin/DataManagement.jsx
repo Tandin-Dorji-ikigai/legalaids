@@ -68,7 +68,7 @@ function DataManagement() {
   };
 
   const handleConfirm = async () => {
-    console.log(caseInfo.caseType)
+    console.log(caseInfo);
     const formData = new FormData();
     formData.append("cid", applicantInfo.cidNumber);
     formData.append("occupation", applicantInfo.occupation);
@@ -97,21 +97,33 @@ function DataManagement() {
       }
     });
 
-    try {
-      const res = await postCase(formData).unwrap();
-      Swal.fire({
-        icon: "success",
-        title: "Application Submitted",
-        text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
-      });
-    } catch (err) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error submitting the case data.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
-    }
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to add this case?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await postCase(formData).unwrap();
+          Swal.fire({
+              icon: "success",
+              title: "Application Submitted",
+              text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
+            });
+        } catch (err) {
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error submitting the case data.",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      }
+    });
   };
 
   const handleFileUpload = (event, docName) => {
@@ -161,6 +173,7 @@ function DataManagement() {
 
                       class="selectFields"
                     >
+                      
                       <option value="Walk In">Walk In</option>
                       <option value="Referral">Referral</option>
                     </select>
@@ -178,9 +191,9 @@ function DataManagement() {
                       }
                       class="selectFields"
                     >
-
-                      <option value="criminal">Criminal</option>
-                      <option value="civil">Civil</option>
+                     
+                      <option value="Criminal">Criminal</option>
+                      <option value="Civil">Civil</option>
                     </select>
 
                   </div>

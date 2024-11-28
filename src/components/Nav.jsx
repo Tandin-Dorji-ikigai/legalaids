@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import LanguageSelector from "./LanguageSelector";
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
+import Swal from "sweetalert2";
 
 function NavBar({ currentPage }) {
   const { userInfo } = useSelector((state) => state.auth);
@@ -24,14 +25,32 @@ function NavBar({ currentPage }) {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await logoutCall().unwrap();
-      dispatch(logout());
-      localStorage.removeItem("verified");
-      navigate("/");
-    } catch (err) {
-      console.log(err);
-    }
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to logout?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Logout",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await logoutCall().unwrap();
+          dispatch(logout());
+          localStorage.removeItem("verified");
+          navigate("/");
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: "Error logging out",
+            icon: "error",
+            confirmButtonColor: "#1E306D",
+            confirmButtonText: "OK",
+          });
+        }
+      }
+    });
   };
 
   useEffect(() => {}, [userInfo]);
