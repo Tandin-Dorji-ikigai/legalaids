@@ -93,6 +93,13 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (cas) {
+      console.log(cas)
+      // Update caseInfo
+      setCaseInfo({
+        caseType: cas.caseType,
+        natureOfCase:cas.natureOfCase
+      })
+
       // Update applicantInfo
       setApplicantInfo({
         cidNumber: cas.cid,

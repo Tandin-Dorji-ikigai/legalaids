@@ -74,7 +74,7 @@ function ApplicationManagement() {
           <div className="applications-filters">
             <div className="search-bar case-management-search">
               <div className="search-bar-container">
-                <input type="text" placeholder="Search" style={{width:"100%"}}/>
+                <input type="text" placeholder="Search" style={{ width: "100%" }} />
                 <div className="search-bar-icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +176,7 @@ function ApplicationManagement() {
                   <>
                     {(() => {
                       if (activeStatus === "All Application") {
-                        
+
                         return selectedCases.map((caseItem) => (
                           <tr
                             key={caseItem.cid}
