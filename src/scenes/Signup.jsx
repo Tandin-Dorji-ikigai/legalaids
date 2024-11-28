@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./css/signup.css";
 import { Link } from "react-router-dom";
 import Ndi from "../assets/ndi.jpeg";
-import Logo from "../assets/logo.png";
 import { usePostUserMutation } from "../slices/userApiSlice";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -88,7 +87,7 @@ function Signup() {
       try {
         const res = await postUser({
           cid,
-          contact_no: `+975${contact_no}`,
+          contact_no: `${contact_no}`,
           dob,
           password,
           enabled,
