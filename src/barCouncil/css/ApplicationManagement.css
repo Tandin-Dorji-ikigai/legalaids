@@ -1,0 +1,124 @@
+
+  
+  .stats-header {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 600; /* Space above statistical overview */
+  }
+  
+  .dashboard-stats-container {
+    margin-bottom: 40px; /* Space below stats */
+  }
+  
+  .statistical-overview {
+    display: flex; /* Flexbox for horizontal layout */
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  .stats-card {
+    background: #d46f6f; /* Card background color */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Padding inside the card */
+    flex: 1; /* Allow cards to take equal space */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    min-width: 200px;
+    width: 100%;
+  }
+  
+  .stats-card:last-child {
+    margin-right: 0; /* Remove margin from the last card */
+  }
+  
+  .card-header {
+    font-weight: 500; /* Bold header text */
+    margin-bottom: 10px; /* Space below the header */
+  }
+  
+  .card-stat-num {
+    font-size: 24px; /* Larger font for stats */
+    margin-bottom: 5px; /* Space below the stat number */
+  }
+  
+  
+  .applications-section {
+    margin-top: 20px; /* Space above applications section */
+  }
+  
+  .applications-filters {
+    display: flex; /* Flexbox for filter layout */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 10px; /* Space below filters */
+  }
+  
+  .search-input {
+    margin-right: 10px; /* Space between search input and filters */
+    padding: 10px; /* Padding inside the search input */
+    width: 200px; /* Adjust width as needed */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 4px; /* Rounded corners */
+  }
+  
+  .filter-dropdown {
+    margin-right: 10px; /* Space between dropdowns */
+    padding: 10px; /* Padding inside dropdowns */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 4px; /* Rounded corners */
+  }
+  
+  .application-details {
+    overflow-x: auto; /* Allow horizontal scrolling for table if needed */
+  }
+  
+  table {
+    width: 100%; /* Full width for table */
+    border-collapse: collapse; /* Remove space between borders */
+  }
+  
+  th, td {
+    padding: 10px; /* Padding for table cells */
+    border: 1px solid #ddd; /* Light border for table cells */
+    text-align: left; /* Align text to the left */
+  }
+  
+  th {
+    background-color: #f2f2f2; /* Light background for headers */
+  }
+  
+  @media (max-width: 1198px) {
+    
+
+    .additional-charts-row {
+      overflow-x: hidden;
+    }
+  
+    .stats-card {
+      flex: 1 1 calc(50% - 16px);
+      height: 100%;
+    }
+  }
+
+  @media (max-width: 805px) {
+  
+    .stats-card {
+      flex: 1 1 100%;
+      width: 100%; 
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .applications-filters{
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-section {
+      width: 100%;
+      display: flex;
+      gap: 0.5rem;
+  }
+  }
+  
+  
