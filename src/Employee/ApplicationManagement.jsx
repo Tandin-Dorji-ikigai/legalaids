@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import SideNav from "./DashboardNav"; // Assuming you have a SideNav component
-import "./css/ApplicationManagement.css"; // Ensure you have a CSS file for styles
+import SideNav from "./DashboardNav";
+import "./css/ApplicationManagement.css";
 import { Modal } from "@mui/material";
 import ApplicationPopup from "../components/ApplicationPopup";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
@@ -9,6 +9,10 @@ function ApplicationManagement() {
   const [activeStatus, setActiveStatus] = useState("All Application");
   const { data: cases, error } = useGetAllCaseQuery();
   const [selectedCases, setSelectedCases] = useState([]);
+  const [civil, setCivil] = useState([]);
+  const [criminal, setCriminal] = useState([]);
+  const [walkIn, setWalkIn] = useState([]);
+  const [referral, setReferral] = useState([]);
 
   const handleStatusClick = (status) => {
     setActiveStatus(status);
@@ -20,6 +24,14 @@ function ApplicationManagement() {
     } else if (cases) {
       const pendingCases = cases.filter(c => c.status === "Pending" || c.status === "Reviewed" || c.status === "Dismissed");
       setSelectedCases(pendingCases);
+      const criminalCase = cases.filter(c => c.natureOfCase === "Criminal")
+      setCriminal(criminalCase);
+      const civilCase = cases.filter(c => c.natureOfCase === "Civil")
+      setCivil(civilCase);
+      const walkInCase = cases.filter(c => c.caseType === "Walk In")
+      setWalkIn(walkInCase);
+      const referralCase = cases.filter(c => c.caseType === "Referral")
+      setReferral(referralCase);
     }
   }, [error, cases, activeStatus]);
 
@@ -46,25 +58,37 @@ function ApplicationManagement() {
         <h3 className="stats-header">Statistical Overview</h3>
         <div className="dashboard-stats-container">
           <div className="statistical-overview case-management">
-            <div className="stats-card">
+          <div className="stats-card">
               <div className="card-header">Civil Cases</div>
-              <div className="card-stat-num">121 Cases</div>
-              <div>8 new cases</div>
+              {civil ? (
+                <div className="card-stat-num">{civil.length} Case(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Case</div>
+              )}
             </div>
             <div className="stats-card">
               <div className="card-header">Criminal Cases</div>
-              <div className="card-stat-num">12 Cases</div>
-              <div>2 new cases</div>
+              {criminal ? (
+                <div className="card-stat-num">{criminal.length} Case(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Case</div>
+              )}
             </div>
             <div className="stats-card">
               <div className="card-header">Walk-Ins</div>
-              <div className="card-stat-num">121 Walk-Ins</div>
-              <div>8 new walk-ins</div>
+              {walkIn ? (
+                <div className="card-stat-num">{walkIn.length} Walk-In(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Walk-In</div>
+              )}
             </div>
             <div className="stats-card">
               <div className="card-header">Referrals</div>
-              <div className="card-stat-num">12 Referrals</div>
-              <div>8 new referrals</div>
+              {referral ? (
+                <div className="card-stat-num">{referral.length} Referral(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Referral</div>
+              )}
             </div>
           </div>
         </div>
@@ -172,18 +196,6 @@ function ApplicationManagement() {
                 </tr>
               </thead>
               <tbody>
-              <tr
-                            key={11410008138}
-                            onClick={() => handleOpen(11410008138)}
-                          >
-              <td>11410001838</td>
-                <td>17707335</td>
-                <td>Civil</td>
-                <td>Thimphu</td>
-                <td>Pending</td>
-                <td>Walk-In</td>
-                </tr>
-
                 {cases && (
                   <>
                     {(() => {
@@ -251,7 +263,7 @@ function ApplicationManagement() {
                             </tr>
                           ));
                       } else {
-                        return null; // Handle any other statuses or no cases found
+                        return null;
                       }
                     })()}
                   </>

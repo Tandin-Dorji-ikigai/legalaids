@@ -66,7 +66,6 @@ function DataManagement() {
   };
 
   const handleConfirm = async () => {
-    console.log(caseInfo);
     const formData = new FormData();
     formData.append("cid", applicantInfo.cidNumber);
     formData.append("occupation", applicantInfo.occupation);
