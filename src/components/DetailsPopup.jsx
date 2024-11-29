@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useEffect } from "react";
 import { X, Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
-import { useUpdateCaseMutation } from "../slices/caseApiSlice";
+import { useUpdateResultMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
@@ -31,7 +31,7 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 );
 const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
-  const [updateCase] = useUpdateCaseMutation();
+  const [updateCase] = useUpdateResultMutation();
 
   const handleViewPdf = (url) => {
     window.open(url, '_blank');
@@ -50,12 +50,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   });
 
   const [applicantInfo, setApplicantInfo] = useState({
-    email: "",
-    contactNo: "",
-    caseStatus: "",
-    caseType: "",
-    natureOfCase: "",
-    remarks: "",
     cidNumber: "",
     name: "",
     occupation: "",
@@ -78,6 +72,14 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     officialEmail: "",
   });
 
+  const [caseInfo, setCaseInfo] = useState({
+    aLawyer: "",
+    status: "",
+    caseType: "",
+    natureOfCase: "",
+    remarks: "",
+  })
+
   const [documents, setDocuments] = useState([
     { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
     { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
@@ -89,8 +91,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (cas) {
-      console.log(cas)
-      // Update applicantInfo
       setApplicantInfo({
         cidNumber: cas.cid,
         name: cas.name,
@@ -105,11 +105,17 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         villagePermanent: cas.pvillage,
         gewogPermanent: cas.pgewog,
         dzongkhagPermanent: cas.pdzongkhag,
-        caseType: cas.caseType,
-        natureOfCase: cas.natureOfCase
       });
 
-      // Update institutionInfo
+      setCaseInfo({
+        aLawyer: cas.aLawyer,
+        status: cas.status,
+        caseType: cas.caseType,
+        natureOfCase: cas.natureOfCase,
+        remarks: cas.remarks,
+        outcome: cas.outcome
+      })
+
       setInstitutionInfo({
         institutionName: cas.institutionName,
         officialName: cas.officialName,
@@ -117,7 +123,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         officialEmail: cas.officialEmail,
       });
 
-      // Update documents
       setDocuments(prev =>
         prev.map(doc => ({
           ...doc,
@@ -151,38 +156,48 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     const officialName = institutionInfo.officialName;
     const officialcNumber = institutionInfo.officialContact;
     const officialEmail = institutionInfo.officialEmail;
-    const remarks = applicantInfo.remarks;
-    const status = applicantInfo.caseStatus;
-    const aLawyer = applicantInfo.email
-    const caseType = applicantInfo.caseType
-    const natureOfCase = applicantInfo.natureOfCase
-    try {
-      const id = caseId;
-      await updateCase({
-        id, cid, occupation, name, contactNo, income, member,
-        cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
-        officialEmail, remarks, status, aLawyer, caseType, natureOfCase
-      }).unwrap();
+    const remarks = caseInfo.remarks;
+    const status = caseInfo.caseStatus;
+    const aLawyer = caseInfo.email;
+    const caseType = caseInfo.caseType;
+    const natureOfCase = caseInfo.natureOfCase;
+    const outcome = caseInfo.outcome;
 
-      // Show success message using SweetAlert2
-      Swal.fire({
-        title: 'Success!',
-        text: 'Case details have been updated successfully.',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-
-      onClose(); // Close the popup after successful update
-    } catch (err) {
-      console.log(err);
-      // Show error message using SweetAlert2
-      Swal.fire({
-        title: 'Error!',
-        text: 'Failed to update case details. Please try again.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    }
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to update this case?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const id = caseId;
+          await updateCase({
+            id, cid, occupation, name, contactNo, income, member,
+            cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
+            officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome
+          }).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'Case details have been updated successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+    
+          onClose(); 
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to update case details. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
   }
   const handleCancel = () => {
     onClose();
@@ -235,11 +250,11 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Email</label>
                       <input
                         type="text"
-                        value={applicantInfo.email}
+                        value={caseInfo.aLawyer || "No lawyer assigned"}
                         onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            email: e.target.value,
+                          setCaseInfo({
+                            ...caseInfo,
+                            aLawyer: e.target.value,
                           })
                         }
                       />
@@ -253,11 +268,11 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Case Status</label>
                       <input
                         type="text"
-                        value={applicantInfo.caseStatus}
+                        value={caseInfo.status}
                         onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            caseStatus: e.target.value,
+                          caseInfo({
+                            ...caseInfo,
+                            status: e.target.value,
                           })
                         }
                       />
@@ -266,10 +281,10 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Case Type</label>
                       <select
                         className="case-type-select"
-                        value={applicantInfo.caseType || "Walk-in"}
+                        value={caseInfo.caseType}
                         onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
+                          setCaseInfo({
+                            ...caseInfo,
                             caseType: e.target.value,
                           })
                         }
@@ -305,10 +320,10 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Nature of Case</label>
                       <select
                         className="case-type-select"
-                        value={applicantInfo.natureOfCase || "Civil Case"}
+                        value={caseInfo.natureOfCase}
                         onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
+                          setCaseInfo({
+                            ...caseInfo,
                             natureOfCase: e.target.value,
                           })
                         }
@@ -329,16 +344,17 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Case Result</label>
                       <select
                         className="case-type-select"
-                        value={applicantInfo.caseType}
+                        value={caseInfo.outcome}
                         onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            caseType: e.target.value,
+                          setCaseInfo({
+                            ...caseInfo,
+                            outcome: e.target.value,
                           })
                         }
                       >
-                        <option value="Walk-in">Walk-in</option>
-                        <option value="Referral">Referral</option>
+                        <option value="Sentence Reduction">Sentence Reduction</option>
+                        <option value="Case Negotiation">Case Negotiation</option>
+                        <option value="Acquittal">Acquittal</option>
                       </select>
                     </div>
                   </div>
@@ -347,10 +363,10 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Remarks</label>
                       <textarea
                         className="case-remark"
-                        value={applicantInfo.remarks}
+                        value={caseInfo.remarks}
                         onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
+                          setCaseInfo({
+                            ...caseInfo,
                             remarks: e.target.value,
                           })
                         }
@@ -683,11 +699,11 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
           </div>
 
           <div className="popup-footer">
+            <button onClick={handleConfirm} className="confirm-button">
+              Update
+            </button>
             <button onClick={handleCancel} className="cancel-button">
               Cancel
-            </button>
-            <button onClick={handleConfirm} className="confirm-button">
-              Confirm
             </button>
           </div>
         </div>
