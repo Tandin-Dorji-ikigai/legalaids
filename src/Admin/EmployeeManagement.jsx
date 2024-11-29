@@ -43,6 +43,7 @@ function EmployeeManagement() {
   const { data: users, error3 } = useGetAllUserQuery();
   const { data: roles, error4 } = useGetAllRoleQuery();
 
+
   useEffect(() => {
     if (error) {
       console.log(error);
@@ -112,10 +113,10 @@ function EmployeeManagement() {
       if (result.isConfirmed) {
         try {
           const enabled = true;
-          const roles = [{id : role}]
+          const roles = [{ id: role }]
           console.log(roleName)
           console.log(role)
-          if(roleName === "Employee"){
+          if (roleName === "Employee") {
             await postEmployee({
               cid,
               userName,
@@ -131,7 +132,7 @@ function EmployeeManagement() {
               icon: "success",
               confirmButtonText: "OK",
             });
-          }else if(roleName === "Lawyer"){
+          } else if (roleName === "Lawyer") {
             await postLawyer({
               cid,
               userName,
@@ -225,111 +226,126 @@ function EmployeeManagement() {
             <button className="add-user-btn" onClick={handleAddUser}>
               Add User
             </button>
-            <button className="edit-btn">Edit</button>
           </div>
           <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-            <div>
-              <h2>Add User</h2>
-              <form>
-                <div>
-                  <label>CID</label>
-                  <input
-                    type="text"
-                    placeholder="Enter CID"
-                    value={cid}
-                    onChange={(e) => setCid(e.target.value)}
-                  />
-                </div>
+            <div className="custom-modal-overlay">
+              <div className="custom-modal-content">
+                <h2 className="custom-modal-header">Add User</h2>
+                <form>
+                  <div className="custom-form-group">
+                    <label className="custom-form-label">CID</label>
+                    <input
+                      className="custom-form-input"
+                      type="text"
+                      placeholder="Enter CID"
+                      value={cid}
+                      required
+                      onChange={(e) => setCid(e.target.value)}
+                    />
+                  </div>
 
-                <div>
-                  <label>Username</label>
-                  <input
-                    type="text"
-                    placeholder="Enter username"
-                    value={userName}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </div>
+                  <div className="custom-form-group">
+                    <label className="custom-form-label">Username</label>
+                    <input
+                      className="custom-form-input"
+                      type="text"
+                      placeholder="Enter username"
+                      required
+                      value={userName}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </div>
 
-                <div>
-                  <label>Contact No</label>
-                  <input
-                    type="text"
-                    placeholder="Enter contact number"
-                    value={contactNo}
-                    onChange={(e) => setContactNo(e.target.value)}
-                  />
-                </div>
+                  <div className="custom-form-group">
+                    <label className="custom-form-label">Contact No</label>
+                    <input
+                      className="custom-form-input"
+                      type="text"
+                      placeholder="Enter contact number"
+                      value={contactNo}
+                      required
+                      onChange={(e) => setContactNo(e.target.value)}
+                    />
+                  </div>
 
-                <div>
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    placeholder="Enter email"
-                  />
-                  {emailError && <p className="error-message">{emailError}</p>}
-                </div>
+                  <div className="custom-form-group">
+                    <label className="custom-form-label">Email</label>
+                    <input
+                      className="custom-form-input"
+                      type="email"
+                      placeholder="Enter email"
+                      required
+                      value={email}
+                      onChange={handleEmailChange}
+                    />
+                    {emailError && (
+                      <p className="custom-error-message">{emailError}</p>
+                    )}
+                  </div>
 
-                <div>
-                  <label>Password</label>
-                  <input
-                    type="password"
-                    placeholder="Enter password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
+                  <div className="custom-form-group">
+                    <label className="custom-form-label">Password</label>
+                    <input
+                      className="custom-form-input"
+                      type="password"
+                      placeholder="Enter password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
 
-                <div>
-                  <label>Role</label>
-                  <select
-                    value={role}
-                    onChange={(e) => {
-                      const selectedRole = roles.find(
-                        (role) => role.id === Number(e.target.value)
-                      );
-                      setRole(e.target.value);
-                      setRoleName(selectedRole?.name || "");
-                    }}
-                  >
-                    <option value="" disabled>
-                      Select role
-                    </option>
-                    {roles &&
-                      roles
-                        .filter(
-                          (role) =>
-                            role.name !== "Admin" && role.name !== "User"
-                        )
-                        .map((role) => (
-                          <option key={role.id} value={role.id}>
-                            {role.name}
-                          </option>
-                        ))}
-                  </select>
-                </div>
+                  <div className="custom-form-group">
+                    <label className="custom-form-label">Role</label>
+                    <select
+                      className="custom-form-select"
+                      value={role}
+                      required
+                      onChange={(e) => {
+                        const selectedRole = roles.find(
+                          (role) => role.id === Number(e.target.value)
+                        );
+                        setRole(e.target.value);
+                        setRoleName(selectedRole?.name || "");
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select role
+                      </option>
+                      {roles &&
+                        roles
+                          .filter(
+                            (role) => role.name !== "Admin" && role.name !== "User"
+                          )
+                          .map((role) => (
+                            <option key={role.id} value={role.id}>
+                              {role.name}
+                            </option>
+                          ))}
+                    </select>
+                  </div>
 
-                <div className="modal-buttons">
-                  <button
-                    type="button"
-                    class="add-user-btn"
-                    onClick={handleInviteUser}
-                  >
-                    Add
-                  </button>
-                  <button
-                    type="button"
-                    class="cancelBtn"
-                    onClick={handleCloseModal}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
+                  <div className="custom-modal-buttons">
+                    <button
+                      type="button"
+                      className="custom-button custom-add-user-btn"
+                      onClick={handleInviteUser}
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      className="custom-button custom-cancel-btn"
+                      onClick={handleCloseModal}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </Modal>
+
 
           <div className="details-container">
             <div className="admin-details">
@@ -340,6 +356,7 @@ function EmployeeManagement() {
                     <th>CID</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -350,12 +367,17 @@ function EmployeeManagement() {
                           <td>{admin.cid}</td>
                           <td>{admin.userName}</td>
                           <td>{admin.email}</td>
+                          <td>{admin.enabled === true ?
+                            <button className="disable_user">Disable</button>
+                            :
+                            <button className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
                 </tbody>
               </table>
             </div>
+
             <div className="employee-details">
               <h3>Employee Details</h3>
               <table>
@@ -364,6 +386,7 @@ function EmployeeManagement() {
                     <th>CID</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -374,6 +397,10 @@ function EmployeeManagement() {
                           <td>{employee.cid}</td>
                           <td>{employee.userName}</td>
                           <td>{employee.email}</td>
+                          <td>{employee.enabled === true ?
+                            <button className="disable_user">Disable</button>
+                            :
+                            <button className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
@@ -381,8 +408,11 @@ function EmployeeManagement() {
               </table>
             </div>
           </div>
-          <div className="details-container lawyer-details-container">
-            <div className="lawyer-details lawyer-details-sm">
+
+          <div className="whiteSpace"></div>
+
+          <div className="details-container">
+            <div className="admin-details">
               <h3>Lawyer Details</h3>
               <table>
                 <thead>
@@ -390,6 +420,7 @@ function EmployeeManagement() {
                     <th>CID</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -400,6 +431,40 @@ function EmployeeManagement() {
                           <td>{lawyer.cid}</td>
                           <td>{lawyer.userName}</td>
                           <td>{lawyer.email}</td>
+                          <td>{lawyer.enabled === true ?
+                            <button className="disable_user">Disable</button>
+                            :
+                            <button className="enable_user">Enable</button>} </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="employee-details">
+              <h3>Bar Council Details</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>CID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {employees &&
+                    employees.map((employee) => {
+                      return (
+                        <tr key={employee.cid}>
+                          <td>{employee.cid}</td>
+                          <td>{employee.userName}</td>
+                          <td>{employee.email}</td>
+                          <td>{employee.enabled === true ?
+                            <button className="disable_user">Disable</button>
+                            :
+                            <button className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
