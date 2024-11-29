@@ -14,9 +14,13 @@ export const employeeApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             })
+        }),
+        getEmployeeById: builder.query({
+            query: (cid) => ({
+                url: EMPLOYEE_URL + `/cid/${cid}`,
+            }),
         })
-
     })
 })
 
-export const { useGetAllEmployeeQuery, usePostEmployeeMutation } = employeeApiSlice;
+export const { useGetAllEmployeeQuery, usePostEmployeeMutation, useGetEmployeeByIdQuery } = employeeApiSlice;

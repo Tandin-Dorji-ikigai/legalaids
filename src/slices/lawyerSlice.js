@@ -14,8 +14,13 @@ export const lawyerApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             })
+        }),
+        getLawyerById: builder.query({
+            query: (cid) => ({
+                url: LAWYER_URL + `/cid/${cid}`,
+            }),
         })
     })
 })
 
-export const { useGetAllLawyerQuery, usePostLawyerMutation } = lawyerApiSlice;
+export const { useGetAllLawyerQuery, usePostLawyerMutation, useGetLawyerByIdQuery } = lawyerApiSlice;

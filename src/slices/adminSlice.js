@@ -14,8 +14,13 @@ export const adminApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             })
+        }),
+        getAdminById: builder.query({
+            query: (cid) => ({
+                url: ADMIN_URL + `/cid/${cid}`,
+            }),
         })
     })
 })
 
-export const { useGetAllAdminQuery, usePostAdminMutation } = adminApiSlice;
+export const { useGetAllAdminQuery, usePostAdminMutation, useGetAdminByIdQuery } = adminApiSlice;

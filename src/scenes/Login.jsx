@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/signup.css";
 import { Link } from "react-router-dom";
 import Ndi from "../assets/ndi.jpeg";
@@ -9,14 +9,22 @@ import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../slices/authApiSlice";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
+import { useGetAllAdminQuery } from "../slices/adminSlice";
+import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
+import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 
 function Login() {
   const [cid, setCID] = useState("");
   const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for toggling password visibility
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
   const navigate = useNavigate();
+
+  const {data: adminResult} = useGetAllAdminQuery();
+  const {data: employeeResult} = useGetAllEmployeeQuery();
+  const {data: lawyerResult} = useGetAllLawyerQuery();
 
   const handleCidChange = (e) => {
     setCID(e.target.value);
@@ -34,11 +42,10 @@ function Login() {
     e.preventDefault();
     try {
       const res = await login({ cid, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
 
-      // Check user role and display corresponding alert
       if (res.user.authorities[0].authority === "User") {
         localStorage.setItem("verified", JSON.stringify(res));
+        dispatch(setCredentials({ ...res }));
         Swal.fire({
           icon: "success",
           title: "Login",
@@ -47,19 +54,62 @@ function Login() {
           timer: 1500,
         });
         navigate("/");
-      } else {
-        Swal.fire({
-          icon: "success",
-          title: "Login",
-          text: "Login Successful",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-
-        if (res.user.authorities[0].authority === "Admin") {
+      } else if (res.user.authorities[0].authority === "Admin") {
+        const admin = adminResult.find((adm) => adm.cid === res.user.username);
+        if (admin.enabled === true) {
+          dispatch(setCredentials({ ...res }));
+          Swal.fire({
+            icon: "success",
+            title: "Login",
+            text: "Login Successful",
+            showConfirmButton: false,
+            timer: 1500,
+          });
           navigate("/dashboard");
-        } else if (res.user.authorities[0].authority === "Lawyer") {
+        } else {
+          Swal.fire({
+            icon: "info",
+            title: "Login Failed",
+            text: "Your account is disabled. Please contact customer service for further details!",
+          });
+        }
+      } else if (res.user.authorities[0].authority === "Lawyer") {
+        const lawyer = lawyerResult.find((lyr) => lyr.cid === res.user.username);
+        if (lawyer.enabled === true) {
+          dispatch(setCredentials({ ...res }));
+          Swal.fire({
+            icon: "success",
+            title: "Login",
+            text: "Login Successful",
+            showConfirmButton: false,
+            timer: 1500,
+          });
           navigate("/currentcases");
+        } else {
+          Swal.fire({
+            icon: "info",
+            title: "Login Failed",
+            text: "Your account is disabled. Please contact customer service for further details!",
+          });
+        }
+      } else if (res.user.authorities[0].authority === "Employee") {
+        const employee = employeeResult.find((emp) => emp.cid === res.user.username);
+        if (employee.enabled === true) {
+          dispatch(setCredentials({ ...res }));
+          Swal.fire({
+            icon: "success",
+            title: "Login",
+            text: "Login Successful",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          navigate("/employeeCaseManagement");
+        } else {
+          Swal.fire({
+            icon: "info",
+            title: "Login Failed",
+            text: "Your account is disabled. Please contact customer service for further details!",
+          });
         }
       }
     } catch (err) {
@@ -108,7 +158,10 @@ function Login() {
             <div>
               <label className="form-label">
                 Password
-                <div className="password-container" style={{ position: "relative", height: "50px"}}>
+                <div
+                  className="password-container"
+                  style={{ position: "relative", height: "50px" }}
+                >
                   <input
                     className="form-input"
                     type={isPasswordVisible ? "text" : "password"}
@@ -129,9 +182,9 @@ function Login() {
                     }}
                   >
                     {isPasswordVisible ? (
-                      <EyeOff size={16} /> // Smaller size for the eye icon
+                      <EyeOff size={16} />
                     ) : (
-                      <Eye size={16} /> // Smaller size for the eye icon
+                      <Eye size={16} />
                     )}
                   </span>
                 </div>

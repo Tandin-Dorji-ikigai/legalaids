@@ -61,7 +61,7 @@ function SideNav() {
       <div>
         <div className="side-nav-logo-container">
           <div className="dashboard-navLogo">
-            <Link to="/dashboard">
+            <Link to="/employeeCaseManagement">
               <img src={Logo} alt="Logo" />
             </Link>
           </div>
@@ -87,7 +87,7 @@ function SideNav() {
                   viewBox="0 -960 960 960"
                   width="28px"
                   fill={
-                    location.pathname === "/caseManagement"
+                    location.pathname === "/employeeCaseManagement"
                       ? "#15605C"
                       : "#F1ECE4"
                   }
