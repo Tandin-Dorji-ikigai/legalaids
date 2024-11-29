@@ -336,3 +336,26 @@ min-width: 400px;
   background: #f0f0f0;
 }
 
+.toggleEnable{
+  padding: .5rem;
+  background-color: rgb(48, 117, 48);
+}
+.toggleEnable:hover{
+  background-color: rgb(172, 249, 255);
+  color: black;
+  cursor: pointer;
+}
+.toggleDisable:hover{
+  background-color: rgb(252, 201, 201);
+  cursor: pointer;
+}
+.toggleDisable{
+  padding: .5rem;
+  background-color: rgb(226, 118, 118);
+}
+
+.toggleEnable, .toggleDisable{
+  border: none; 
+  color: white;
+  border-radius: 6px;
+}
