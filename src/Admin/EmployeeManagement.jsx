@@ -22,7 +22,6 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
-// Email validation function
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -37,20 +36,40 @@ function EmployeeManagement() {
   const [roleName, setRoleName] = useState("");
   const [postEmployee] = usePostEmployeeMutation();
   const [postLawyer] = usePostLawyerMutation();
-  const { data: admins } = useGetAllAdminQuery();
-  const { data: employees } = useGetAllEmployeeQuery();
-  const { data: lawyers } = useGetAllLawyerQuery();
-  const { data: users } = useGetAllUserQuery();
-  const { data: roles } = useGetAllRoleQuery();
-  
+
+  const { data: admins, error } = useGetAllAdminQuery();
+  const { data: employees, error1 } = useGetAllEmployeeQuery();
+  const { data: lawyers, error2 } = useGetAllLawyerQuery();
+  const { data: users, error3 } = useGetAllUserQuery();
+  const { data: roles, error4 } = useGetAllRoleQuery();
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+    } else if (error1) {
+      console.log(error1);
+    } else if (error2) {
+      console.log(error2);
+    } else if (error3) {
+      console.log(error3);
+    } else if (error4) {
+      console.log(error4);
+    }
+  }, [
+    error,
+    error1,
+    error2,
+    error3,
+    error4,
+    employees,
+    admins,
+    lawyers,
+    users,
+    roles,
+  ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [editMode, setEditMode] = useState(false); // New state for edit mode
-
-  useEffect(() => {
-    // Error handling omitted for brevity
-  }, [admins, employees, lawyers, users, roles]);
 
   const handleAddUser = () => {
     setIsModalOpen(true);
@@ -73,12 +92,73 @@ function EmployeeManagement() {
   };
 
   const handleInviteUser = () => {
-    // User registration logic omitted for brevity
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to register this user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const enabled = true;
+          const roles = [{id : role}]
+          console.log(roleName)
+          console.log(role)
+          if(roleName === "Employee"){
+            await postEmployee({
+              cid,
+              userName,
+              contactNo,
+              email,
+              password,
+              enabled,
+              roles
+            })
+            Swal.fire({
+              title: "Success!",
+              text: "The user has been registered successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          }else if(roleName === "Lawyer"){
+            await postLawyer({
+              cid,
+              userName,
+              contactNo,
+              email,
+              password,
+              enabled,
+              roles
+            })
+            Swal.fire({
+              title: "Success!",
+              text: "The user has been registered successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          }
+        } catch (err) {
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error registering the user.",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      }
+    });
     handleCloseModal();
-  };
-
-  const toggleUserStatus = async (userId, currentStatus) => {
-    // Code to toggle User Status
   };
 
   return (
@@ -124,15 +204,28 @@ function EmployeeManagement() {
               )}
             </div>
           </div>
-        </div>        <div className="users-section">
+        </div>
+        <div className="users-section">
           <div className="users-header">Users</div>
           <div className="search-bar">
+            <div className="search-bar-container">
+              <input type="text" placeholder="Search" />
+              <div className="search-bar-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#fff"
+                >
+                  <path d="M765-144 526-383q-30 22-65.79 34.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Z" />
+                </svg>
+              </div>
+            </div>
             <button className="add-user-btn" onClick={handleAddUser}>
               Add User
             </button>
-            <button className="edit-btn" onClick={() => setEditMode(!editMode)}>
-              {editMode ? "Done" : "Edit"}
-            </button>
+            <button className="edit-btn">Edit</button>
           </div>
           <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
             <div>
@@ -147,6 +240,7 @@ function EmployeeManagement() {
                     onChange={(e) => setCid(e.target.value)}
                   />
                 </div>
+
                 <div>
                   <label>Username</label>
                   <input
@@ -156,6 +250,7 @@ function EmployeeManagement() {
                     onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
+
                 <div>
                   <label>Contact No</label>
                   <input
@@ -165,6 +260,7 @@ function EmployeeManagement() {
                     onChange={(e) => setContactNo(e.target.value)}
                   />
                 </div>
+
                 <div>
                   <label>Email</label>
                   <input
@@ -175,6 +271,7 @@ function EmployeeManagement() {
                   />
                   {emailError && <p className="error-message">{emailError}</p>}
                 </div>
+
                 <div>
                   <label>Password</label>
                   <input
@@ -184,6 +281,7 @@ function EmployeeManagement() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
+
                 <div>
                   <label>Role</label>
                   <select
@@ -193,7 +291,7 @@ function EmployeeManagement() {
                         (role) => role.id === Number(e.target.value)
                       );
                       setRole(e.target.value);
-                      setRoleName(selectedRole?.name || ""); // Update role name if needed
+                      setRoleName(selectedRole?.name || "");
                     }}
                   >
                     <option value="" disabled>
@@ -212,17 +310,18 @@ function EmployeeManagement() {
                         ))}
                   </select>
                 </div>
+
                 <div className="modal-buttons">
                   <button
                     type="button"
-                    className="add-user-btn"
+                    class="add-user-btn"
                     onClick={handleInviteUser}
                   >
                     Add
                   </button>
                   <button
                     type="button"
-                    className="cancelBtn"
+                    class="cancelBtn"
                     onClick={handleCloseModal}
                   >
                     Cancel
@@ -231,6 +330,7 @@ function EmployeeManagement() {
               </form>
             </div>
           </Modal>
+
           <div className="details-container">
             <div className="admin-details">
               <h3>Admin Details</h3>
@@ -240,32 +340,19 @@ function EmployeeManagement() {
                     <th>CID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    {editMode && <th>Actions</th>} {/* Conditional rendering */}
                   </tr>
                 </thead>
                 <tbody>
-                  {admins && admins.map((admin) => (
-                    <tr key={admin.cid}>
-                      <td>{admin.cid}</td>
-                      <td>{admin.userName}</td>
-                      <td>{admin.email}</td>
-                      {editMode && (
-                        <td>
-                         {"Enabled" == "Enabled" ? (
-                             <button class = "toggleDisable" onClick={() => toggleUserStatus("test", "enable")}>
-                             Disable
-                           </button>
-                            ) : (
-                              <button  class = "toggleDisable" onClick={() => toggleUserStatus("test", "enable")}>
-                              Enable
-                            </button>
-                            )}
-
-                         
-                        </td>
-                      )}
-                    </tr>
-                  ))}
+                  {admins &&
+                    admins.map((admin) => {
+                      return (
+                        <tr key={admin.cid}>
+                          <td>{admin.cid}</td>
+                          <td>{admin.userName}</td>
+                          <td>{admin.email}</td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
@@ -277,54 +364,19 @@ function EmployeeManagement() {
                     <th>CID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    {editMode && <th>Actions</th>} {/* Conditional rendering */}
                   </tr>
                 </thead>
                 <tbody>
-
-                  {/*  */}
-                <tr key={114123123}>
-                      <td>{114123123}</td>
-                      <td>{"test"}</td>
-                      <td>{"test"}</td>
-                      {editMode && (
-                        <td>
-                         {"Enabled" == "Enabled" ? (
-                             <button class = "toggleDisable" onClick={() => toggleUserStatus("test", "enable")}>
-                             Disable
-                           </button>
-                            ) : (
-                              <button  class = "toggleEnable" onClick={() => toggleUserStatus("test", "enable")}>
-                              Enable
-                            </button>
-                            )}
-
-                         
-                        </td>
-                      )}
-                    </tr>
-                  {employees && employees.map((employee) => (
-                    <tr key={employee.cid}>
-                      <td>{employee.cid}</td>
-                      <td>{employee.userName}</td>
-                      <td>{employee.email}</td>
-                      {editMode && (
-                        <td>
-                         {"Enabled" == "Enabled" ? (
-                             <button class = "toggleDisable" onClick={() => toggleUserStatus("test", "enable")}>
-                             Disable
-                           </button>
-                            ) : (
-                              <button  class = "toggleDisable" onClick={() => toggleUserStatus("test", "enable")}>
-                              Enable
-                            </button>
-                            )}
-
-                         
-                        </td>
-                      )}
-                    </tr>
-                  ))}
+                  {employees &&
+                    employees.map((employee) => {
+                      return (
+                        <tr key={employee.cid}>
+                          <td>{employee.cid}</td>
+                          <td>{employee.userName}</td>
+                          <td>{employee.email}</td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
@@ -338,32 +390,19 @@ function EmployeeManagement() {
                     <th>CID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    {editMode && <th>Actions</th>} {/* Conditional rendering */}
                   </tr>
                 </thead>
                 <tbody>
-                  {lawyers && lawyers.map((lawyer) => (
-                    <tr key={lawyer.cid}>
-                      <td>{lawyer.cid}</td>
-                      <td>{lawyer.userName}</td>
-                      <td>{lawyer.email}</td>
-                      {editMode && (
-                        <td>
-                         {"Enabled" == "Enabled" ? (
-                             <button class = "toggleDisable" onClick={() => toggleUserStatus("test", "enable")}>
-                             Disable
-                           </button>
-                            ) : (
-                              <button  class = "toggleDisable" onClick={() => toggleUserStatus("test", "enable")}>
-                              Enable
-                            </button>
-                            )}
-
-                         
-                        </td>
-                      )}
-                    </tr>
-                  ))}
+                  {lawyers &&
+                    lawyers.map((lawyer) => {
+                      return (
+                        <tr key={lawyer.cid}>
+                          <td>{lawyer.cid}</td>
+                          <td>{lawyer.userName}</td>
+                          <td>{lawyer.email}</td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
