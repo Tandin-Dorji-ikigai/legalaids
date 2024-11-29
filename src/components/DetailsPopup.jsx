@@ -266,7 +266,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Case Type</label>
                       <select
                         className="case-type-select"
-                        value={applicantInfo.caseType || "Walk-in"}
+                        value={applicantInfo.caseType}
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -305,7 +305,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Nature of Case</label>
                       <select
                         className="case-type-select"
-                        value={applicantInfo.natureOfCase || "Civil Case"}
+                        value={applicantInfo.natureOfCase}
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -337,8 +337,9 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                           })
                         }
                       >
-                        <option value="Walk-in">Walk-in</option>
-                        <option value="Referral">Referral</option>
+                        <option value="Sentence Reduction">Sentence Reduction</option>
+                        <option value="Negotiation">Negotiation</option>
+                        <option value="Acquittal">Acquittal</option>
                       </select>
                     </div>
                   </div>
