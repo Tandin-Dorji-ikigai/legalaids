@@ -4,7 +4,6 @@ import "./css/CaseManagement.css";
 import DetailsPopup from "../components/DetailsPopup";
 import Modal from "@mui/material/Modal";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
-import { CaseSensitive } from "lucide-react";
 
 function CaseManagement() {
   const [activeStatus, setActiveStatus] = useState("All Application");
@@ -14,6 +13,10 @@ function CaseManagement() {
   const [criminal, setCriminal] = useState([]);
   const [walkIn, setWalkIn] = useState([]);
   const [referral, setReferral] = useState([]);
+
+
+  // Filter dropdown
+  const [dzongkhags, setDzongkhags] = useState([])
 
   useEffect(() => {
     if (error) {
@@ -29,6 +32,17 @@ function CaseManagement() {
       setWalkIn(walkInCase);
       const referralCase = cases.filter(c => c.caseType === "Referral")
       setReferral(referralCase);
+
+      // Dropdowns
+      const dzongkhags = Array.from(
+        new Set(
+          cases
+            .map(c => c.pdzongkhag)
+            .filter(dzongkhag => dzongkhag !== undefined && dzongkhag !== null)
+        )
+      ).sort();
+      setDzongkhags(dzongkhags);
+
     }
   }, [error, cases, activeStatus]);
 
@@ -42,7 +56,7 @@ function CaseManagement() {
     setSelectedCaseId(caseId);
     setOpen(true);
   };
-  
+
   const handleClose = () => {
     setOpen(false);
     setSelectedCaseId(null);
@@ -112,69 +126,66 @@ function CaseManagement() {
                   </svg>
                 </div>
               </div>
-             
+
             </div>
             <div className="filter-section">
-            <div className="filter-card case-management-filter">
-              <div>Filter</div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="#9A9A9A"
-              >
-                <path d="M456.18-192Q446-192 439-198.9t-7-17.1v-227L197-729q-9-12-2.74-25.5Q200.51-768 216-768h528q15.49 0 21.74 13.5Q772-741 763-729L528-443v227q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88ZM480-498l162-198H317l163 198Zm0 0Z" />
-              </svg>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select className="filter-select calse-management-filter-select">
-                <option value="2023">Dzongkhag</option>
-                <option value="2023">Thimphu</option>
-                <option value="2024">Gase</option>
-                <option value="2025">Paro</option>
-                <option value="2027">Haa</option>
-              </select>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select className="filter-select calse-management-filter-select ">
-                <option value="2023">All Case Type</option>
-                <option value="2023">Walk-In</option>
-                <option value="2024">Walk-In</option>
-              </select>
-            </div>
-            <div className="filter-select-wrapper case-management-select">
-              <select className="filter-select calse-management-filter-select case-nature">
-                <option value="2023">All Case Nature</option>
-                <option value="2023">Criminal</option>
-                <option value="2024">Civil</option>
-                <option value="2025">Criminal</option>
-                <option value="2027">Civil</option>
-              </select>
-            </div>
+              <div className="filter-card case-management-filter">
+                <div>Filter</div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#9A9A9A"
+                >
+                  <path d="M456.18-192Q446-192 439-198.9t-7-17.1v-227L197-729q-9-12-2.74-25.5Q200.51-768 216-768h528q15.49 0 21.74 13.5Q772-741 763-729L528-443v227q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88ZM480-498l162-198H317l163 198Zm0 0Z" />
+                </svg>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select className="filter-select calse-management-filter-select">
+                  <option value="2023">Dzongkhag</option>
+                  <option value="2023">Thimphu</option>
+                  <option value="2024">Gase</option>
+                  <option value="2025">Paro</option>
+                  <option value="2027">Haa</option>
+                </select>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select className="filter-select calse-management-filter-select ">
+                  <option value="2023">All Case Type</option>
+                  <option value="2023">Walk-In</option>
+                  <option value="2024">Walk-In</option>
+                </select>
+              </div>
+              <div className="filter-select-wrapper case-management-select">
+                <select className="filter-select calse-management-filter-select case-nature">
+                  <option value="2023">All Case Nature</option>
+                  <option value="2023">Criminal</option>
+                  <option value="2024">Civil</option>
+                  <option value="2025">Criminal</option>
+                  <option value="2027">Civil</option>
+                </select>
+              </div>
             </div>
           </div>
           <div className="case-status-container">
             <div
-              className={`case-status-btn ${
-                activeStatus === "All Application" ? "status-active" : ""
-              }`}
+              className={`case-status-btn ${activeStatus === "All Application" ? "status-active" : ""
+                }`}
               onClick={() => handleStatusClick("All Application")}
             >
               All Application
             </div>
             <div
-              className={`case-status-btn ${
-                activeStatus === "In Progress" ? "status-active" : ""
-              }`}
+              className={`case-status-btn ${activeStatus === "In Progress" ? "status-active" : ""
+                }`}
               onClick={() => handleStatusClick("In Progress")}
             >
               In Progress
             </div>
             <div
-              className={`case-status-btn ${
-                activeStatus === "Completed" ? "status-active" : ""
-              }`}
+              className={`case-status-btn ${activeStatus === "Completed" ? "status-active" : ""
+                }`}
               onClick={() => handleStatusClick("Completed")}
             >
               Completed
@@ -191,10 +202,11 @@ function CaseManagement() {
                   <th>Dzongkhag</th>
                   <th>Status</th>
                   <th>Case Type</th>
+                  <th>Case Result</th>
                 </tr>
               </thead>
               <tbody>
-              {/* <tr
+                {/* <tr
                             key={11410008138}
                             onClick={() => handleOpen(11410008138)}
                           >
@@ -205,8 +217,8 @@ function CaseManagement() {
                 <td>Pending</td>
                 <td>Walk-In</td>
                 </tr> */}
-               
-              {cases && (
+
+                {cases && (
                   <>
                     {(() => {
                       if (activeStatus === "All Application") {
@@ -221,6 +233,7 @@ function CaseManagement() {
                             <td>{caseItem.pdzongkhag}</td>
                             <td>{caseItem.status}</td>
                             <td>{caseItem.caseType}</td>
+                            <td>{caseItem.outcome || "None"}</td>
                           </tr>
                         ));
                       } else if (activeStatus === "In Progress") {

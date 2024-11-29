@@ -10,6 +10,7 @@ import Loader from "../components/Loader";
 function DataManagement() {
   const [postCase, { isLoading }] = usePostCaseMutation();
   const [files, setFiles] = useState([]);
+
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: true,
     institutions: true,
@@ -111,6 +112,7 @@ function DataManagement() {
             title: "Application Submitted",
             text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
           });
+
         } catch (err) {
           Swal.fire({
             title: "Error!",

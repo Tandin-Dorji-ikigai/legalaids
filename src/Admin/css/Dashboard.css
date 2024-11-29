@@ -76,8 +76,9 @@
   color: #fff;
 }
 
-.card-stat-num {
-  font-size: 32px;
+.card-stat-nums {
+  font-size: 40px;
+  font-size: bolder;
 }
 
 .stats-card-trend-decrease {
