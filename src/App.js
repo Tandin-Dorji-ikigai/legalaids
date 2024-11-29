@@ -32,6 +32,8 @@ import EmployeeCaseManagement from './Employee/CaseManagement'
 import EmployeeDataManagement from './Employee/DataManagement'
 
 import CitizenDetails from './scenes/getCencus';
+import CaseOverview from './barCouncil/CaseOverview'
+import RegisteredLawyers from './barCouncil/RegisteredLawyers'
 
 function App() {
 
@@ -105,6 +107,11 @@ function App() {
           <Route path='/employeeApplicationManagement' element={<EmployeeAppManagement />} />
           <Route path='/employeeCaseManagement' element={<EmployeeCaseManagement />} />
           <Route path='/employeeDataManagement' element={<EmployeeDataManagement />} />
+
+
+          {/* Bar Council route */}
+          <Route path='/caseOverview' element={<CaseOverview />} />
+          <Route path='/registeredLawyers' element={<RegisteredLawyers />} />
 
         </Routes>
       </main>
