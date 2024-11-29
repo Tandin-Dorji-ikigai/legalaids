@@ -31,6 +31,8 @@ import EmployeeAppManagement from './Employee/ApplicationManagement'
 import EmployeeCaseManagement from './Employee/CaseManagement'
 import EmployeeDataManagement from './Employee/DataManagement'
 
+import CitizenDetails from './scenes/getCencus';
+
 function App() {
 
   const [currentLang, setCurrentLang] = useState(i18n.language);
@@ -72,7 +74,7 @@ function App() {
       <main className="content">
 
         <Routes>
-          <Route index element={<Home />} />
+          <Route index element={<CitizenDetails />} />
           <Route path='/home' element={<Home />} />
           <Route path='/about' element={<About />} />
           <Route path='/eligibility' element={<Eligibity />} />
