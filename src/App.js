@@ -27,6 +27,10 @@ import AdminLogin from './scenes/AdminLogin';
 import Loader from './components/Loader';
 import i18n from './i18n';
 
+import EmployeeAppManagement from './Employee/ApplicationManagement'
+import EmployeeCaseManagement from './Employee/CaseManagement'
+import EmployeeDataManagement from './Employee/DataManagement'
+
 function App() {
 
   const [currentLang, setCurrentLang] = useState(i18n.language);
@@ -94,6 +98,12 @@ function App() {
           {/* lawyer route */}
           <Route path='/currentcases' element={<CurrentCases />} />
           <Route path='/history' element={<History />} />
+
+          {/* Employee route */}
+          <Route path='/employeeApplicationManagement' element={<EmployeeAppManagement />} />
+          <Route path='/employeeCaseManagement' element={<EmployeeCaseManagement />} />
+          <Route path='/employeeDataManagement' element={<EmployeeDataManagement />} />
+
         </Routes>
       </main>
     </div>

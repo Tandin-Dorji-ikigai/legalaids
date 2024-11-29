@@ -1,0 +1,355 @@
+.dashboard-content {
+  padding: 2rem 20px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.dashboard-sm-header {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.dashboard-header {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.filter-card {
+	color: #797979;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	width: 80px;
+	height: 40px;
+	border: 1px solid #eeeeee;
+	margin-top: 0px;
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+.filter-select {
+  color: #797979;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 120px;
+  height: 40px;
+  border: 1px solid #eeeeee;
+  /* margin-top: 10px; */
+  border-radius: 5px;
+  font-size: 14px;
+  padding: 0 8px;
+  background: transparent;
+}
+
+.dashboard-stats-container {
+  display: flex;
+  height: fit-content;
+  margin-top: 8px;
+  column-gap: 20px;
+  width: 100%;
+}
+
+.stats-card-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  width: 300px;
+}
+
+.stats-card {
+  min-width: 280px;
+  width: 100%;
+  min-height: 142px;
+  height: 100%;
+  height: fit-content;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  padding: 10px;
+  color: #fff;
+}
+
+.card-stat-num {
+  font-size: 32px;
+}
+
+.stats-card-trend-decrease {
+  color: #ffb49b;
+  font-size: 14px;
+}
+
+.stats-card-trend-increase {
+  color: #a5ff9b;
+  font-size: 14px;
+}
+
+.graph-legend-container {
+  width: fit-content;
+  height: fit-content;
+  padding: 1rem;
+  position: absolute;
+  right: 30px;
+  top: 5px;
+}
+
+.graph-legend {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.graph-legend > :nth-child(2) {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.graph-legend-circle-green {
+  width: 14px;
+  height: 14px;
+  background: #02b2af;
+  border-radius: 50%;
+}
+
+.graph-legend-circle-blue {
+  width: 14px;
+  height: 14px;
+  background: #2e96ff;
+  border-radius: 50%;
+}
+
+.graph-legend-circle-pink {
+  width: 14px;
+  height: 14px;
+  background: #b800d8;
+  border-radius: 50%;
+}
+
+.stats-card-container > :nth-child(1) {
+  background: #595cfc;
+}
+
+.stats-card-container > :nth-child(2) {
+  background: #8486ff;
+}
+
+.stats-card-container > :nth-child(3) {
+  background: #4590cf;
+}
+
+.graph-stats-heading {
+  position: absolute;
+  top: 10px;
+  left: 38px;
+}
+
+.graph-stats-heading {
+  font-size: 16px;
+}
+
+.heading-header {
+  font-weight: 600;
+}
+
+.case-data {
+  font-size: 14px;
+  color: #9a9a9a;
+  margin-top: 4px;
+}
+
+.stat-change {
+  font-size: 24px;
+  color: #15605c;
+  display: flex;
+  align-items: center;
+  column-gap: 7px;
+  margin: -7px 0;
+}
+
+.stat-change span {
+  font-size: 16px;
+  color: #00c96e;
+}
+
+.stats-graph-container {
+  min-width: 400px;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  padding: 30px 11px;
+  /* background: #FFFFEB; */
+  border: 1px solid #c9c9c9;
+  position: relative;
+  padding-top: 70px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.stat-change-icon {
+  display: flex;
+  align-items: center;
+}
+
+/* .pie-chart-container {
+  margin-top: 20px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  width: 40%;
+}
+
+.pie-chart-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+} */
+
+.additional-charts-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 20px;
+  width: 100%;
+}
+
+.chart-container {
+  flex: 1;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.chart-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.pie-chart-container {
+  position: relative;
+}
+
+.pie-chart-container .MuiChartsLegend-root {
+  position: absolute !important;
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-36%) !important;
+}
+
+.pie-chart-container .MuiChartsLegend-label {
+  font-size: 10px !important;
+}
+
+@media (max-width: 1537px) {
+  .dashboard-stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .stats-card-container {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 1493px) {
+  .additional-charts-row {
+    overflow-x: auto;        
+    white-space: nowrap;   
+    width: 100%;             
+    padding: 1rem 0;       
+  }
+  
+  .additional-charts-row::-webkit-scrollbar {
+    height: 0.7rem;          
+  }
+  
+  .additional-charts-row::-webkit-scrollbar-thumb {
+    background-color: green; 
+    border-radius: 10px;     
+  }
+  
+  .additional-charts-row::-webkit-scrollbar-track {
+    background: #f0f0f0;    
+  }
+  
+}
+
+@media (max-width: 1198px) {
+  .additional-charts-row {
+    overflow-x: hidden;
+  }
+
+  .stats-card-container {
+    height: 11rem;
+    flex-wrap: wrap;
+    height: auto;
+  }
+
+  .stats-card {
+    height: 100%;
+  }
+
+  .line-graph,
+  .pi-chart,
+  .bar-chart {
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  .line-graph::-webkit-scrollbar,
+  .pi-chart::-webkit-scrollbar,
+  .bar-chart::-webkit-scrollbar {
+    height: 0.7rem;
+  }
+
+  .line-graph::-webkit-scrollbar-thumb,
+  .pi-chart::-webkit-scrollbar-thumb,
+  .bar-chart::-webkit-scrollbar-thumb {
+    background-color: green;
+    border-radius: 10px;
+  }
+
+  .line-graph::-webkit-scrollbar-track,
+  .pi-chart::-webkit-scrollbar-track,
+  .bar-chart::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  }
+
+  .additional-charts-row {
+    flex-direction: column;
+  }
+
+  .pi-chart,
+  .bar-chart {
+    padding: 1rem 0;
+  }
+}
+
+@media (min-width: 881px) and (max-width: 1004px) {
+  .stats-card {
+    height: 12rem;
+  }
+}
+
+
+@media (max-width: 805px) {
+  .stats-card-container {
+    /* overflow-x: auto; */
+    white-space: nowrap;
+    width: 100%;
+    height: auto;
+    padding: 1rem 0;
+  }
+}
