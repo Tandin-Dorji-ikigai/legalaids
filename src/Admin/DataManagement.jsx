@@ -242,6 +242,7 @@ function DataManagement() {
                     <label>CID Number</label>
                     <input
                       type="text"
+                      placeholder="eg.11308231453"
                       value={applicantInfo.cidNumber}
                       required
                       onChange={(e) =>
@@ -257,6 +258,7 @@ function DataManagement() {
                     <input
                       type="text"
                       value={applicantInfo.name}
+                      placeholder="eg.Wangmo"
                       required
                       onChange={(e) =>
                         setApplicantInfo({
@@ -272,6 +274,7 @@ function DataManagement() {
                       type="text"
                       required
                       value={applicantInfo.occupation}
+                      placeholder="eg.Civil Servant"
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -285,6 +288,7 @@ function DataManagement() {
                     <input
                       type="number"
                       value={applicantInfo.contactNumber}
+                      placeholder="eg.17846354"
                       required
                       onChange={(e) =>
                         setApplicantInfo({
@@ -305,6 +309,7 @@ function DataManagement() {
                       type="number"
                       value={applicantInfo.householdIncome}
                       required
+                      placeholder="eg.8000"
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,
@@ -319,6 +324,7 @@ function DataManagement() {
                       type="number"
                       value={applicantInfo.householdMembers}
                       required
+                      placeholder="eg.6"
                       onChange={(e) =>
                         setApplicantInfo({
                           ...applicantInfo,

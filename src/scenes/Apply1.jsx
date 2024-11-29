@@ -7,9 +7,14 @@ import { dzongkhags, gewogs, villages } from '../Data/LocationData';
 import Footer from '../components/Footer';
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
+import { useGetCensusQuery } from '../slices/censusSlice';
 
 function Apply1() {
     const navigate = useNavigate();
+    const [cid,setCid] = useState('')
+
+    const { data, error, isLoading } = useGetCensusQuery("11308006095");
+    console.log(data)
 
     const [formData, setFormData] = useState({
         cid: '',
@@ -36,6 +41,10 @@ function Apply1() {
             ...formData,
             [name]: value
         });
+
+        if(name === "cid"){
+            setCid(value)
+        }
     };
 
     const handleSubmit = (e) => {

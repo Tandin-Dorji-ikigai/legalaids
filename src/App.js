@@ -31,6 +31,10 @@ import EmployeeAppManagement from './Employee/ApplicationManagement'
 import EmployeeCaseManagement from './Employee/CaseManagement'
 import EmployeeDataManagement from './Employee/DataManagement'
 
+import CitizenDetails from './scenes/getCencus';
+import CaseOverview from './barCouncil/CaseOverview'
+import RegisteredLawyers from './barCouncil/RegisteredLawyers'
+
 function App() {
 
   const [currentLang, setCurrentLang] = useState(i18n.language);
@@ -72,7 +76,7 @@ function App() {
       <main className="content">
 
         <Routes>
-          <Route index element={<Home />} />
+          <Route index element={<CitizenDetails />} />
           <Route path='/home' element={<Home />} />
           <Route path='/about' element={<About />} />
           <Route path='/eligibility' element={<Eligibity />} />
@@ -103,6 +107,11 @@ function App() {
           <Route path='/employeeApplicationManagement' element={<EmployeeAppManagement />} />
           <Route path='/employeeCaseManagement' element={<EmployeeCaseManagement />} />
           <Route path='/employeeDataManagement' element={<EmployeeDataManagement />} />
+
+
+          {/* Bar Council route */}
+          <Route path='/caseOverview' element={<CaseOverview />} />
+          <Route path='/registeredLawyers' element={<RegisteredLawyers />} />
 
         </Routes>
       </main>
