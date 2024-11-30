@@ -28,6 +28,7 @@ const isValidEmail = (email) => {
 };
 
 function EmployeeManagement() {
+
   const [cid, setCid] = useState("");
   const [userName, setUsername] = useState("");
   const [contactNo, setContactNo] = useState("");
@@ -161,6 +162,39 @@ function EmployeeManagement() {
     });
     handleCloseModal();
   };
+
+  // Pagination -admin
+  const [currentPage, setCurrentPage] = useState(1);
+  const casesPerPage = 4;
+
+  const totalPages = Math.ceil(admins?.length / casesPerPage);
+  const indexOfLastCase = currentPage * casesPerPage;
+  const indexOfFirstCase = indexOfLastCase - casesPerPage;
+  const currentAdmins = admins?.slice(indexOfFirstCase, indexOfLastCase);
+
+  // Pagination -emp
+  const [currentPageEmp, setCurrentPageEmp] = useState(1);
+
+  const totalPagesEmp = Math.ceil(employees?.length / casesPerPage);
+  const indexOfLastCaseEmp = currentPage * casesPerPage;
+  const indexOfFirstCaseEmp = indexOfLastCaseEmp - casesPerPage;
+  const currentEmp = employees?.slice(indexOfFirstCaseEmp, indexOfLastCaseEmp);
+
+  // Pagination -lawers
+  const [currentPageLawers, setCurrentPageLawers] = useState(1);
+  const totalPagesLawers = Math.ceil(lawyers?.length / casesPerPage);
+  const indexOfLastCaseLawers = currentPage * casesPerPage;
+  const indexOfFirstCaseLawers = indexOfLastCaseLawers - casesPerPage;
+  const currentLawers = lawyers?.slice(indexOfFirstCaseLawers, indexOfLastCaseLawers);
+
+  // Pagination -barCouncil
+  // const [currentPageBarCouncil, setCurrentPageBarCouncil] = useState(1);
+  // const casesPerPageBarCouncil = 4;
+
+  // const totalPagesBarCouncil = Math.ceil(admins.length / casesPerPage);
+  // const indexOfLastCaseBarCouncil = currentPage * casesPerPage;
+  // const indexOfFirstCaseBarCouncil = indexOfLastCase - casesPerPage;
+  // const currentBarCouncil = bar.slice(indexOfFirstCase, indexOfLastCase);
 
   return (
     <div className="dashboard-container ">
@@ -361,7 +395,7 @@ function EmployeeManagement() {
                 </thead>
                 <tbody>
                   {admins &&
-                    admins.map((admin) => {
+                    currentAdmins.map((admin) => {
                       return (
                         <tr key={admin.cid}>
                           <td>{admin.cid}</td>
@@ -376,6 +410,19 @@ function EmployeeManagement() {
                     })}
                 </tbody>
               </table>
+              <div className="pagination-employee">
+                <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                  Previous
+                </button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button key={index + 1} onClick={() => setCurrentPage(index + 1)} className={currentPage === index + 1 ? 'active' : ''}>
+                    {index + 1}
+                  </button>
+                ))}
+                <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                  Next
+                </button>
+              </div>
             </div>
 
             <div className="employee-details">
@@ -391,7 +438,7 @@ function EmployeeManagement() {
                 </thead>
                 <tbody>
                   {employees &&
-                    employees.map((employee) => {
+                    currentEmp.map((employee) => {
                       return (
                         <tr key={employee.cid}>
                           <td>{employee.cid}</td>
@@ -406,6 +453,19 @@ function EmployeeManagement() {
                     })}
                 </tbody>
               </table>
+              <div className="pagination-employee">
+                <button onClick={() => setCurrentPageEmp(currentPageEmp - 1)} disabled={currentPageEmp === 1}>
+                  Previous
+                </button>
+                {Array.from({ length: totalPagesEmp }, (_, index) => (
+                  <button key={index + 1} onClick={() => setCurrentPageEmp(index + 1)} className={currentPageEmp === index + 1 ? 'active' : ''}>
+                    {index + 1}
+                  </button>
+                ))}
+                <button onClick={() => setCurrentPageEmp(currentPageEmp + 1)} disabled={currentPageEmp === totalPagesEmp}>
+                  Next
+                </button>
+              </div>
             </div>
           </div>
 
@@ -425,7 +485,7 @@ function EmployeeManagement() {
                 </thead>
                 <tbody>
                   {lawyers &&
-                    lawyers.map((lawyer) => {
+                    currentLawers.map((lawyer) => {
                       return (
                         <tr key={lawyer.cid}>
                           <td>{lawyer.cid}</td>
@@ -440,6 +500,19 @@ function EmployeeManagement() {
                     })}
                 </tbody>
               </table>
+              <div className="pagination-employee">
+                <button onClick={() => setCurrentPageLawers(currentPageLawers - 1)} disabled={currentPageLawers === 1}>
+                  Previous
+                </button>
+                {Array.from({ length: totalPagesLawers }, (_, index) => (
+                  <button key={index + 1} onClick={() => setCurrentPageLawers(index + 1)} className={currentPageLawers === index + 1 ? 'active' : ''}>
+                    {index + 1}
+                  </button>
+                ))}
+                <button onClick={() => setCurrentPageLawers(currentPageLawers + 1)} disabled={currentPageLawers === totalPagesLawers}>
+                  Next
+                </button>
+              </div>
             </div>
 
             <div className="employee-details">

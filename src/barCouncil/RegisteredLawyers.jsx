@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import SideNav from "./DashboardNav";
-import "./css/EmployeeManagement.css";
 import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
