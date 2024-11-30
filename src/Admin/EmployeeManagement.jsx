@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SideNav from "./DashboardNav";
 import "./css/EmployeeManagement.css";
+import { useLocation } from "react-router-dom";
 import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
@@ -38,6 +39,7 @@ const isValidEmail = (email) => {
 };
 
 function EmployeeManagement() {
+  const location = useLocation()
 
   const [cid, setCid] = useState("");
   const [userName, setUsername] = useState("");
@@ -145,6 +147,9 @@ function EmployeeManagement() {
               icon: "success",
               confirmButtonText: "OK",
             });
+
+            window.location.reload()
+            
           } else if (roleName === "Lawyer") {
             await postLawyer({
               cid,
@@ -161,6 +166,7 @@ function EmployeeManagement() {
               icon: "success",
               confirmButtonText: "OK",
             });
+            window.location.reload()
           }else if(roleName === "Bar Council"){
             await postCouncil({
               cid,
@@ -177,6 +183,7 @@ function EmployeeManagement() {
               icon: "success",
               confirmButtonText: "OK",
             });
+            window.location.reload()
           }
         } catch (err) {
           Swal.fire({

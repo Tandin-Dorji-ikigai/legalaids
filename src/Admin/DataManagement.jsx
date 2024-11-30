@@ -111,6 +111,7 @@ function DataManagement() {
             title: "Application Submitted",
             text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
           });
+          window.location.reload()
 
         } catch (err) {
           Swal.fire({

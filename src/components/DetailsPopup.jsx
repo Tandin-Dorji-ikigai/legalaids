@@ -188,6 +188,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
           });
 
           onClose();
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',

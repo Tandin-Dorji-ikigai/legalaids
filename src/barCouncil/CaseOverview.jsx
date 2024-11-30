@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import SideNav from "./DashboardNav";
-import DetailsPopup from "../components/DetailsPopup";
 import Modal from "@mui/material/Modal";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+import CaseOverViewPopup from "../components/CaseOverViewPopup";
 
 function CaseManagement() {
   const [activeStatus, setActiveStatus] = useState("All Application");
@@ -37,7 +37,7 @@ function CaseManagement() {
   return (
     <div className="dashboard-container">
       <Modal open={open} onClose={handleClose}>
-        <DetailsPopup caseId={selectedCaseId} onClose={handleClose} />
+        <CaseOverViewPopup caseId={selectedCaseId} onClose={handleClose} />
       </Modal>
       <SideNav />
       <div className="dashboard-content">
