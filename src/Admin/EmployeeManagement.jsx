@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SideNav from "./DashboardNav";
 import "./css/EmployeeManagement.css";
-import { useLocation } from "react-router-dom";
 import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
@@ -39,8 +38,6 @@ const isValidEmail = (email) => {
 };
 
 function EmployeeManagement() {
-  const location = useLocation()
-
   const [cid, setCid] = useState("");
   const [userName, setUsername] = useState("");
   const [contactNo, setContactNo] = useState("");
@@ -79,7 +76,7 @@ function EmployeeManagement() {
       console.log(error3);
     } else if (error4) {
       console.log(error4);
-    }else if(error5){
+    } else if (error5) {
       console.log(error5);
     }
   }, [error, error1, error2, error3, error4, error5,
@@ -149,7 +146,7 @@ function EmployeeManagement() {
             });
 
             window.location.reload()
-            
+
           } else if (roleName === "Lawyer") {
             await postLawyer({
               cid,
@@ -167,7 +164,7 @@ function EmployeeManagement() {
               confirmButtonText: "OK",
             });
             window.location.reload()
-          }else if(roleName === "Bar Council"){
+          } else if (roleName === "Bar Council") {
             await postCouncil({
               cid,
               userName,
@@ -249,6 +246,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -280,6 +278,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -311,6 +310,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -342,6 +342,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -373,6 +374,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -404,6 +406,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -435,6 +438,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -466,6 +470,7 @@ function EmployeeManagement() {
             icon: 'success',
             confirmButtonText: 'OK'
           });
+          window.location.reload()
         } catch (err) {
           Swal.fire({
             title: 'Error!',
