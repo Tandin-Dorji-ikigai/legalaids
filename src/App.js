@@ -109,8 +109,8 @@ function App() {
           <Route path='/employeeCaseManagement' element={<EmployeeCaseManagement />} />
           <Route path='/employeeDataManagement' element={<EmployeeDataManagement />} />
 
-          <Route path='/barCaseManagement' element={<BarCaseManagement />} />
-          <Route path='/barLawyers' element={<BarRegisteredLawyer />} />
+          <Route path='/caseOverview' element={<BarCaseManagement />} />
+          <Route path='/registeredLawyers' element={<BarRegisteredLawyer />} />
 
         </Routes>
       </main>

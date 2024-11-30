@@ -8,6 +8,16 @@ import { useGetAllUserQuery } from "../slices/userApiSlice";
 import { useGetAllRoleQuery } from "../slices/userApiSlice";
 import { usePostEmployeeMutation } from "../slices/employeeSlice";
 import { usePostLawyerMutation } from "../slices/lawyerSlice";
+import { usePostCouncilMutation } from "../slices/councilApiSlice";
+import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
+import { useEnableAdminMutation } from "../slices/adminSlice";
+import { useDisableAdminMutation } from "../slices/adminSlice";
+import { useEnableCouncilMutation } from "../slices/councilApiSlice";
+import { useDisableCouncilMutation } from "../slices/councilApiSlice";
+import { useEnableEmployeeMutation } from "../slices/employeeSlice";
+import { useDisableEmployeeMutation } from "../slices/employeeSlice";
+import { useEnableLawyerMutation } from "../slices/lawyerSlice";
+import { useDisableLawyerMutation } from "../slices/lawyerSlice";
 import Swal from "sweetalert2";
 
 const Modal = ({ isOpen, onClose, children }) => {
@@ -36,12 +46,23 @@ function EmployeeManagement() {
   const [roleName, setRoleName] = useState("");
   const [postEmployee] = usePostEmployeeMutation();
   const [postLawyer] = usePostLawyerMutation();
+  const [postCouncil] = usePostCouncilMutation();
+
+  const [enableAdmin] = useEnableAdminMutation();
+  const [disableAdmin] = useDisableAdminMutation();
+  const [enableEmployee] = useEnableEmployeeMutation();
+  const [disableEmployee] = useDisableEmployeeMutation();
+  const [enableCouncil] = useEnableCouncilMutation();
+  const [disableCouncil] = useDisableCouncilMutation();
+  const [enableLawyer] = useEnableLawyerMutation();
+  const [disableLawyer] = useDisableLawyerMutation();
 
   const { data: admins, error } = useGetAllAdminQuery();
   const { data: employees, error1 } = useGetAllEmployeeQuery();
   const { data: lawyers, error2 } = useGetAllLawyerQuery();
   const { data: users, error3 } = useGetAllUserQuery();
   const { data: roles, error4 } = useGetAllRoleQuery();
+  const { data: councils, error5 } = useGetAllCouncilQuery();
 
 
   useEffect(() => {
@@ -55,18 +76,11 @@ function EmployeeManagement() {
       console.log(error3);
     } else if (error4) {
       console.log(error4);
+    }else if(error5){
+      console.log(error5);
     }
-  }, [
-    error,
-    error1,
-    error2,
-    error3,
-    error4,
-    employees,
-    admins,
-    lawyers,
-    users,
-    roles,
+  }, [error, error1, error2, error3, error4, error5,
+    employees, admins, lawyers, users, roles, councils
   ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -114,8 +128,6 @@ function EmployeeManagement() {
         try {
           const enabled = true;
           const roles = [{ id: role }]
-          console.log(roleName)
-          console.log(role)
           if (roleName === "Employee") {
             await postEmployee({
               cid,
@@ -148,6 +160,22 @@ function EmployeeManagement() {
               icon: "success",
               confirmButtonText: "OK",
             });
+          }else if(roleName === "Bar Council"){
+            await postCouncil({
+              cid,
+              userName,
+              contactNo,
+              email,
+              password,
+              enabled,
+              roles
+            })
+            Swal.fire({
+              title: "Success!",
+              text: "The user has been registered successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
           }
         } catch (err) {
           Swal.fire({
@@ -161,6 +189,254 @@ function EmployeeManagement() {
     });
     handleCloseModal();
   };
+
+  const handleEnableAdmin = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableAdmin(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableAdmin = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableAdmin(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleEnableCouncil = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableCouncil(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableCouncil = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableCouncil(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleEnableEmployee = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableEmployee(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableEmployee = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableEmployee(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleEnableLawyer = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableLawyer(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableLawyer = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableLawyer(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
 
   return (
     <div className="dashboard-container ">
@@ -368,9 +644,9 @@ function EmployeeManagement() {
                           <td>{admin.userName}</td>
                           <td>{admin.email}</td>
                           <td>{admin.enabled === true ?
-                            <button className="disable_user">Disable</button>
+                            <button onClick={() => handleDisableAdmin(admin.id)} className="disable_user">Disable</button>
                             :
-                            <button className="enable_user">Enable</button>} </td>
+                            <button onClick={() => handleEnableAdmin(admin.id)} className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
@@ -398,9 +674,9 @@ function EmployeeManagement() {
                           <td>{employee.userName}</td>
                           <td>{employee.email}</td>
                           <td>{employee.enabled === true ?
-                            <button className="disable_user">Disable</button>
+                            <button onClick={() => handleDisableEmployee(employee.id)} className="disable_user">Disable</button>
                             :
-                            <button className="enable_user">Enable</button>} </td>
+                            <button onClick={() => handleEnableEmployee(employee.id)} className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
@@ -432,9 +708,9 @@ function EmployeeManagement() {
                           <td>{lawyer.userName}</td>
                           <td>{lawyer.email}</td>
                           <td>{lawyer.enabled === true ?
-                            <button className="disable_user">Disable</button>
+                            <button onClick={() => handleDisableLawyer(lawyer.id)} className="disable_user">Disable</button>
                             :
-                            <button className="enable_user">Enable</button>} </td>
+                            <button onClick={() => handleEnableLawyer(lawyer.id)} className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
@@ -454,17 +730,17 @@ function EmployeeManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                  {employees &&
-                    employees.map((employee) => {
+                  {councils &&
+                    councils.map((council) => {
                       return (
-                        <tr key={employee.cid}>
-                          <td>{employee.cid}</td>
-                          <td>{employee.userName}</td>
-                          <td>{employee.email}</td>
-                          <td>{employee.enabled === true ?
-                            <button className="disable_user">Disable</button>
+                        <tr key={council.cid}>
+                          <td>{council.cid}</td>
+                          <td>{council.userName}</td>
+                          <td>{council.email}</td>
+                          <td>{council.enabled === true ?
+                            <button onClick={() => handleDisableCouncil(council.id)} className="disable_user">Disable</button>
                             :
-                            <button className="enable_user">Enable</button>} </td>
+                            <button onClick={() => handleEnableCouncil(council.id)} className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
