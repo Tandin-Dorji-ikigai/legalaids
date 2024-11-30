@@ -186,6 +186,7 @@ function CaseManagement() {
                   <th>Dzongkhag</th>
                   <th>Lawyer Assigned</th>
                   <th>Case Status</th>
+                  <th>Case Result</th>
                 </tr>
               </thead>
               <tbody>
