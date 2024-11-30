@@ -191,7 +191,6 @@ function EmployeeManagement() {
     handleCloseModal();
   };
 
-<<<<<<< HEAD
   // Pagination -admin
   const [currentPage, setCurrentPage] = useState(1);
   const casesPerPage = 4;
@@ -224,7 +223,6 @@ function EmployeeManagement() {
   // const indexOfLastCaseBarCouncil = currentPage * casesPerPage;
   // const indexOfFirstCaseBarCouncil = indexOfLastCase - casesPerPage;
   // const currentBarCouncil = bar.slice(indexOfFirstCase, indexOfLastCase);
-=======
   const handleEnableAdmin = (id) => {
     Swal.fire({
       title: "",
@@ -472,7 +470,6 @@ function EmployeeManagement() {
       }
     });
   }
->>>>>>> 36e2b21c72b090ac862c9a4c88d948612e15a05c
 
   return (
     <div className="dashboard-container ">

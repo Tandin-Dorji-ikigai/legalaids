@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import SideNav from "./DashboardNav";
-<<<<<<< HEAD
 import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
-=======
->>>>>>> 36e2b21c72b090ac862c9a4c88d948612e15a05c
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 import Swal from "sweetalert2";
 
@@ -14,7 +11,7 @@ function EmployeeManagement() {
   useEffect(() => {
     if (error) {
       console.log(error);
-    } 
+    }
   }, [error, lawyers]);
 
   return (
@@ -49,9 +46,9 @@ function EmployeeManagement() {
                   <tr>
                     <th>CID</th>
                     <th>Name</th>
-                    <th>Email</th> 
-                    <th>Contact Number</th> 
-                    <th>Action</th> 
+                    <th>Email</th>
+                    <th>Contact Number</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>

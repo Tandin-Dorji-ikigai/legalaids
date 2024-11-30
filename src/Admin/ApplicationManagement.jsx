@@ -10,7 +10,6 @@ function ApplicationManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const casesPerPage = 10;
 
-  const [activeStatus, setActiveStatus] = useState("All Application");
   const { data: cases, error } = useGetAllCaseQuery();
   const [selectedCases, setSelectedCases] = useState([]);
   const [civil, setCivil] = useState([]);
@@ -28,11 +27,7 @@ function ApplicationManagement() {
   const [dzongkhags, setDzongkhags] = useState([])
   const [caseType, setCaseType] = useState([])
   const [natureOfCase, setNatureOfCase] = useState([])
-
-  const handleStatusClick = (status) => {
-    setActiveStatus(status);
-  };
-
+  
   useEffect(() => {
     if (error) {
       console.log(error);
