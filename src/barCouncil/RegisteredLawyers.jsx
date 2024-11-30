@@ -1,10 +1,14 @@
 import React, { useEffect } from "react";
 import SideNav from "./DashboardNav";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
+import { useEnableLawyerMutation } from "../slices/lawyerSlice";
+import { useDisableLawyerMutation } from "../slices/lawyerSlice";
 import Swal from "sweetalert2";
 
 function EmployeeManagement() {
   const { data: lawyers, error } = useGetAllLawyerQuery();
+  const [enableLawyer] = useEnableLawyerMutation();
+  const [disableLawyer] = useDisableLawyerMutation();
 
   useEffect(() => {
     if (error) {
@@ -12,6 +16,67 @@ function EmployeeManagement() {
     } 
   }, [error, lawyers]);
 
+  const handleEnableLawyer = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableLawyer(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableLawyer = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableLawyer(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
   return (
     <div className="dashboard-container ">
       <SideNav />
@@ -34,7 +99,6 @@ function EmployeeManagement() {
                 </svg>
               </div>
             </div>
-            <button className="edit-btn">Edit</button>
           </div>
           <div className="details-container lawyer-details-container">
             <div className="lawyer-details lawyer-details-sm">
@@ -59,9 +123,9 @@ function EmployeeManagement() {
                           <td>{lawyer.email}</td>
                           <td>{lawyer.contactNo}</td>
                           <td>{lawyer.enabled === true ?
-                            <button className="disable_user">Disable</button>
+                            <button onClick={() => handleDisableLawyer(lawyer.id)} className="disable_user">Disable</button>
                             :
-                            <button className="enable_user">Enable</button>} </td>
+                            <button onClick={() => handleEnableLawyer(lawyer.id)} className="enable_user">Enable</button>} </td>
                         </tr>
                       );
                     })}
