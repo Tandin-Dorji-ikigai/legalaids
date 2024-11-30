@@ -216,7 +216,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             icon: "success",
             confirmButtonText: "OK",
           });
-          navigate("/caseManagement");
     
         } catch (err) {
           Swal.fire({
@@ -302,7 +301,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             icon: "success",
             confirmButtonText: "OK",
           });
-          navigate("/applicationManagement");
     
         } catch (err) {
           Swal.fire({

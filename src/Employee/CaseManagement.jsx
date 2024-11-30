@@ -4,12 +4,15 @@ import "./css/CaseManagement.css";
 import DetailsPopup from "../components/DetailsPopup";
 import Modal from "@mui/material/Modal";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
-import { CaseSensitive } from "lucide-react";
 
 function CaseManagement() {
   const [activeStatus, setActiveStatus] = useState("All Application");
   const { data: cases, error } = useGetAllCaseQuery();
   const [selectedCases, setSelectedCases] = useState([]);
+  const [civil, setCivil] = useState([]);
+  const [criminal, setCriminal] = useState([]);
+  const [walkIn, setWalkIn] = useState([]);
+  const [referral, setReferral] = useState([]);
 
   useEffect(() => {
     if (error) {
@@ -17,6 +20,14 @@ function CaseManagement() {
     } else if (cases) {
       const pendingCases = cases.filter(c => c.status === "In Progress" || c.status === "Completed");
       setSelectedCases(pendingCases);
+      const criminalCase = cases.filter(c => c.natureOfCase === "Criminal")
+      setCriminal(criminalCase);
+      const civilCase = cases.filter(c => c.natureOfCase === "Civil")
+      setCivil(civilCase);
+      const walkInCase = cases.filter(c => c.caseType === "Walk In")
+      setWalkIn(walkInCase);
+      const referralCase = cases.filter(c => c.caseType === "Referral")
+      setReferral(referralCase);
     }
   }, [error, cases, activeStatus]);
 
@@ -49,23 +60,35 @@ function CaseManagement() {
           <div className="statistical-overview case-management">
             <div className="stats-card">
               <div className="card-header">Civil Cases</div>
-              <div className="card-stat-num">121 Cases</div>
-              <div className="">8 new cases</div>
+              {civil ? (
+                <div className="card-stat-num">{civil.length} Case(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Case</div>
+              )}
             </div>
             <div className="stats-card">
               <div className="card-header">Criminal Cases</div>
-              <div className="card-stat-num">12 Cases</div>
-              <div className="">2 new cases</div>
+              {criminal ? (
+                <div className="card-stat-num">{criminal.length} Case(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Case</div>
+              )}
             </div>
             <div className="stats-card">
               <div className="card-header">Walk-Ins</div>
-              <div className="card-stat-num">121 Walk-Ins</div>
-              <div className="">8 new walk-ins</div>
+              {walkIn ? (
+                <div className="card-stat-num">{walkIn.length} Walk-In(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Walk-In</div>
+              )}
             </div>
             <div className="stats-card">
               <div className="card-header">Referrals</div>
-              <div className="card-stat-num">12 Referrals</div>
-              <div className="">8 new referrals</div>
+              {referral ? (
+                <div className="card-stat-num">{referral.length} Referral(s)</div>
+              ) : (
+                <div className="card-stat-num">0 Referral</div>
+              )}
             </div>
           </div>
         </div>

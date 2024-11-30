@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./css/signup.css";
 import { Link } from "react-router-dom";
 import Ndi from "../assets/ndi.jpeg";
@@ -12,6 +12,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
+import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
 
 function Login() {
   const [cid, setCID] = useState("");
@@ -25,6 +26,7 @@ function Login() {
   const {data: adminResult} = useGetAllAdminQuery();
   const {data: employeeResult} = useGetAllEmployeeQuery();
   const {data: lawyerResult} = useGetAllLawyerQuery();
+  const {data: councilResult} = useGetAllCouncilQuery();
 
   const handleCidChange = (e) => {
     setCID(e.target.value);
@@ -111,7 +113,26 @@ function Login() {
             text: "Your account is disabled. Please contact customer service for further details!",
           });
         }
-      }
+      } else if (res.user.authorities[0].authority === "Bar Council") {
+        const council = councilResult.find((cnl) => cnl.cid === res.user.username);
+        if (council.enabled === true) {
+          dispatch(setCredentials({ ...res }));
+          Swal.fire({
+            icon: "success",
+            title: "Login",
+            text: "Login Successful",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          navigate("/caseOverview");
+        } else {
+          Swal.fire({
+            icon: "info",
+            title: "Login Failed",
+            text: "Your account is disabled. Please contact customer service for further details!",
+          });
+        }
+      } 
     } catch (err) {
       Swal.fire({
         icon: "error",

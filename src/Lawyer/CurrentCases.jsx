@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp} from "lucide-react";
 import LawyerSideNav from "./LawyerDashboardNav";
 import "./css/CurrentCases.css";
 
