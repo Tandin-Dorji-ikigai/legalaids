@@ -4,7 +4,6 @@ import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
@@ -34,13 +33,12 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 
 const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
-  const navigate = useNavigate();
 
   const [updateCase] = useUpdateCaseMutation();
 
   const [caseInfo, setCaseInfo] = useState({
-    caseType: "",
-    natureOfCase: ""
+    caseType: "Walk In",
+    natureOfCase: "Civil"
   })
 
 
@@ -51,7 +49,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   if (fetchError) {
     console.log(fetchError)
   }
-  
+
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: false,
     caseDetails: true,
@@ -97,7 +95,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       // Update caseInfo
       setCaseInfo({
         caseType: cas.caseType,
-        natureOfCase:cas.natureOfCase
+        natureOfCase: cas.natureOfCase
       })
 
       // Update applicantInfo
@@ -168,7 +166,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       officialEmail
     } = institutionInfo;
 
-    const { 
+    const {
       caseType,
       natureOfCase
     } = caseInfo;
@@ -209,14 +207,14 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             natureOfCase,
             status
           }).unwrap();
-    
+
           Swal.fire({
             title: "Success!",
             text: "The case has been updated successfully.",
             icon: "success",
             confirmButtonText: "OK",
           });
-    
+
         } catch (err) {
           Swal.fire({
             title: "Error!",
@@ -253,7 +251,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       officialEmail
     } = institutionInfo;
 
-    const { 
+    const {
       caseType,
       natureOfCase
     } = caseInfo;
@@ -294,14 +292,14 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             natureOfCase,
             status
           }).unwrap();
-    
+
           Swal.fire({
             title: "Success!",
             text: "The case has been updated successfully.",
             icon: "success",
             confirmButtonText: "OK",
           });
-    
+
         } catch (err) {
           Swal.fire({
             title: "Error!",
@@ -370,9 +368,9 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                           })
                         }
 
-                        class="selectFields"
+                        className="selectFields"
                       >
-
+                         <option value="" disabled selected>Select Case Type</option>
                         <option value="Walk In">Walk In</option>
                         <option value="Referral">Referral</option>
                       </select>
@@ -388,9 +386,9 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                             natureOfCase: e.target.value,
                           })
                         }
-                        class="selectFields"
+                        className="selectFields"
                       >
-
+                        <option value="" disabled selected>Select Nature Of Case</option>
                         <option value="Criminal">Criminal</option>
                         <option value="Civil">Civil</option>
                       </select>
@@ -428,6 +426,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.cidNumber}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -440,6 +439,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Name</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.name}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -457,6 +457,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Occupation</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.occupation}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -470,6 +471,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Contact Number</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.contactNumber}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -487,6 +489,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Total Household Income (Nu.)</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.householdIncome}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -500,6 +503,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Total Household Members</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.householdMembers}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -513,6 +517,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Dzongkhag</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.dzongkhag}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -530,6 +535,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Village</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.villageCurrent}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -543,6 +549,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Gewog</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.gewogCurrent}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -556,6 +563,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Dzongkhag</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.dzongkhagCurrent}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -573,6 +581,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Village</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.villagePermanent}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -586,6 +595,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Gewog</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.gewogPermanent}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -599,6 +609,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Dzongkhag</label>
                       <input
                         type="text"
+                        readOnly
                         value={applicantInfo.dzongkhagPermanent}
                         onChange={(e) =>
                           setApplicantInfo({
@@ -637,6 +648,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Institution Name</label>
                       <input
                         type="text"
+                        readOnly
                         value={institutionInfo.institutionName}
                         onChange={(e) =>
                           setInstitutionInfo({
@@ -654,6 +666,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Name</label>
                       <input
                         type="text"
+                        readOnly
                         value={institutionInfo.officialName}
                         onChange={(e) =>
                           setInstitutionInfo({
@@ -667,6 +680,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Contact Number</label>
                       <input
                         type="text"
+                        readOnly
                         value={institutionInfo.officialContact}
                         onChange={(e) =>
                           setInstitutionInfo({
@@ -680,6 +694,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Email</label>
                       <input
                         type="email"
+                        readOnly
                         value={institutionInfo.officialEmail}
                         onChange={(e) =>
                           setInstitutionInfo({

@@ -74,7 +74,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   const [caseInfo, setCaseInfo] = useState({
     aLawyer: "",
-    status: "",
+    status: "InProgress",
     caseType: "",
     natureOfCase: "",
     remarks: "",
@@ -186,8 +186,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
             icon: 'success',
             confirmButtonText: 'OK'
           });
-    
-          onClose(); 
+
+          onClose();
         } catch (err) {
           Swal.fire({
             title: 'Error!',
@@ -203,9 +203,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     onClose();
   };
 
-  const handleDeleteDocument = (index) => {
-    setDocuments(documents.filter((_, i) => i !== index));
-  };
 
   return (
     <div className="popup-overlay" ref={ref}>
@@ -251,91 +248,46 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={caseInfo.aLawyer || "No lawyer assigned"}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            aLawyer: e.target.value,
-                          })
-                        }
+                        readOnly
                       />
                     </div>
-
                   </div>
 
                   <h4>Case Status and Documents</h4>
-                  <div className="form-grid">
-                    <div className="form-field">
-                      <label>Case Status</label>
-                      <input
-                        type="text"
-                        value={caseInfo.status}
-                        onChange={(e) =>
-                          caseInfo({
-                            ...caseInfo,
-                            status: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="form-field">
-                      <label>Case Type</label>
-                      <select
-                        className="case-type-select"
-                        value={caseInfo.caseType}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            caseType: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="Walk In">Walk In</option>
-                        <option value="Referral">Referral</option>
-                      </select>
-                    </div>
+                  <div className="form-field">
+                    <label>Case Status</label>
+                    <select
+                      value={caseInfo.status}
+                      className="selectFields"
+                      onChange={(e) =>
+                        caseInfo({
+                          ...caseInfo,
+                          status: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="" disabled selected>Select Case Status</option>
+                      <option value="InProgress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Dismissed">Dismissed</option>
+
+                    </select>
                   </div>
 
                   <div className="form-grid">
                     <div className="form-field">
-                      <label>Case Documents</label>
-                      <div className="document-list">
-                        <div className="document-item">
-                          <div>
-
-                            <span className="document-filename">asdf</span>
-                          </div>
-                          <div className="document-actions">
-                            {/* <button className="icon-button delete">
-                            <Trash2 size={18} />
-                          </button> */}
-                            {/* Only include add button if needed */}
-                            <button className="icon-button add">
-                              <EyeIcon size={18} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                      <label>Case Type</label>
+                      <input type="text"
+                        readOnly
+                        value={caseInfo.caseType}
+                      />
                     </div>
                     <div className="form-field case-remark-container">
                       <label>Nature of Case</label>
-                      <select
-                        className="case-type-select"
+                      <input type="text"
+                        readOnly
                         value={caseInfo.natureOfCase}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            natureOfCase: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="Civil">Civil</option>
-                        <option value="Criminal">Criminal</option>
-                      </select>
-                    </div>
-                    <div className="form-field add-doc-btn-container">
-                      <button type="button" className="add-document-btn">
-                        Add Documents
-                      </button>
+                      />
                     </div>
                   </div>
                   <h4>Case Results</h4>
@@ -405,12 +357,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.cidNumber}
-                        onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            cidNumber: e.target.value,
-                          })
-                        }
+                        readOnly
+
                       />
                     </div>
                     <div className="form-field">
@@ -418,6 +366,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.name}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -431,6 +380,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.occupation}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -444,6 +394,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.contactNumber}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -461,6 +412,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.householdIncome}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -474,6 +426,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.householdMembers}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -491,6 +444,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.dzongkhag}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -504,6 +458,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.villageCurrent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -517,6 +472,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.gewogCurrent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -530,6 +486,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.dzongkhagCurrent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -545,6 +502,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.villagePermanent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -558,6 +516,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.gewogPermanent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -571,6 +530,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={applicantInfo.dzongkhagPermanent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -609,6 +569,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={institutionInfo.institutionName}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
@@ -622,6 +583,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={institutionInfo.officialName}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
@@ -637,6 +599,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="text"
                         value={institutionInfo.officialContact}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
@@ -650,6 +613,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <input
                         type="email"
                         value={institutionInfo.officialEmail}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
