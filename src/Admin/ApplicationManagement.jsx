@@ -32,7 +32,7 @@ function ApplicationManagement() {
     if (error) {
       console.log(error);
     } else if (cases) {
-      const pendingCases = cases.filter(c => c.status === "Pending" || c.status === "Reviewed" || c.status === "Dismissed");
+      const pendingCases = cases.filter(c => c.status === "Pending" || c.status === "Dismissed");
       setSelectedCases(pendingCases);
       const criminalCase = cases.filter(c => c.natureOfCase === "Criminal")
       setCriminal(criminalCase);
