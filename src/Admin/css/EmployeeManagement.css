@@ -9,7 +9,7 @@
 
 .stats-card-container-employee-card {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1rem;
 }
 
@@ -411,4 +411,43 @@ table tr:last-child td {
 
 .custom-cancel-btn:hover {
   background-color: #c62828;
+}
+
+/* Pagination employee*/
+.pagination-employee {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.pagination-employee button {
+  margin: 0 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #09a29b;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.pagination-employee button:hover {
+  filter: brightness(0.8);
+}
+
+.pagination-employee button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-employee .active {
+  background-color: #15605C;
+  font-weight: bold;
+}
+
+.page-number {
+  padding: 10px;
 }

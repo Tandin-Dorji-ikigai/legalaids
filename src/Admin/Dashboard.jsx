@@ -184,21 +184,9 @@ function Dashboard() {
           <div className="stats-graph-container">
             <div className="graph-stats-heading">
               <div className="heading-header">Case Analytics</div>
-              <div className="case-data">Total Client</div>
+              <div className="case-data">Total Cases</div>
               <div className="stat-change">
-                250
-                <span className="stat-change-icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="17px"
-                    viewBox="0 -960 960 960"
-                    width="17px"
-                    fill="#00C96E"
-                  >
-                    <path d="M440-80v-647L256-544l-56-56 280-280 280 280-56 57-184-184v647h-80Z" />
-                  </svg>
-                  <div>5%</div>
-                </span>
+                {cases?.length || 0}
               </div>
             </div>
             <div className="graph-legend-container">
