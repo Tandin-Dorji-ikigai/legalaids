@@ -191,6 +191,254 @@ function EmployeeManagement() {
     handleCloseModal();
   };
 
+  const handleEnableAdmin = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableAdmin(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableAdmin = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableAdmin(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleEnableCouncil = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableCouncil(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableCouncil = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableCouncil(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleEnableEmployee = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableEmployee(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableEmployee = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableEmployee(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleEnableLawyer = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to enable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await enableLawyer(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to enable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
+  const handleDisableLawyer = (id) => {
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to disable the user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await disableLawyer(id).unwrap();
+          Swal.fire({
+            title: 'Success!',
+            text: 'User successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+        } catch (err) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to disable the user. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    });
+  }
+
   // Pagination -admin
   const [currentPage, setCurrentPage] = useState(1);
   const casesPerPage = 4;
@@ -214,8 +462,6 @@ function EmployeeManagement() {
   const indexOfLastCaseLawers = currentPage * casesPerPage;
   const indexOfFirstCaseLawers = indexOfLastCaseLawers - casesPerPage;
   const currentLawers = lawyers?.slice(indexOfFirstCaseLawers, indexOfLastCaseLawers);
-
-  
 
   return (
     <div className="dashboard-container ">
