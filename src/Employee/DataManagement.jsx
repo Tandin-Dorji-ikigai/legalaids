@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import SideNav from "./DashboardNav";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { usePostCaseMutation } from "../slices/caseApiSlice";
-import "./css/DataManagement.css";
 import Swal from "sweetalert2";
 import Loader from "../components/Loader";
 

@@ -73,10 +73,10 @@ function EmployeeManagement() {
     }
   };
 
-  const totalPages = Math.ceil(lawyers.length / casesPerPage);
+  const totalPages = Math.ceil(lawyers?.length / casesPerPage);
   const indexOfLastCase = currentPage * casesPerPage;
   const indexOfFirstCase = indexOfLastCase - casesPerPage;
-  const currentCases = lawyers.slice(indexOfFirstCase, indexOfLastCase);
+  const currentCases = lawyers?.slice(indexOfFirstCase, indexOfLastCase);
 
   return (
     <div className="dashboard-container">
@@ -113,7 +113,7 @@ function EmployeeManagement() {
             <Loader />
           ) : error ? (
             <div>Error loading lawyers. Please try again later.</div>
-          ) : filteredLawyers.length > 0 ? (
+          ) : filteredLawyers?.length > 0 ? (
             <div className="details-container lawyer-details-container">
               <table>
                 <thead>
@@ -126,7 +126,7 @@ function EmployeeManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredLawyers.map((lawyer) => (
+                  {currentCases?.map((lawyer) => (
                     <tr key={lawyer.cid}>
                       <td>{lawyer.cid}</td>
                       <td>{lawyer.userName}</td>

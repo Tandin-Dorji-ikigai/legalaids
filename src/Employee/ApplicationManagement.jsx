@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import SideNav from "./DashboardNav";
-import "./css/ApplicationManagement.css";
 import { Modal } from "@mui/material";
 import ApplicationPopup from "../components/ApplicationPopup";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
