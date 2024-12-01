@@ -97,6 +97,7 @@ i18n
           casesHelped: "CASES HELPED",
 
           //track your application
+          EnterAppId:"Enter Application Id",
           applicationTrack: "Track your application",
           justice:
             "We provide accessible, expert legal aid to ensure justice and equality for all.",
@@ -311,6 +312,7 @@ i18n
           casesHelped: "ཕན་ཐོགས་བྱུང་ཡོདཔ།",
 
           //Track  Tour Application
+          EnterAppId:"གློག་རིམ་ཨའི་ཌི་བཙུགས།",
           applicationTrack: "ཁྱོད་རའི་ཞུ་ཡིག་བརྟག་ཞིབ་འབད།",
           justice:
             "ང་བཅས་ཀྱིས་ མི་ཆ་མཉམ་ལུ་ དྲང་བདེན་དང་འདྲ་མཉམ་གྱི་དོན་ལུ་ འཐོབ་ཚུགས་པའི་ མཁས་མཆོག་ཁྲིམས་དོན་གྱི་གྲོགས་རམ་བྱིནམ་ཨིན།",

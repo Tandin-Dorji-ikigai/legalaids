@@ -56,26 +56,26 @@ const CurrentCases = () => {
   });
 
   const [applicantInfo, setApplicantInfo] = useState({
-    cidNumber: cas.cid,
-    name: cas.name,
-    occupation: cas.occupation,
-    contactNumber: cas.contactNo,
-    householdIncome: cas.income,
-    householdMembers: cas.member,
-    dzongkhag: cas.cdzongkhag,
-    villageCurrent: cas.village,
-    gewogCurrent: cas.gewog,
-    dzongkhagCurrent: cas.dzongkhag,
-    villagePermanent: cas.pvillage,
-    gewogPermanent: cas.pgewog,
-    dzongkhagPermanent: cas.pdzongkhag,
+    cidNumber: "",
+    name: "",
+    occupation: "",
+    contactNumber: "",
+    householdIncome: "",
+    householdMembers: "",
+    dzongkhag: "",
+    villageCurrent: "",
+    gewogCurrent: "",
+    dzongkhagCurrent: "",
+    villagePermanent: "",
+    gewogPermanent: "",
+    dzongkhagPermanent: "",
   });
 
   const [institutionInfo, setInstitutionInfo] = useState({
-    institutionName: cas.institutionName,
-    officialName: cas.officialName,
-    officialContact: cas.officialcNumber,
-    officialEmail: cas.officialEmail,
+    institutionName: "",
+    officialName: "",
+    officialContact: "",
+    officialEmail: "",
   });
   
   const [documents, setDocuments] = useState([

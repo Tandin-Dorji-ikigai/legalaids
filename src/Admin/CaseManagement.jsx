@@ -82,7 +82,7 @@ function CaseManagement() {
         setNatureOfCase(natureOfCase);
       }
     }
-  }, [error, cases, selectedCases]);
+  }, [error, cases]);
 
   const filteredCases = selectedCases
     ? selectedCases.filter((caseItem) => {
