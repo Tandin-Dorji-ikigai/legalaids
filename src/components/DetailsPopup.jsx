@@ -4,6 +4,7 @@ import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
+import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
@@ -30,11 +31,15 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
     </div>
   </div>
 );
+
 const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const { data: lawyers, lerror } = useGetAllLawyerQuery();
+  const { data: employees } = useGetAllEmployeeQuery();
   const [updateCase] = useUpdateResultMutation();
   const [lawyer, setLawyer] = useState();
+
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
 
   const handleViewPdf = (url) => {
     window.open(url, '_blank');
@@ -47,11 +52,13 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   useEffect(() => {
     if(lerror){
       console.log(lerror);
-    }else if(lawyers && cas){
+    }else if(lawyers && cas && employees){
       const selected = lawyers.find((lwy) => lwy.cid === cas.aLawyer);
+      const availableEmployees = employees.filter((employee) => employee.enabled === true);
+      setFilteredEmployees(availableEmployees);
       setLawyer(selected);
     }
-  }, [cas, lawyers, lerror, fetchError])
+  }, [cas, lawyers, lerror, fetchError, employees])
 
   const [expandedSections, setExpandedSections] = useState({
     caseDetails: true,
@@ -89,6 +96,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     caseType: "",
     natureOfCase: "",
     remarks: "",
+    aEmployee: ""
   })
 
   const [documents, setDocuments] = useState([
@@ -124,7 +132,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         caseType: cas.caseType,
         natureOfCase: cas.natureOfCase,
         remarks: cas.remarks,
-        outcome: cas.outcome
+        outcome: cas.outcome,
+        aEmployee: cas.aEmployee
       })
 
       setInstitutionInfo({
@@ -173,6 +182,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     const caseType = caseInfo.caseType;
     const natureOfCase = caseInfo.natureOfCase;
     const outcome = caseInfo.outcome;
+    const aEmployee = caseInfo.aEmployee;
 
     Swal.fire({
       title: "",
@@ -189,7 +199,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
           await updateCase({
             id, cid, occupation, name, contactNo, income, member,
             cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
-            officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome
+            officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee
           }).unwrap();
           Swal.fire({
             title: 'Success!',
@@ -253,15 +263,42 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
               </button>
               {expandedSections.caseDetails && (
                 <div className="section-content">
-                  <h4>Lawyer Details</h4>
+                  <h4>Lawyer & Employee Details</h4>
                   <div className="form-grid layer-detail-container">
                     <div className="form-field">
                       <label>Lawyer</label>
                       <input
                         type="text"
-                        value={lawyer?.userName}
+                        value={lawyer?.userName || "No Lawyer Assigned"}
                         readOnly
                       />
+                    </div>
+                    <div className="form-field">
+                      <label>Employee</label>
+                      <select
+                        className="custom-form-select"
+                        value={caseInfo.aEmployee}
+                        required
+                        onChange={(e) => {
+                          setCaseInfo({
+                            ...caseInfo,
+                            aEmployee: e.target.value,
+                          });
+                        }}
+                      >
+                        <option value="" disabled>
+                          Assign Employee
+                        </option>
+                        <option value="All">
+                          All Employee
+                        </option>
+                        {filteredEmployees &&
+                          filteredEmployees.map((employee) => (
+                            <option key={employee.id} value={employee.cid}>
+                              {employee.userName}
+                            </option>
+                          ))}
+                      </select>
                     </div>
                   </div>
 

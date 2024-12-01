@@ -3,6 +3,7 @@ import { Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateCaseMutation } from "../slices/caseApiSlice";
+import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
@@ -33,12 +34,24 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 
 const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
-
+  const { data: employees } = useGetAllEmployeeQuery();
   const [updateCase] = useUpdateCaseMutation();
+
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
+
+  useEffect(() => {
+    if (employees) {
+      const availableEmployees = employees.filter((employee) => employee.enabled === true);
+    
+      setFilteredEmployees(availableEmployees);
+    }
+    
+  }, [employees]);
 
   const [caseInfo, setCaseInfo] = useState({
     caseType: "Walk In",
-    natureOfCase: "Civil"
+    natureOfCase: "Civil",
+    aEmployee : ""
   })
 
 
@@ -93,7 +106,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     if (cas) {
       setCaseInfo({
         caseType: cas.caseType,
-        natureOfCase: cas.natureOfCase
+        natureOfCase: cas.natureOfCase,
+        aEmployee: cas.aEmployee
       })
 
       setApplicantInfo({
@@ -125,11 +139,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
           filename: cas[doc.docKey] || null
         }))
       );
-
-      setCaseInfo({
-        caseType: cas.caseType,
-        natureOfCase: cas.natureOfCase
-      })
     }
   }, [cas]);
 
@@ -163,7 +172,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
     const {
       caseType,
-      natureOfCase
+      natureOfCase,
+      aEmployee
     } = caseInfo;
 
     const status = "In Progress";
@@ -200,7 +210,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             officialEmail,
             caseType,
             natureOfCase,
-            status
+            status,
+            aEmployee
           }).unwrap();
 
           Swal.fire({
@@ -352,6 +363,37 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
               {expandedSections.caseDetails && (
                 <div className="section-content">
                   <h3>Case Information</h3>
+                  <h4>Employee Details</h4>
+                  <div className="form-grid layer-detail-container">
+                    <div className="form-field">
+                      <label>Employee</label>
+                      <select
+                        className="custom-form-select"
+                        value={caseInfo.aEmployee}
+                        required
+                        onChange={(e) => {
+                          setCaseInfo({
+                            ...caseInfo,
+                            aEmployee: e.target.value,
+                          });
+                        }}
+                      >
+                        <option value="" disabled>
+                          Assign Employee
+                        </option>
+                        <option value="All">
+                          All Employee
+                        </option>
+                        {filteredEmployees &&
+                          filteredEmployees.map((employee) => (
+                            <option key={employee.id} value={employee.cid}>
+                              {employee.userName}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+                  <h4>Case Status</h4>
                   <div className="form-grid">
                     <div className="form-field">
                       <label>Case Type</label>
