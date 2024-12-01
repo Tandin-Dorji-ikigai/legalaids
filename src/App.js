@@ -17,7 +17,6 @@ import EmployeeManagement from './Admin/EmployeeManagement';
 import CaseManagement from './Admin/CaseManagement';
 import ApplicationManagement from './Admin/ApplicationManagement';
 import DataManagement from './Admin/DataManagement';
-import Cursor from './components/Cursor';
 import { CssBaseline } from "@mui/material";
 import { Routes, Route, useLocation } from "react-router-dom";
 import DetailsPopup from './components/DetailsPopup';
@@ -34,10 +33,7 @@ import EmployeeDataManagement from './Employee/DataManagement'
 import BarCaseManagement from './barCouncil/CaseOverview';
 import BarRegisteredLawyer from './barCouncil/RegisteredLawyers';
 
-import CitizenDetails from './scenes/getCencus';
-
 function App() {
-
   const [currentLang, setCurrentLang] = useState(i18n.language);
 
   useEffect(() => {
@@ -45,19 +41,14 @@ function App() {
       setCurrentLang(i18n.language);
     };
 
-    i18n.on('languageChanged', handleLanguageChange); // Listen for language changes
+    i18n.on('languageChanged', handleLanguageChange);
 
     return () => {
-      i18n.off('languageChanged', handleLanguageChange); // Clean up
+      i18n.off('languageChanged', handleLanguageChange);
     };
   }, []);
 
   const location = useLocation();
-  const isAdminRoute = (pathname) => {
-    const adminRoutes = ['/dashboard', '/employeeManagement', '/caseManagement', '/applicationManagement', '/dataManagement', "/history", "/currentcases"];
-    return adminRoutes.some(route => pathname.startsWith(route));
-  };
-  const showCursor = !isAdminRoute(location.pathname);
 
   function ScrollToTop() {
     const { pathname } = useLocation();
@@ -70,15 +61,13 @@ function App() {
   }
 
   return (
-    <div className={`app ${showCursor ? 'custom-cursor' : ''}`} >
+    <div className="app">
       <ScrollToTop />
-      {showCursor && <Cursor />}
       <CssBaseline />
       <main className="content">
-
         <Routes>
-          {/* <Route index element={<CitizenDetails />} /> */}
-          <Route index path='/home' element={<Home />} />
+          <Route index element={<Home />} />
+          <Route path='/home' element={<Home />} />
           <Route path='/about' element={<About />} />
           <Route path='/eligibility' element={<Eligibity />} />
           <Route path='/legal' element={<LegalIssues />} />
@@ -111,7 +100,6 @@ function App() {
 
           <Route path='/caseOverview' element={<BarCaseManagement />} />
           <Route path='/registeredLawyers' element={<BarRegisteredLawyer />} />
-
         </Routes>
       </main>
     </div>
