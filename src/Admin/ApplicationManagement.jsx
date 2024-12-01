@@ -82,7 +82,7 @@ function ApplicationManagement() {
       }
 
     }
-  }, [error, cases, selectedCases]);
+  }, [error, cases]);
 
   const filteredCases = selectedCases
     ? selectedCases.filter((caseItem) => {
