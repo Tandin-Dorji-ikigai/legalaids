@@ -32,21 +32,19 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 );
 
 
-const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
+const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const { data: employees } = useGetAllEmployeeQuery();
   const [updateCase] = useUpdateCaseMutation();
-
-  const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [employee, setEmployee] = useState();
 
   useEffect(() => {
-    if (employees) {
-      const availableEmployees = employees.filter((employee) => employee.enabled === true);
-    
-      setFilteredEmployees(availableEmployees);
+    if (employees && cas) {
+        const eSelected = employees.find((emp) => emp.cid === cas.aEmployee);
+        setEmployee(eSelected);
     }
     
-  }, [employees]);
+  }, [employees, cas]);
 
   const [caseInfo, setCaseInfo] = useState({
     caseType: "Walk In",
@@ -185,8 +183,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       showCancelButton: true,
       confirmButtonColor: "#1E306D",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Confirm",
-      cancelButtonText: "Update",
+      confirmButtonText: "Confirm"
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -212,48 +209,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             caseType,
             natureOfCase,
             status,
-            aEmployee
-          }).unwrap();
-
-          Swal.fire({
-            title: "Success!",
-            text: "The case has been updated successfully.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-          window.location.reload()
-
-        } catch (err) {
-          Swal.fire({
-            title: "Error!",
-            text: "There was an error updating the case.",
-            icon: "error",
-            confirmButtonText: "Try Again",
-          });
-        }
-      }else{
-        try {
-          await updateCase({
-            id: caseId,
-            cid,
-            occupation,
-            name,
-            contactNo,
-            income,
-            member,
-            cdzongkhag,
-            village,
-            gewog,
-            dzongkhag,
-            pvillage,
-            pgewog,
-            pdzongkhag,
-            institutionName,
-            officialName,
-            officialcNumber,
-            officialEmail,
-            caseType,
-            natureOfCase,
             aEmployee
           }).unwrap();
 
@@ -303,7 +258,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
     const {
       caseType,
-      natureOfCase
+      natureOfCase,
+      aEmployee
     } = caseInfo;
 
     const status = "Dismissed";
@@ -340,7 +296,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             officialEmail,
             caseType,
             natureOfCase,
-            status
+            status,
+            aEmployee
           }).unwrap();
 
           Swal.fire({
@@ -410,70 +367,28 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                   <div className="form-grid layer-detail-container">
                     <div className="form-field">
                       <label>Employee</label>
-                      <select
-                        className="custom-form-select"
-                        value={caseInfo.aEmployee}
-                        required
-                        onChange={(e) => {
-                          setCaseInfo({
-                            ...caseInfo,
-                            aEmployee: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value="" disabled>
-                          Assign Employee
-                        </option>
-                        <option value="All">
-                          All Employee
-                        </option>
-                        {filteredEmployees &&
-                          filteredEmployees.map((employee) => (
-                            <option key={employee.id} value={employee.cid}>
-                              {employee.userName}
-                            </option>
-                          ))}
-                      </select>
+                      <input
+                        type="text"
+                        value={employee?.userName || "All Employee"}
+                        readOnly
+                      />
                     </div>
                   </div>
                   <h4>Case Status</h4>
                   <div className="form-grid">
                     <div className="form-field">
                       <label>Case Type</label>
-                      <select
+                      <input type="text"
+                        readOnly
                         value={caseInfo.caseType}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            caseType: e.target.value,
-                          })
-                        }
-
-                        className="selectFields"
-                      >
-                        <option value="" disabled selected>Select Case Type</option>
-                        <option value="Walk In">Walk In</option>
-                        <option value="Referral">Referral</option>
-                      </select>
-
+                      />
                     </div>
                     <div className="form-field">
                       <label>Nature Of Case</label>
-                      <select
+                      <input type="text"
+                        readOnly
                         value={caseInfo.natureOfCase}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            natureOfCase: e.target.value,
-                          })
-                        }
-                        className="selectFields"
-                      >
-                        <option value="" disabled selected>Select Nature Of Case</option>
-                        <option value="Criminal">Criminal</option>
-                        <option value="Civil">Civil</option>
-                      </select>
-
+                      />
                     </div>
                   </div>
 
@@ -842,4 +757,4 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
 });
 
-export default ApplicationPopup;
+export default EmployeeApplicationPopup;
