@@ -11,9 +11,9 @@ import { useGetCensusQuery } from '../slices/censusSlice';
 
 function Apply1() {
     const navigate = useNavigate();
-    const [cid,setCid] = useState('')
+    const [cid, setCid] = useState('')
 
-    const { data, error, isLoading } = useGetCensusQuery("11308006095");
+    const { data, error, isLoading } = useGetCensusQuery(11308006090);
     console.log(data)
 
     const [formData, setFormData] = useState({
@@ -42,7 +42,7 @@ function Apply1() {
             [name]: value
         });
 
-        if(name === "cid"){
+        if (name === "cid") {
             setCid(value)
         }
     };
