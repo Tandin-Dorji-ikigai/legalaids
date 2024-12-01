@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from "react";
 import SideNav from "./DashboardNav";
-import DetailsPopup from "../components/DetailsPopup";
+import EmployeeCasePopup from "../components/EmployeeCasePopup";
 import Modal from "@mui/material/Modal";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+import { useSelector } from "react-redux";
 
 function CaseManagement() {
   const [activeStatus, setActiveStatus] = useState("All Application");
   const { data: cases, error } = useGetAllCaseQuery();
-  const [selectedCases, setSelectedCases] = useState([]);
+  const { userInfo } = useSelector((state) => state.auth);
   const [civil, setCivil] = useState([]);
   const [criminal, setCriminal] = useState([]);
   const [walkIn, setWalkIn] = useState([]);
   const [referral, setReferral] = useState([]);
+  const [completedCases, setCompletedCases] = useState([]);
+
 
   useEffect(() => {
     if (error) {
       console.log(error);
-    } else if (cases) {
-      const pendingCases = cases.filter(c => c.status === "In Progress" || c.status === "Completed");
-      setSelectedCases(pendingCases);
+    } else if (cases && userInfo) {
+      const filteredCases = cases.filter(
+        (caseItem) =>
+          (caseItem.aEmployee === userInfo.user.username || caseItem.aEmployee === "All") &&
+          (caseItem.status === "Completed" || caseItem.status === "In Progress")
+      );
+      setCompletedCases(filteredCases);
       const criminalCase = cases.filter(c => c.natureOfCase === "Criminal")
       setCriminal(criminalCase);
       const civilCase = cases.filter(c => c.natureOfCase === "Civil")
@@ -49,7 +56,7 @@ function CaseManagement() {
   return (
     <div className="dashboard-container">
       <Modal open={open} onClose={handleClose}>
-        <DetailsPopup caseId={selectedCaseId} onClose={handleClose} />
+        <EmployeeCasePopup caseId={selectedCaseId} onClose={handleClose} />
       </Modal>
       <SideNav />
       <div className="dashboard-content">
@@ -192,23 +199,12 @@ function CaseManagement() {
                 </tr>
               </thead>
               <tbody>
-              {/* <tr
-                            key={11410008138}
-                            onClick={() => handleOpen(11410008138)}
-                          >
-              <td>11410001838</td>
-                <td>17707335</td>
-                <td>Civil</td>
-                <td>Thimphu</td>
-                <td>Pending</td>
-                <td>Walk-In</td>
-                </tr> */}
                
-              {cases && (
+              {completedCases && (
                   <>
                     {(() => {
                       if (activeStatus === "All Application") {
-                        return selectedCases.map((caseItem) => (
+                        return completedCases.map((caseItem) => (
                           <tr
                             key={caseItem.cid}
                             onClick={() => handleOpen(caseItem.id)}
@@ -222,7 +218,7 @@ function CaseManagement() {
                           </tr>
                         ));
                       } else if (activeStatus === "In Progress") {
-                        return selectedCases
+                        return completedCases
                           .filter((caseItem) => caseItem.status === "In Progress")
                           .map((caseItem) => (
                             <tr
@@ -238,7 +234,7 @@ function CaseManagement() {
                             </tr>
                           ));
                       } else if (activeStatus === "Completed") {
-                        return selectedCases
+                        return completedCases
                           .filter((caseItem) => caseItem.status === "Completed")
                           .map((caseItem) => (
                             <tr
@@ -254,7 +250,7 @@ function CaseManagement() {
                             </tr>
                           ));
                       } else {
-                        return null; // Handle any other statuses or no cases found
+                        return null;
                       }
                     })()}
                   </>

@@ -92,7 +92,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   const [caseInfo, setCaseInfo] = useState({
     aLawyer: "",
-    status: "In Progress",
+    status: "",
     caseType: "",
     natureOfCase: "",
     remarks: "",
@@ -177,7 +177,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     const officialcNumber = institutionInfo.officialContact;
     const officialEmail = institutionInfo.officialEmail;
     const remarks = caseInfo.remarks;
-    const status = caseInfo.caseStatus;
+    const status = caseInfo.status;
     const aLawyer = caseInfo.email;
     const caseType = caseInfo.caseType;
     const natureOfCase = caseInfo.natureOfCase;
@@ -264,7 +264,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
               {expandedSections.caseDetails && (
                 <div className="section-content">
                   <h4>Lawyer & Employee Details</h4>
-                  <div className="form-grid layer-detail-container">
+                  <div className="form-grid">
                     <div className="form-field">
                       <label>Lawyer</label>
                       <input

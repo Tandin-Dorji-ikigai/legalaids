@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import SideNav from "./DashboardNav";
 import { Modal } from "@mui/material";
-import ApplicationPopup from "../components/ApplicationPopup";
+import EmployeeApplicationPopup from "../components/EmployeeApplicationPopup";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+import { useSelector } from "react-redux";
 
 function ApplicationManagement() {
   const [activeStatus, setActiveStatus] = useState("All Application");
   const { data: cases, error } = useGetAllCaseQuery();
-  const [selectedCases, setSelectedCases] = useState([]);
+  const { userInfo } = useSelector((state) => state.auth);
   const [civil, setCivil] = useState([]);
   const [criminal, setCriminal] = useState([]);
   const [walkIn, setWalkIn] = useState([]);
   const [referral, setReferral] = useState([]);
+  const [completedCases, setCompletedCases] = useState([]);
 
   const handleStatusClick = (status) => {
     setActiveStatus(status);
@@ -21,8 +23,12 @@ function ApplicationManagement() {
     if (error) {
       console.log(error);
     } else if (cases) {
-      const pendingCases = cases.filter(c => c.status === "Pending" || c.status === "Dismissed");
-      setSelectedCases(pendingCases);
+      const filteredCases = cases.filter(
+        (caseItem) =>
+          (caseItem.aEmployee === userInfo.user.username || caseItem.aEmployee === "All") &&
+          (caseItem.status === "Pending")
+      );
+      setCompletedCases(filteredCases);
       const criminalCase = cases.filter(c => c.natureOfCase === "Criminal")
       setCriminal(criminalCase);
       const civilCase = cases.filter(c => c.natureOfCase === "Civil")
@@ -49,7 +55,7 @@ function ApplicationManagement() {
   return (
     <div className="dashboard-container">
       <Modal open={open} onClose={handleClose}>
-        <ApplicationPopup caseId={selectedCaseId} onClose={handleClose} />
+        <EmployeeApplicationPopup caseId={selectedCaseId} onClose={handleClose} />
       </Modal>
       <SideNav />
       <div className="dashboard-content">
@@ -193,7 +199,7 @@ function ApplicationManagement() {
                     {(() => {
                       if (activeStatus === "All Application") {
                         
-                        return selectedCases.map((caseItem) => (
+                        return completedCases.map((caseItem) => (
                           <tr
                             key={caseItem.cid}
                             onClick={() => handleOpen(caseItem.id)}
@@ -207,7 +213,7 @@ function ApplicationManagement() {
                           </tr>
                         ));
                       } else if (activeStatus === "Pending") {
-                        return selectedCases
+                        return completedCases
                           .filter((caseItem) => caseItem.status === "Pending")
                           .map((caseItem) => (
                             <tr
@@ -223,7 +229,7 @@ function ApplicationManagement() {
                             </tr>
                           ));
                       } else if (activeStatus === "Reviewed") {
-                        return selectedCases
+                        return completedCases
                           .filter((caseItem) => caseItem.status === "Reviewed")
                           .map((caseItem) => (
                             <tr
@@ -239,7 +245,7 @@ function ApplicationManagement() {
                             </tr>
                           ));
                       } else if (activeStatus === "Dismissed") {
-                        return selectedCases
+                        return completedCases
                           .filter((caseItem) => caseItem.status === "Dismissed")
                           .map((caseItem) => (
                             <tr
