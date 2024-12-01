@@ -371,7 +371,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
                         className="selectFields"
                       >
-                         <option value="" disabled selected>Select Case Type</option>
+                        <option value="" disabled selected>Select Case Type</option>
                         <option value="Walk In">Walk In</option>
                         <option value="Referral">Referral</option>
                       </select>
