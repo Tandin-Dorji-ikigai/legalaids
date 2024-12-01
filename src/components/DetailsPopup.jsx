@@ -3,6 +3,7 @@ import { X, Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
+import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
@@ -31,7 +32,9 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 );
 const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
+  const { data: lawyers, lerror } = useGetAllLawyerQuery();
   const [updateCase] = useUpdateResultMutation();
+  const [lawyer, setLawyer] = useState();
 
   const handleViewPdf = (url) => {
     window.open(url, '_blank');
@@ -41,6 +44,14 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     console.log(fetchError);
   }
 
+  useEffect(() => {
+    if(lerror){
+      console.log(lerror);
+    }else if(lawyers && cas){
+      const selected = lawyers.find((lwy) => lwy.cid === cas.aLawyer);
+      setLawyer(selected);
+    }
+  }, [cas, lawyers, lerror, fetchError])
 
   const [expandedSections, setExpandedSections] = useState({
     caseDetails: true,
@@ -74,7 +85,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   const [caseInfo, setCaseInfo] = useState({
     aLawyer: "",
-    status: "InProgress",
+    status: "In Progress",
     caseType: "",
     natureOfCase: "",
     remarks: "",
@@ -245,10 +256,10 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                   <h4>Lawyer Details</h4>
                   <div className="form-grid layer-detail-container">
                     <div className="form-field">
-                      <label>Email</label>
+                      <label>Lawyer</label>
                       <input
                         type="text"
-                        value={caseInfo.aLawyer || "No lawyer assigned"}
+                        value={lawyer?.userName}
                         readOnly
                       />
                     </div>
@@ -268,7 +279,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       }
                     >
                       <option value="" disabled selected>Select Case Status</option>
-                      <option value="InProgress">In Progress</option>
+                      <option value="In Progress">In Progress</option>
                       <option value="Completed">Completed</option>
                       <option value="Dismissed">Dismissed</option>
 
