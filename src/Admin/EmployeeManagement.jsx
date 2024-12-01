@@ -220,13 +220,13 @@ function EmployeeManagement() {
   const currentLawers = lawyers?.slice(indexOfFirstCaseLawers, indexOfLastCaseLawers);
 
   // Pagination -barCouncil
-  // const [currentPageBarCouncil, setCurrentPageBarCouncil] = useState(1);
-  // const casesPerPageBarCouncil = 4;
+  const [currentPageBarCouncil, setCurrentPageBarCouncil] = useState(1);
 
-  // const totalPagesBarCouncil = Math.ceil(admins.length / casesPerPage);
-  // const indexOfLastCaseBarCouncil = currentPage * casesPerPage;
-  // const indexOfFirstCaseBarCouncil = indexOfLastCase - casesPerPage;
-  // const currentBarCouncil = bar.slice(indexOfFirstCase, indexOfLastCase);
+  const totalPagesBarCouncil = Math.ceil(councils?.length / casesPerPage);
+  const indexOfLastCaseBarCouncil = currentPage * casesPerPage;
+  const indexOfFirstCaseBarCouncil = indexOfLastCaseBarCouncil - casesPerPage;
+  const currentBarCouncil = councils?.slice(indexOfFirstCaseBarCouncil, indexOfLastCaseBarCouncil);
+
   const handleEnableAdmin = (id) => {
     Swal.fire({
       title: "",
@@ -530,20 +530,6 @@ function EmployeeManagement() {
         <div className="users-section">
           <div className="users-header">Users</div>
           <div className="search-bar">
-            <div className="search-bar-container">
-              <input type="text" placeholder="Search" />
-              <div className="search-bar-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="20px"
-                  viewBox="0 -960 960 960"
-                  width="20px"
-                  fill="#fff"
-                >
-                  <path d="M765-144 526-383q-30 22-65.79 34.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Z" />
-                </svg>
-              </div>
-            </div>
             <button className="add-user-btn" onClick={handleAddUser}>
               Add User
             </button>
@@ -815,7 +801,7 @@ function EmployeeManagement() {
                 </thead>
                 <tbody>
                   {councils &&
-                    councils.map((council) => {
+                    currentBarCouncil.map((council) => {
                       return (
                         <tr key={council.cid}>
                           <td>{council.cid}</td>
@@ -830,6 +816,19 @@ function EmployeeManagement() {
                     })}
                 </tbody>
               </table>
+              <div className="pagination-employee">
+                <button onClick={() => setCurrentPageBarCouncil(currentPageBarCouncil - 1)} disabled={currentPageBarCouncil === 1}>
+                  Previous
+                </button>
+                {Array.from({ length: totalPagesBarCouncil }, (_, index) => (
+                  <button key={index + 1} onClick={() => setCurrentPageBarCouncil(index + 1)} className={currentPageBarCouncil === index + 1 ? 'active' : ''}>
+                    {index + 1}
+                  </button>
+                ))}
+                <button onClick={() => setCurrentPageBarCouncil(currentPageBarCouncil + 1)} disabled={currentPageBarCouncil === totalPagesBarCouncil}>
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </div>

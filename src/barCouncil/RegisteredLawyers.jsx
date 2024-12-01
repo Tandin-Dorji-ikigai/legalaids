@@ -1,10 +1,29 @@
 import React, { useEffect, useState } from "react";
 import SideNav from "./DashboardNav";
-import { useGetAllLawyerQuery, useEnableLawyerMutation, useDisableLawyerMutation } from "../slices/lawyerSlice";
+import { useGetAllLawyerQuery, useEnableLawyerMutation, useDisableLawyerMutation, usePostLawyerMutation } from "../slices/lawyerSlice";
+import { useGetAllRoleQuery } from "../slices/userApiSlice";
 import Swal from "sweetalert2";
 import Loader from "../components/Loader";
 
-function EmployeeManagement() {
+
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+function RegisteredLawyers() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const casesPerPage = 10;
@@ -65,13 +84,106 @@ function EmployeeManagement() {
     setSearchQuery(query);
     if (lawyers) {
       const filtered = lawyers.filter((lawyer) =>
-        Object.values(lawyer).some((value) =>
-          String(value).toLowerCase().includes(query.toLowerCase())
+        Object.keys(lawyer).some((key) =>
+          String(lawyer[key]).toLowerCase().includes(query.toLowerCase())
         )
       );
       setFilteredLawyers(filtered);
     }
   };
+
+
+  const { data: roles } = useGetAllRoleQuery();
+  const [postLawyer] = usePostLawyerMutation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [cid, setCid] = useState("");
+  const [userName, setUsername] = useState("");
+  const [contactNo, setContactNo] = useState("");
+  const [password, setPassword] = useState("");
+  const [roleId, setRoleId] = useState()
+
+  useEffect(() => {
+    if (roles) {
+      const role = roles.find(role => role.name === "Lawyer");
+      if (role) {
+        setRoleId(role.id);
+      }
+    }
+  }, [roles]);
+
+  const handleAddUser = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEmail("");
+    setEmailError("");
+  };
+
+
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    if (newEmail && !isValidEmail(newEmail)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handleInviteUser = () => {
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to register this user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const enabled = true;
+          await postLawyer({
+            cid,
+            userName,
+            contactNo,
+            email,
+            password,
+            enabled,
+            roleId
+          })
+          Swal.fire({
+            title: "Success!",
+            text: "The user has been registered successfully.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+          window.location.reload()
+        } catch (err) {
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error registering the user.",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      }
+    })
+  }
+
 
   const totalPages = Math.ceil(lawyers?.length / casesPerPage);
   const indexOfLastCase = currentPage * casesPerPage;
@@ -108,6 +220,99 @@ function EmployeeManagement() {
               </div>
 
             </div>
+
+            <button className="add-user-btn" onClick={handleAddUser}>
+              Add Lawyer
+            </button>
+
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+              <div className="custom-modal-overlay">
+                <div className="custom-modal-content">
+                  <h2 className="custom-modal-header">Add User</h2>
+                  <form>
+                    <div className="custom-form-group">
+                      <label className="custom-form-label">CID</label>
+                      <input
+                        className="custom-form-input"
+                        type="text"
+                        placeholder="Enter CID"
+                        value={cid}
+                        required
+                        onChange={(e) => setCid(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="custom-form-group">
+                      <label className="custom-form-label">Username</label>
+                      <input
+                        className="custom-form-input"
+                        type="text"
+                        placeholder="Enter username"
+                        required
+                        value={userName}
+                        onChange={(e) => setUsername(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="custom-form-group">
+                      <label className="custom-form-label">Contact No</label>
+                      <input
+                        className="custom-form-input"
+                        type="text"
+                        placeholder="Enter contact number"
+                        value={contactNo}
+                        required
+                        onChange={(e) => setContactNo(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="custom-form-group">
+                      <label className="custom-form-label">Email</label>
+                      <input
+                        className="custom-form-input"
+                        type="email"
+                        placeholder="Enter email"
+                        required
+                        value={email}
+                        onChange={handleEmailChange}
+                      />
+                      {emailError && (
+                        <p className="custom-error-message">{emailError}</p>
+                      )}
+                    </div>
+
+                    <div className="custom-form-group">
+                      <label className="custom-form-label">Password</label>
+                      <input
+                        className="custom-form-input"
+                        type="password"
+                        placeholder="Enter password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="custom-modal-buttons">
+                      <button
+                        type="button"
+                        className="custom-button custom-add-user-btn"
+                        onClick={handleInviteUser}
+                      >
+                        Add
+                      </button>
+                      <button
+                        type="button"
+                        className="custom-button custom-cancel-btn"
+                        onClick={handleCloseModal}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </Modal>
+
           </div>
           {isLoading ? (
             <Loader />
@@ -126,7 +331,7 @@ function EmployeeManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentCases?.map((lawyer) => (
+                  {filteredLawyers?.map((lawyer) => (
                     <tr key={lawyer.cid}>
                       <td>{lawyer.cid}</td>
                       <td>{lawyer.userName}</td>
@@ -178,4 +383,4 @@ function EmployeeManagement() {
   );
 }
 
-export default EmployeeManagement;
+export default RegisteredLawyers;
