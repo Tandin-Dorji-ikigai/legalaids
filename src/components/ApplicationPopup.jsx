@@ -91,14 +91,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (cas) {
-      console.log(cas)
-      // Update caseInfo
       setCaseInfo({
         caseType: cas.caseType,
         natureOfCase: cas.natureOfCase
       })
 
-      // Update applicantInfo
       setApplicantInfo({
         cidNumber: cas.cid,
         name: cas.name,
@@ -115,7 +112,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
         dzongkhagPermanent: cas.pdzongkhag,
       });
 
-      // Update institutionInfo
       setInstitutionInfo({
         institutionName: cas.institutionName,
         officialName: cas.officialName,
@@ -123,7 +119,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
         officialEmail: cas.officialEmail,
       });
 
-      // Update documents
       setDocuments(prev =>
         prev.map(doc => ({
           ...doc,
