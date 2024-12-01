@@ -8,7 +8,6 @@ function CaseManagement() {
   const { data: cases, error } = useGetAllCaseQuery();
   const [selectedCases, setSelectedCases] = useState([]);
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const casesPerPage = 10;
 
@@ -23,14 +22,13 @@ function CaseManagement() {
   const [caseType, setCaseType] = useState([])
   const [natureOfCase, setNatureOfCase] = useState([])
 
+
   useEffect(() => {
     if (error) {
       console.log(error);
     } else if (cases) {
       const pendingCases = cases.filter(c => c.status === "In Progress" || c.status === "Completed");
       setSelectedCases(pendingCases);
-
-      // Dropdowns
       if (selectedCases) {
         const status = Array.from(
           new Set(
