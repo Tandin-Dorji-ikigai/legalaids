@@ -61,7 +61,7 @@ function LawyerSideNav() {
     <div className="lawyer-sidenav-container">
       <div className="lawyer-side-nav-logo-container">
         <div className="lawyer-dashboard-navLogo">
-          <Link to="/">
+          <Link to="/currentcases">
             <img src={Logo} alt="Logo" />
           </Link>
         </div>

@@ -1,23 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LawyerSideNav from "./LawyerDashboardNav";
 import "./css/History.css";
 import HistoryPopup from "../components/HistoryPopup";
 import { Modal } from "@mui/material";
+import { useSelector } from "react-redux";
+import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+
 const History = () => {
   const [activeStatus, setActiveStatus] = useState("All Application");
+  const { data:cases } = useGetAllCaseQuery();
+  const { userInfo } = useSelector((state) => state.auth);
+  const [completedCases, setCompletedCases] = useState([]);
+  const [selected, setSelected] = useState();
+
+  useEffect(() => {
+    if (cases && userInfo) {
+      const filteredCases = cases.filter(
+        (caseItem) =>
+          caseItem.aLawyer === userInfo.user.username &&
+          caseItem.status === "Completed"
+      );
+      setCompletedCases(filteredCases);
+    }
+  }, [cases, userInfo]);
 
   const handleStatusClick = (status) => {
     setActiveStatus(status);
   };
 
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (id) => {
+    setOpen(true);
+    setSelected(id);
+  };
   const handleClose = () => setOpen(false);
 
   return (
     <div className="dashboard-container">
       <Modal open={open} onClose={handleClose}>
-        <HistoryPopup onClose={handleClose} />
+        <HistoryPopup caseId ={selected} onClose={handleClose} />
       </Modal>
       <LawyerSideNav />
       <div className="dashboard-content">
@@ -105,22 +126,16 @@ const History = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr onClick={handleOpen}>
-                  <td>1121850223</td>
-                  <td>11/04/2024</td>
-                  <td>Criminal</td>
-                  <td>Thimphu</td>
-                  <td>Pending</td>
-                  <td>Walk-In</td>
+              {completedCases && completedCases.map((caseItem) => (
+                <tr key={caseItem.cid} onClick={() => handleOpen(caseItem.id)}>
+                  <td>{caseItem.cid}</td>
+                  <td>{caseItem.aDate}</td>
+                  <td>{caseItem.natureOfCase}</td>
+                  <td>{caseItem.cdzongkhag}</td>
+                  <td>{caseItem.status}</td>
+                  <td>{caseItem.caseType}</td>
                 </tr>
-                <tr onClick={handleOpen}>
-                  <td>1141005900</td>
-                  <td>11/04/2024</td>
-                  <td>Civil</td>
-                  <td>Punakha</td>
-                  <td>Granted</td>
-                  <td>Walk-In</td>
-                </tr>
+              ))}
               </tbody>
             </table>
           </div>

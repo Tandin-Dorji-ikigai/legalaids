@@ -1,9 +1,54 @@
-import React, { useState } from "react";
-import { ChevronDown, ChevronUp} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp, EyeIcon} from "lucide-react";
 import LawyerSideNav from "./LawyerDashboardNav";
 import "./css/CurrentCases.css";
+import { useSelector } from "react-redux";
+import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+
+const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
+  <div className="document-item">
+    <div>
+      <span className="document-label">{label}</span>
+      {isLoading ? (
+        <span className="document-filename">Loading...</span>
+      ) : (
+        <span className="document-filename">
+          {filename ? filename.split('/').pop() : 'No file'}
+        </span>
+      )}
+    </div>
+    <div className="document-actions">
+      <button
+        className="icon-button add"
+        disabled={isLoading || !filename}
+        onClick={() => filename && onViewPdf(filename)}
+      >
+        <EyeIcon size={18} />
+      </button>
+    </div>
+  </div>
+);
 
 const CurrentCases = () => {
+  const { data:cases, error: fetchError, isLoading } = useGetAllCaseQuery();
+  const { userInfo } = useSelector((state) => state.auth);
+  const [cas, setCase] = useState([]);
+
+  if (fetchError) {
+    console.log(fetchError)
+  }
+
+  useEffect(() => {
+    if (cases && userInfo) {
+      const filteredCase = cases.find(
+        (caseItem) =>
+          caseItem.aLawyer === userInfo.user.username &&
+          caseItem.status === "In Progress"
+      );
+      setCase(filteredCase);
+    }
+  }, [cases, userInfo]);
+
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: true,
     institutions: true,
@@ -11,54 +56,78 @@ const CurrentCases = () => {
   });
 
   const [applicantInfo, setApplicantInfo] = useState({
-    cidNumber: "11410007866",
-    name: "Dorji Tshering",
-    occupation: "Teacher",
-    contactNumber: "17734567",
-    householdIncome: "Nu. 50,000",
-    householdMembers: "5",
-    dzongkhag: "Thimphu",
-    villageCurrent: "Tsento",
-    gewogCurrent: "Tsento",
-    dzongkhagCurrent: "Paro",
-    villagePermanent: "Tsento",
-    gewogPermanent: "Tsento",
-    dzongkhagPermanent: "Paro",
+    cidNumber: cas.cid,
+    name: cas.name,
+    occupation: cas.occupation,
+    contactNumber: cas.contactNo,
+    householdIncome: cas.income,
+    householdMembers: cas.member,
+    dzongkhag: cas.cdzongkhag,
+    villageCurrent: cas.village,
+    gewogCurrent: cas.gewog,
+    dzongkhagCurrent: cas.dzongkhag,
+    villagePermanent: cas.pvillage,
+    gewogPermanent: cas.pgewog,
+    dzongkhagPermanent: cas.pdzongkhag,
   });
 
   const [institutionInfo, setInstitutionInfo] = useState({
-    institutionName: "Bhutan National Legal Institute",
-    officialName: "Pema Dorji",
-    officialContact: "17634882",
-    officialEmail: "pema23@gmail.com",
+    institutionName: cas.institutionName,
+    officialName: cas.officialName,
+    officialContact: cas.officialcNumber,
+    officialEmail: cas.officialEmail,
   });
-  const handleFileUpload = (event, filename) => {
-    const file = event.target.files[0];
-    // Logic to handle the file upload, such as saving it to a database or sending it to a server
-    console.log(`File selected for ${filename}:`, file);
-  };
-  const [expandedDocuments, setExpandedDocuments] = useState([
-    { label: "CID or Valid Passport", filename: "passport.pdf" },
-    { label: "Details of Household members", filename: "passport.pdf" },
-    { label: "Attachment for household income", filename: "passport.pdf" },
-    {
-      label: "Attachment for household disposable capital",
-      filename: "passport.pdf",
-    },
-    { label: "Brief Background of the Case*", filename: "passport.pdf" },
-    { label: "Evidence of any form of disability.", filename: "passport.pdf" },
+  
+  const [documents, setDocuments] = useState([
+    { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
+    { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
+    { label: "Attachment for household income", filename: null, docKey: 'hIncomeDoc' },
+    { label: "Attachment for household disposable capital", filename: null, docKey: 'hCapitalDoc' },
+    { label: "Brief Background of the Case*", filename: null, docKey: 'cBackgroundDoc' },
+    { label: "Evidence of any form of disability.", filename: null, docKey: 'disabilityDoc' },
   ]);
+
+  useEffect(() => {
+    if (cas) {
+      setApplicantInfo({
+        cidNumber: cas.cid,
+        name: cas.name,
+        occupation: cas.occupation,
+        contactNumber: cas.contactNo,
+        householdIncome: cas.income,
+        householdMembers: cas.member,
+        dzongkhag: cas.cdzongkhag,
+        villageCurrent: cas.village,
+        gewogCurrent: cas.gewog,
+        dzongkhagCurrent: cas.dzongkhag,
+        villagePermanent: cas.pvillage,
+        gewogPermanent: cas.pgewog,
+        dzongkhagPermanent: cas.pdzongkhag,
+      });
+
+      setInstitutionInfo({
+        institutionName: cas.institutionName,
+        officialName: cas.officialName,
+        officialContact: cas.officialcNumber,
+        officialEmail: cas.officialEmail,
+      });
+
+      setDocuments(prev =>
+        prev.map(doc => ({
+          ...doc,
+          filename: cas[doc.docKey] || null
+        }))
+      );
+
+    }
+  }, [cas]);
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const handleConfirm = () => {
-    console.log("Confirmed", { applicantInfo, institutionInfo });
-  };
-
-  const handleCancel = () => {
-    console.log("Cancelled");
+  const handleViewPdf = (url) => {
+    window.open(url, '_blank');
   };
 
   return (
@@ -91,6 +160,7 @@ const CurrentCases = () => {
                           cidNumber: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -104,6 +174,7 @@ const CurrentCases = () => {
                           name: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -117,6 +188,7 @@ const CurrentCases = () => {
                           occupation: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -130,6 +202,7 @@ const CurrentCases = () => {
                           contactNumber: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -148,6 +221,7 @@ const CurrentCases = () => {
                           householdIncome: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -161,6 +235,7 @@ const CurrentCases = () => {
                           householdMembers: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -174,6 +249,7 @@ const CurrentCases = () => {
                           dzongkhag: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -191,6 +267,7 @@ const CurrentCases = () => {
                           villageCurrent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -204,6 +281,7 @@ const CurrentCases = () => {
                           gewogCurrent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -217,6 +295,7 @@ const CurrentCases = () => {
                           dzongkhagCurrent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -234,6 +313,7 @@ const CurrentCases = () => {
                           villagePermanent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -247,6 +327,7 @@ const CurrentCases = () => {
                           gewogPermanent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -260,6 +341,7 @@ const CurrentCases = () => {
                           dzongkhagPermanent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -290,6 +372,7 @@ const CurrentCases = () => {
                           institutionName: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -307,6 +390,7 @@ const CurrentCases = () => {
                           officialName: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -320,6 +404,7 @@ const CurrentCases = () => {
                           officialContact: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -333,6 +418,7 @@ const CurrentCases = () => {
                           officialEmail: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -351,29 +437,19 @@ const CurrentCases = () => {
             {expandedSections.documents && (
               <div className="lawyer-section-content">
                 <h3>Check List of Documents*</h3>
-                <div className="lawyer-document-list">
-                  {expandedDocuments.map((doc, index) => (
-                    <div key={index} className="document-upload-item">
-                      <label>{doc.label}</label>
-                      <input
-                        type="file"
-                        name={doc.filename}
-                        onChange={(e) => handleFileUpload(e, doc.filename)}
-                      />
-                    </div>
+                <div className="document-list">
+                  {documents.map((doc, index) => (
+                    <DocumentItem
+                    key={index}
+                    label={doc.label}
+                    filename={doc.filename}
+                    isLoading={isLoading}
+                    onViewPdf={handleViewPdf}
+                  />
                   ))}
                 </div>
               </div>
             )}
-          </div>
-
-          <div className="lawyer-action-buttons">
-            <button onClick={handleConfirm} className="lawyer-confirm-button">
-              Confirm
-            </button>
-            <button onClick={handleCancel} className="lawyer-cancel-button">
-              Cancel
-            </button>
           </div>
         </div>
       </div>

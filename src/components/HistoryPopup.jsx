@@ -1,81 +1,119 @@
-import React, { useState, forwardRef } from "react";
-import { X, Trash2, Plus, Minus } from "lucide-react";
+import React, { useState, forwardRef, useEffect } from "react";
+import { Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
+import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 
-const DocumentItem = ({ label, filename }) => (
+const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
     <div>
       <span className="document-label">{label}</span>
-      <span className="document-filename">{filename}</span>
+      {isLoading ? (
+        <span className="document-filename">Loading...</span>
+      ) : (
+        <span className="document-filename">
+          {filename ? filename.split('/').pop() : 'No file'}
+        </span>
+      )}
     </div>
     <div className="document-actions">
-      <button className="icon-button delete">
-        <Trash2 size={18} />
-      </button>
-      {/* Only include add button if needed */}
-      <button className="icon-button add">
-        <Plus size={18} />
+      <button
+        className="icon-button add"
+        disabled={isLoading || !filename}
+        onClick={() => filename && onViewPdf(filename)}
+      >
+        <EyeIcon size={18} />
       </button>
     </div>
   </div>
 );
 
-const HistoryPopup = forwardRef(({ onClose }, ref) => {
+const HistoryPopup = forwardRef(({ caseId, onClose }, ref) => {
+  const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: true,
     institutions: false,
     documents: false,
   });
 
+  if (fetchError) {
+    console.log(fetchError)
+  }
+
   const [applicantInfo, setApplicantInfo] = useState({
-    cidNumber: "11410007866",
-    name: "Dorji Tshering",
-    occupation: "Teacher",
-    contactNumber: "17734567",
-    householdIncome: "Nu. 50,000",
-    householdMembers: "5",
-    dzongkhag: "Thimphu",
-    villageCurrent: "Tsento",
-    gewogCurrent: "Tsento",
-    dzongkhagCurrent: "Paro",
-    villagePermanent: "Tsento",
-    gewogPermanent: "Tsento",
-    dzongkhagPermanent: "Paro",
+    cidNumber: "",
+    name: "",
+    occupation: "",
+    contactNumber: "",
+    householdIncome: "",
+    householdMembers: "",
+    dzongkhag: "",
+    villageCurrent: "",
+    gewogCurrent: "",
+    dzongkhagCurrent: "",
+    villagePermanent: "",
+    gewogPermanent: "",
+    dzongkhagPermanent: "",
   });
 
   const [institutionInfo, setInstitutionInfo] = useState({
-    institutionName: "Bhutan National Legal Institute",
-    officialName: "Pema Dorji",
-    officialContact: "17634882",
-    officialEmail: "pema23@gmail.com",
+    institutionName: "",
+    officialName: "",
+    officialContact: "",
+    officialEmail: "",
   });
 
-  const [expandedDocuments, setExpandedDocuments] = useState([
-    { label: "CID or Valid Passport", filename: "passport.pdf" },
-    { label: "Details of Household members", filename: "passport.pdf" },
-    { label: "Attachment for household income", filename: "passport.pdf" },
-    {
-      label: "Attachment for household disposable capital",
-      filename: "passport.pdf",
-    },
-    { label: "Brief Background of the Case*", filename: "passport.pdf" },
-    { label: "Evidence of any form of disability.", filename: "passport.pdf" },
+  const [documents, setDocuments] = useState([
+    { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
+    { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
+    { label: "Attachment for household income", filename: null, docKey: 'hIncomeDoc' },
+    { label: "Attachment for household disposable capital", filename: null, docKey: 'hCapitalDoc' },
+    { label: "Brief Background of the Case*", filename: null, docKey: 'cBackgroundDoc' },
+    { label: "Evidence of any form of disability.", filename: null, docKey: 'disabilityDoc' },
   ]);
+
+  const handleViewPdf = (url) => {
+    window.open(url, '_blank');
+  };
+
+  useEffect(() => {
+    if (cas) {
+      setApplicantInfo({
+        cidNumber: cas.cid,
+        name: cas.name,
+        occupation: cas.occupation,
+        contactNumber: cas.contactNo,
+        householdIncome: cas.income,
+        householdMembers: cas.member,
+        dzongkhag: cas.cdzongkhag,
+        villageCurrent: cas.village,
+        gewogCurrent: cas.gewog,
+        dzongkhagCurrent: cas.dzongkhag,
+        villagePermanent: cas.pvillage,
+        gewogPermanent: cas.pgewog,
+        dzongkhagPermanent: cas.pdzongkhag,
+      });
+
+      setInstitutionInfo({
+        institutionName: cas.institutionName,
+        officialName: cas.officialName,
+        officialContact: cas.officialcNumber,
+        officialEmail: cas.officialEmail,
+      });
+
+      setDocuments(prev =>
+        prev.map(doc => ({
+          ...doc,
+          filename: cas[doc.docKey] || null
+        }))
+      );
+
+    }
+  }, [cas]);
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const handleConfirm = () => {
-    // Add your confirmation logic here
-    console.log("Confirmed", { applicantInfo, institutionInfo });
-  };
-
-  const handleCancel = () => {
-    // Add your cancellation logic here
-    console.log("Cancelled");
-    onClose(); // Close the popup on cancel
-  };
 
   return (
     <div className="popup-overlay" ref={ref}>
@@ -127,6 +165,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           cidNumber: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -140,6 +179,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           name: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -157,6 +197,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           occupation: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -170,6 +211,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           contactNumber: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -187,6 +229,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           householdIncome: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -200,6 +243,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           householdMembers: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -213,6 +257,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           dzongkhag: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -230,6 +275,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           villageCurrent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -243,6 +289,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           gewogCurrent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -256,6 +303,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           dzongkhagCurrent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -273,6 +321,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           villagePermanent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -286,6 +335,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           gewogPermanent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -299,6 +349,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           dzongkhagPermanent: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -336,6 +387,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           institutionName: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -353,6 +405,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           officialName: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -366,6 +419,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           officialContact: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                   <div className="form-field">
@@ -379,6 +433,7 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
                           officialEmail: e.target.value,
                         })
                       }
+                      readOnly
                     />
                   </div>
                 </div>
@@ -405,12 +460,14 @@ const HistoryPopup = forwardRef(({ onClose }, ref) => {
               <div className="section-content">
                 <h3>Check List of Documents*</h3>
                 <div className="document-list">
-                  {expandedDocuments.map((doc, index) => (
+                  {documents.map((doc, index) => (
                     <DocumentItem
-                      key={index}
-                      label={doc.label}
-                      filename={doc.filename}
-                    />
+                    key={index}
+                    label={doc.label}
+                    filename={doc.filename}
+                    isLoading={isLoading}
+                    onViewPdf={handleViewPdf}
+                  />
                   ))}
                 </div>
               </div>
