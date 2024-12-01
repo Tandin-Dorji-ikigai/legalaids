@@ -312,6 +312,44 @@
   font-size: 30px;
 }
 
+.termsAndConditionWrapper{
+  /* border: 1px solid red; */
+  height: auto;
+  margin-bottom:20px ;
+}
+
+.termsContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-size: clamp(14px, 3vw, 16px);
+  padding: 10px 20px;
+}
+
+
+.custom-form__checkbox-container {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* Custom Checkbox Label */
+.custom-form__checkbox-label{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.custom-checkbox {
+  width: 20px; 
+  height: 20px;
+}
+
+.custom-form__checkbox-label span{
+  font-weight: 600;
+  font-size: clamp(14px,2vw,16px);
+}
+
 @media (max-width: 1050px) {
   .apply-tab {
     text-align: center;
@@ -389,6 +427,10 @@
   .application-status {
     width: 100%;
   }
+
+  .termsContainer{
+    padding: 5px 10px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -405,5 +447,11 @@
   .mid-tab,
   .last-tab {
     padding: 5px;
+  }
+}
+
+@media (max-width: 320px) {
+  .termsContainer{
+    padding: 0;
   }
 }
