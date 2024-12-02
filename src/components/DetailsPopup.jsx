@@ -5,6 +5,7 @@ import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
+import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
@@ -38,6 +39,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: employees } = useGetAllEmployeeQuery();
   const [updateCase] = useUpdateResultMutation();
   const [lawyer, setLawyer] = useState();
+  const [sendEmail] = useSendEmailMutation();
+  const [email, setEmail] = useState();
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
 
@@ -47,6 +50,11 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   if (fetchError) {
     console.log(fetchError);
+  }
+
+  const getEmail = (cid) => {
+    const employeeMail = employees.find((employee) => employee.cid === cid);
+    setEmail(employeeMail.email);
   }
 
   useEffect(() => {
@@ -153,6 +161,12 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     }
   }, [cas]);
 
+  const notifyEmployee = async () => {
+    const to = email;
+    const subject = "Application Assignment";
+    const body = `Respected Sir/Madam, There has been a new application assigned to you. Please check the application for further details. Thank you.`;
+    await sendEmail({ to, subject, body }).unwrap();
+  }
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -196,6 +210,11 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
       if (result.isConfirmed) {
         try {
           const id = caseId;
+
+          if(email){
+            notifyEmployee();
+          }
+
           await updateCase({
             id, cid, occupation, name, contactNo, income, member,
             cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
@@ -284,6 +303,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                             ...caseInfo,
                             aEmployee: e.target.value,
                           });
+                          getEmail(e.target.value);
                         }}
                       >
                         <option value="" disabled>
