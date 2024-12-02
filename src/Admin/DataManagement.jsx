@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import SideNav from "./DashboardNav";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { usePostCaseMutation } from "../slices/caseApiSlice";
+import { useSendEmailMutation } from "../slices/emailApiSlice";
+import { useGetAllAdminQuery } from "../slices/adminSlice";
 import "./css/DataManagement.css";
 import Swal from "sweetalert2";
 import Loader from "../components/Loader";
@@ -9,6 +11,8 @@ import Loader from "../components/Loader";
 // DataManagement Component
 function DataManagement() {
   const [postCase, { isLoading }] = usePostCaseMutation();
+  const { data: admins } = useGetAllAdminQuery();
+  const [sendEmail, {isMailLoading}] = useSendEmailMutation();
   const [files, setFiles] = useState([]);
 
   const [expandedSections, setExpandedSections] = useState({
@@ -65,6 +69,15 @@ function DataManagement() {
     }));
   };
 
+  const notifyAdmin = (id) => {
+    admins.map( async (admin) => {
+      const to = admin.email;
+      const subject = "New Application";
+      const body = `Respected Sir/Madam, There has been a new application applied with Application ID ${id}. Please check the application for further details. Thank you.`;
+      await sendEmail({ to, subject, body }).unwrap();
+    });
+  }
+
   const handleConfirm = async () => {
     const formData = new FormData();
     formData.append("cid", applicantInfo.cidNumber);
@@ -105,20 +118,25 @@ function DataManagement() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          
           const res = await postCase(formData).unwrap();
+          notifyAdmin(res.appid);
+
           Swal.fire({
             icon: "success",
             title: "Application Submitted",
             text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
+            showConfirmButton: false,
+            timer: 2000
           });
           window.location.reload()
 
-        } catch (err) {
+        } catch (error) {
           Swal.fire({
             title: "Error!",
             text: "There was an error submitting the case data.",
             icon: "error",
-            confirmButtonText: "Try Again",
+            confirmButtonText: "OK",
           });
         }
       }
@@ -144,7 +162,6 @@ function DataManagement() {
         return;
       }
 
-      // Optional: Additional file type check
       if (selectedFile.type !== 'application/pdf') {
         Swal.fire({
           icon: 'error',
@@ -171,6 +188,7 @@ function DataManagement() {
   return (
     <div className="dashboard-container">
       {isLoading && <Loader />}
+      {isMailLoading && <Loader />}
       <SideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">Data Management</div>

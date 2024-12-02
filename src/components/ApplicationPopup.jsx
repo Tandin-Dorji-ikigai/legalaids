@@ -6,6 +6,8 @@ import { useUpdateCaseMutation } from "../slices/caseApiSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
+import { useSendEmailMutation } from "../slices/emailApiSlice";
+import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -35,7 +37,10 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const { data: employees } = useGetAllEmployeeQuery();
+  const { data: councils } = useGetAllCouncilQuery();
   const [updateCase] = useUpdateCaseMutation();
+  const [sendEmail] = useSendEmailMutation();
+  const [email, setEmail] = useState();
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
 
@@ -53,6 +58,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     natureOfCase: "Civil",
     aEmployee : ""
   })
+
+  const getEmail = (cid) => {
+    const employeeMail = employees.find((employee) => employee.cid === cid);
+    setEmail(employeeMail.email);
+  }
 
 
   const handleViewPdf = (url) => {
@@ -146,6 +156,22 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
+  const notifyEmployee = async () => {
+    const to = email;
+    const subject = "Application Assignment";
+    const body = `Respected Sir/Madam, There has been a new application assigned to you. Please check the application for further details. Thank you.`;
+    await sendEmail({ to, subject, body }).unwrap();
+  }
+
+  const notifyCouncil = () => {
+    councils.map( async (council) => {
+      const to = council.email;
+      const subject = "New Application";
+      const body = `Respected Sir/Madam, There has been a new application approved. Please check the application for further details. Thank you.`;
+      await sendEmail({ to, subject, body }).unwrap();
+    });
+  }
+
   const handleConfirm = async () => {
     const {
       cidNumber: cid,
@@ -182,11 +208,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       title: "",
       text: "Are you sure you want to accept this case?",
       icon: "question",
-      showCancelButton: true,
+      showDenyButton: true,
       confirmButtonColor: "#1E306D",
-      cancelButtonColor: "#d33",
+      denyButtonColor: "#4590CF",
       confirmButtonText: "Confirm",
-      cancelButtonText: "Update",
+      denyButtonText: "Update",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -215,11 +241,17 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             aEmployee
           }).unwrap();
 
+          notifyCouncil();
+          if(email){
+            notifyEmployee();
+          }
+
           Swal.fire({
             title: "Success!",
             text: "The case has been updated successfully.",
             icon: "success",
-            confirmButtonText: "OK",
+            showConfirmButton: false,
+            timer: 2000
           });
           window.location.reload()
 
@@ -231,8 +263,13 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             confirmButtonText: "Try Again",
           });
         }
-      }else{
+      }else if(result.isDenied){
         try {
+          
+          if(email){
+            notifyEmployee();
+          }
+
           await updateCase({
             id: caseId,
             cid,
@@ -261,7 +298,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             title: "Success!",
             text: "The case has been updated successfully.",
             icon: "success",
-            confirmButtonText: "OK",
+            showConfirmButton: false,
+            timer: 2000
           });
           window.location.reload()
 
@@ -419,6 +457,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                             ...caseInfo,
                             aEmployee: e.target.value,
                           });
+                          getEmail(e.target.value);
                         }}
                       >
                         <option value="" disabled>

@@ -5,7 +5,7 @@ import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
-
+import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
@@ -37,7 +37,8 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: lawyers } = useGetAllLawyerQuery();
   const { data: cases } = useGetAllCaseQuery();
   const [updateCase] = useUpdateResultMutation();
-
+  const [sendEmail] = useSendEmailMutation();
+  const [email, setEmail] = useState();
   const [filteredLawyers, setFilteredLawyers] = useState([]);
 
   useEffect(() => {
@@ -66,6 +67,11 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   if (fetchError) {
     console.log(fetchError);
+  }
+
+  const getEmail = (cid) => {
+    const lawyerMail = lawyers.find((lawyer) => lawyer.cid === cid);
+    setEmail(lawyerMail.email);
   }
 
   const [expandedSections, setExpandedSections] = useState({
@@ -182,6 +188,13 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
+  const notifyLawyer = async () => {
+    const to = email;
+    const subject = "Application Assignment";
+    const body = `Respected Sir/Madam, There has been a new application assigned to you. Please check the application for further details. Thank you.`;
+    await sendEmail({ to, subject, body }).unwrap();
+  }
+
   const handleConfirm = async () => {
     const cid = applicantInfo.cidNumber;
     const occupation = applicantInfo.occupation;
@@ -206,6 +219,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     const caseType = caseInfo.caseType;
     const natureOfCase = caseInfo.natureOfCase;
     const outcome = caseInfo.outcome;
+    console.log(email);
     Swal.fire({
       title: "",
       text: "Are you sure you want to update this case?",
@@ -218,6 +232,11 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
       if (result.isConfirmed) {
         try {
           const id = caseId;
+          
+          if(email){
+            notifyLawyer();
+          }
+
           await updateCase({
             id,
             cid,
@@ -264,6 +283,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
       }
     });
   };
+
   const handleCancel = () => {
     onClose();
   };
@@ -316,6 +336,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                             ...caseInfo,
                             aLawyer: e.target.value,
                           });
+                          getEmail(e.target.value);
                         }}
                       >
                         <option value="" disabled>

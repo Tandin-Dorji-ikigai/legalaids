@@ -6,6 +6,8 @@ import { useUpdateCaseMutation } from "../slices/caseApiSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
+import { useSendEmailMutation } from "../slices/emailApiSlice";
+import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -35,7 +37,9 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const { data: employees } = useGetAllEmployeeQuery();
+  const { data: councils } = useGetAllCouncilQuery();
   const [updateCase] = useUpdateCaseMutation();
+  const [sendEmail] = useSendEmailMutation();
   const [employee, setEmployee] = useState();
 
   useEffect(() => {
@@ -140,6 +144,15 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     }
   }, [cas]);
 
+  const notifyCouncil = () => {
+    councils.map( async (council) => {
+      const to = council.email;
+      const subject = "New Application";
+      const body = `Respected Sir/Madam, There has been a new application approved. Please check the application for further details. Thank you.`;
+      await sendEmail({ to, subject, body }).unwrap();
+    });
+  }
+
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
@@ -187,6 +200,8 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          notifyCouncil();
+          
           await updateCase({
             id: caseId,
             cid,
