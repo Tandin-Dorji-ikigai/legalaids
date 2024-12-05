@@ -6,7 +6,10 @@ import ApplicationPopup from "../components/ApplicationPopup";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
 
 function ApplicationManagement() {
-  const [activeStatus, setActiveStatus] = useState("All Application");
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const casesPerPage = 10;
+
   const { data: cases, error } = useGetAllCaseQuery();
   const [selectedCases, setSelectedCases] = useState([]);
   const [civil, setCivil] = useState([]);
@@ -14,15 +17,22 @@ function ApplicationManagement() {
   const [walkIn, setWalkIn] = useState([]);
   const [referral, setReferral] = useState([]);
 
-  const handleStatusClick = (status) => {
-    setActiveStatus(status);
-  };
 
+  // Filter dropdown
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedDzongkhag, setSelectedDzongkhag] = useState('');
+  const [selectedCaseType, setSelectedCaseType] = useState('');
+  const [selectedNatureOfCase, setSelectedNatureOfCase] = useState('');
+  const [statuses, setStatuses] = useState([])
+  const [dzongkhags, setDzongkhags] = useState([])
+  const [caseType, setCaseType] = useState([])
+  const [natureOfCase, setNatureOfCase] = useState([])
+  
   useEffect(() => {
     if (error) {
       console.log(error);
     } else if (cases) {
-      const pendingCases = cases.filter(c => c.status === "Pending" || c.status === "Reviewed" || c.status === "Dismissed");
+      const pendingCases = cases.filter(c => c.status === "Pending" || c.status === "Dismissed");
       setSelectedCases(pendingCases);
       const criminalCase = cases.filter(c => c.natureOfCase === "Criminal")
       setCriminal(criminalCase);
@@ -32,8 +42,63 @@ function ApplicationManagement() {
       setWalkIn(walkInCase);
       const referralCase = cases.filter(c => c.caseType === "Referral")
       setReferral(referralCase);
+      // Dropdowns
+      if (selectedCases) {
+        const status = Array.from(
+          new Set(
+            selectedCases
+              .map(c => c.status)
+              .filter(status => status !== undefined && status !== null)
+          )
+        ).sort();
+        setStatuses(status);
+
+        const dzongkhag = Array.from(
+          new Set(
+            selectedCases
+              .map(c => c.pdzongkhag)
+              .filter(dzongkhag => dzongkhag !== undefined && dzongkhag !== null)
+          )
+        ).sort();
+        setDzongkhags(dzongkhag);
+
+        const caseType = Array.from(
+          new Set(
+            selectedCases
+              .map(c => c.caseType)
+              .filter(caseType => caseType !== undefined && caseType !== null)
+          )
+        ).sort();
+        setCaseType(caseType);
+
+        const natureOfCase = Array.from(
+          new Set(
+            selectedCases
+              .map(c => c.natureOfCase)
+              .filter(natureOfCase => natureOfCase !== undefined && natureOfCase !== null)
+          )
+        ).sort();
+        setNatureOfCase(natureOfCase);
+      }
+
     }
-  }, [error, cases, activeStatus]);
+  }, [error, cases]);
+
+  const filteredCases = selectedCases
+    ? selectedCases.filter((caseItem) => {
+      const matchesStatus = selectedStatus === '' || caseItem.status === selectedStatus;
+      const matchesDzongkhag = selectedDzongkhag === '' || caseItem.pdzongkhag === selectedDzongkhag;
+      const matchesCaseType = selectedCaseType === '' || caseItem.caseType === selectedCaseType;
+      const matchesNatureOfCase = selectedNatureOfCase === '' || caseItem.natureOfCase === selectedNatureOfCase;
+
+      return matchesStatus && matchesDzongkhag && matchesCaseType && matchesNatureOfCase;
+    })
+    : [];
+
+  const totalPages = Math.ceil(filteredCases.length / casesPerPage);
+  const indexOfLastCase = currentPage * casesPerPage;
+  const indexOfFirstCase = indexOfLastCase - casesPerPage;
+  const currentCases = filteredCases.slice(indexOfFirstCase, indexOfLastCase);
 
   const [open, setOpen] = React.useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
@@ -57,7 +122,7 @@ function ApplicationManagement() {
         <div className="dashboard-header">Application Management</div>
         <h3 className="stats-header">Statistical Overview</h3>
         <div className="dashboard-stats-container">
-        <div className="statistical-overview case-management">
+          <div className="statistical-overview case-management">
             <div className="stats-card">
               <div className="card-header">Civil Cases</div>
               {civil ? (
@@ -96,22 +161,6 @@ function ApplicationManagement() {
         <div className="applications-section">
           <h3>Applications</h3>
           <div className="applications-filters">
-            <div className="search-bar case-management-search">
-              <div className="search-bar-container">
-                <input type="text" placeholder="Search" style={{ width: "100%" }} />
-                <div className="search-bar-icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20px"
-                    viewBox="0 -960 960 960"
-                    width="20px"
-                    fill="#fff"
-                  >
-                    <path d="M765-144 526-383q-30 22-65.79 34.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
             <div className="filter-section">
               <div className="filter-card case-management-filter">
                 <div>Filter</div>
@@ -126,62 +175,56 @@ function ApplicationManagement() {
                 </svg>
               </div>
               <div className="filter-select-wrapper case-management-select">
-                <select className="filter-select case-management-filter-select">
-                  <option value="2023">Dzongkhag</option>
-                  <option value="2023">Thimphu</option>
-                  <option value="2024">Gase</option>
-                  <option value="2025">Paro</option>
-                  <option value="2027">Haa</option>
+                <select className="filter-select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                  <option value="">All Applications</option>
+                  {statuses.map(status => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
                 </select>
               </div>
+
               <div className="filter-select-wrapper case-management-select">
-                <select className="filter-select case-management-filter-select">
-                  <option value="2023">All Case Type</option>
-                  <option value="2023">Walk-In</option>
-                  <option value="2024">Walk-In</option>
+                <select
+                  className="filter-select calse-management-filter-select "
+                  value={selectedDzongkhag}
+                  onChange={(e) => setSelectedDzongkhag(e.target.value)}
+                >
+                  <option value="">All Dzongkhags</option>
+                  {dzongkhags.map(dzongkhag => (
+                    <option key={dzongkhag} value={dzongkhag}>{dzongkhag}</option>
+                  ))}
                 </select>
               </div>
+
               <div className="filter-select-wrapper case-management-select">
-                <select className="filter-select case-management-filter-select case-nature">
-                  <option value="2023">All Case Nature</option>
-                  <option value="2023">Criminal</option>
-                  <option value="2024">Civil</option>
-                  <option value="2025">Criminal</option>
-                  <option value="2027">Civil</option>
+                <select
+                  className="filter-select calse-management-filter-select"
+                  value={selectedCaseType}
+                  onChange={(e) => setSelectedCaseType(e.target.value)}
+                >
+                  <option value="">All Case Types</option>
+                  {caseType.map(caseType => (
+                    <option key={caseType} value={caseType}>{caseType}</option>
+                  ))}
+                </select>
+              </div>
+
+
+              <div className="filter-select-wrapper case-management-select">
+                <select
+                  className="filter-select calse-management-filter-select"
+                  value={selectedNatureOfCase}
+                  onChange={(e) => setSelectedNatureOfCase(e.target.value)}
+                >
+                  <option value="">All Nature Of Cases</option>
+                  {natureOfCase.map(natureOfCase => (
+                    <option key={natureOfCase} value={natureOfCase}>{natureOfCase}</option>
+                  ))}
                 </select>
               </div>
             </div>
           </div>
-          <div className="case-status-container">
-            <div
-              className={`case-status-btn ${activeStatus === "All Application" ? "status-active" : ""
-                }`}
-              onClick={() => handleStatusClick("All Application")}
-            >
-              All Cases
-            </div>
-            <div
-              className={`case-status-btn ${activeStatus === "Pending" ? "status-active" : ""
-                }`}
-              onClick={() => handleStatusClick("Pending")}
-            >
-              Pending
-            </div>
-            {/* <div
-              className={`case-status-btn ${activeStatus === "Reviewed" ? "status-active" : ""
-                }`}
-              onClick={() => handleStatusClick("Reviewed")}
-            >
-              Reviewed
-            </div> */}
-            <div
-              className={`case-status-btn ${activeStatus === "Dismissed" ? "status-active" : ""
-                }`}
-              onClick={() => handleStatusClick("Dismissed")}
-            >
-              Dismissed
-            </div>
-          </div>
+
           <div className="application-details">
             <h3>Application Details</h3>
             <table>
@@ -196,80 +239,31 @@ function ApplicationManagement() {
                 </tr>
               </thead>
               <tbody>
-                {cases && (
-                  <>
-                    {(() => {
-                      if (activeStatus === "All Application") {
-
-                        return selectedCases.map((caseItem) => (
-                          <tr
-                            key={caseItem.cid}
-                            onClick={() => handleOpen(caseItem.id)}
-                          >
-                            <td>{caseItem.cid}</td>
-                            <td>{caseItem.contactNo}</td>
-                            <td>{caseItem.natureOfCase}</td>
-                            <td>{caseItem.pdzongkhag}</td>
-                            <td>{caseItem.status}</td>
-                            <td>{caseItem.caseType}</td>
-                          </tr>
-                        ));
-                      } else if (activeStatus === "Pending") {
-                        return selectedCases
-                          .filter((caseItem) => caseItem.status === "Pending")
-                          .map((caseItem) => (
-                            <tr
-                              key={caseItem.cid}
-                              onClick={() => handleOpen(caseItem.id)}
-                            >
-                              <td>{caseItem.cid}</td>
-                              <td>{caseItem.contactNo}</td>
-                              <td>{caseItem.natureOfCase}</td>
-                              <td>{caseItem.pdzongkhag}</td>
-                              <td>{caseItem.status}</td>
-                              <td>{caseItem.caseType}</td>
-                            </tr>
-                          ));
-                      } else if (activeStatus === "Reviewed") {
-                        return selectedCases
-                          .filter((caseItem) => caseItem.status === "Reviewed")
-                          .map((caseItem) => (
-                            <tr
-                              key={caseItem.cid}
-                              onClick={() => handleOpen(caseItem.id)}
-                            >
-                              <td>{caseItem.cid}</td>
-                              <td>{caseItem.contactNo}</td>
-                              <td>{caseItem.natureOfCase}</td>
-                              <td>{caseItem.pdzongkhag}</td>
-                              <td>{caseItem.status}</td>
-                              <td>{caseItem.caseType}</td>
-                            </tr>
-                          ));
-                      } else if (activeStatus === "Dismissed") {
-                        return selectedCases
-                          .filter((caseItem) => caseItem.status === "Dismissed")
-                          .map((caseItem) => (
-                            <tr
-                              key={caseItem.cid}
-                              onClick={() => handleOpen(caseItem.id)}
-                            >
-                              <td>{caseItem.cid}</td>
-                              <td>{caseItem.contactNo}</td>
-                              <td>{caseItem.natureOfCase}</td>
-                              <td>{caseItem.pdzongkhag}</td>
-                              <td>{caseItem.status}</td>
-                              <td>{caseItem.caseType}</td>
-                            </tr>
-                          ));
-                      } else {
-                        return null; // Handle any other statuses or no cases found
-                      }
-                    })()}
-                  </>
-                )}
+                {currentCases.map((caseItem) => (
+                  <tr key={caseItem.id} onClick={() => handleOpen(caseItem.id)}>
+                    <td>{caseItem.cid}</td>
+                    <td>{caseItem.contactNo}</td>
+                    <td>{caseItem.natureOfCase}</td>
+                    <td>{caseItem.pdzongkhag}</td>
+                    <td>{caseItem.status}</td>
+                    <td>{caseItem.caseType}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+            <div className="pagination">
+              <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button key={index + 1} onClick={() => setCurrentPage(index + 1)} className={currentPage === index + 1 ? 'active' : ''}>
+                  {index + 1}
+                </button>
+              ))}
+              <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>

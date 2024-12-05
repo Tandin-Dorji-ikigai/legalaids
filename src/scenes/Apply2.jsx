@@ -32,7 +32,6 @@ function Apply2() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData, "second appeneded form");
         navigate('/apply3', { state: formData });
     };
 
@@ -96,7 +95,6 @@ function Apply2() {
                                     value={formData.institutionName}
                                     onChange={handleChange}
                                     placeholder={t('institutionNamePlaceholder')}
-                                    required
                                 />
 
                                 <input
@@ -106,7 +104,6 @@ function Apply2() {
                                     value={formData.officialName}
                                     onChange={handleChange}
                                     placeholder={t('officialNamePlaceholder')}
-                                    required
                                 />
                             </div>
 
@@ -119,7 +116,6 @@ function Apply2() {
                                     value={formData.officialcNumber}
                                     onChange={handleChange}
                                     placeholder={t('contactNumberPlaceholder')}
-                                    required
                                 />
                                 <input
                                     className='form-input'
@@ -128,7 +124,6 @@ function Apply2() {
                                     value={formData.officialEmail}
                                     onChange={handleChange}
                                     placeholder={t('emailPlaceholder')}
-                                    required
                                 />
                             </div>
                         </div>

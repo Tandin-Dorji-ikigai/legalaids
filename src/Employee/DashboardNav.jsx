@@ -7,11 +7,11 @@ import { useLogoutMutation } from "../slices/authApiSlice";
 import { logout } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useGetAllAdminQuery } from "../slices/adminSlice";
+import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 
 function SideNav() {
-  const { data: admins, error } = useGetAllAdminQuery();
+  const { data: employees, error } = useGetAllEmployeeQuery();
   const location = useLocation();
   const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -50,18 +50,18 @@ function SideNav() {
   useEffect(() => {
     if (error) {
       console.log(error);
-    } else if (admins && userInfo) {
-      const adm = admins.find((admin) => admin.cid === userInfo.user.username);
+    } else if (employees && userInfo) {
+      const adm = employees.find((employee) => employee.cid === userInfo.user.username);
       setUser(adm);
     }
-  }, [error, admins, userInfo]);
+  }, [error, employees, userInfo]);
 
   return (
     <div className="sidenav-container">
       <div>
         <div className="side-nav-logo-container">
           <div className="dashboard-navLogo">
-            <Link to="/dashboard">
+            <Link to="/employeeCaseManagement">
               <img src={Logo} alt="Logo" />
             </Link>
           </div>
@@ -87,7 +87,7 @@ function SideNav() {
                   viewBox="0 -960 960 960"
                   width="28px"
                   fill={
-                    location.pathname === "/caseManagement"
+                    location.pathname === "/employeeCaseManagement"
                       ? "#15605C"
                       : "#F1ECE4"
                   }

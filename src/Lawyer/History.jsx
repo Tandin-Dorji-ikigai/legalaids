@@ -1,45 +1,121 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LawyerSideNav from "./LawyerDashboardNav";
 import "./css/History.css";
 import HistoryPopup from "../components/HistoryPopup";
 import { Modal } from "@mui/material";
+import { useSelector } from "react-redux";
+import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+
 const History = () => {
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const casesPerPage = 10;
+
   const [activeStatus, setActiveStatus] = useState("All Application");
+  const { data: cases } = useGetAllCaseQuery();
+  const { userInfo } = useSelector((state) => state.auth);
+  const [completedCases, setCompletedCases] = useState([]);
+  const [selected, setSelected] = useState();
+
+
+  // Filter dropdown
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedDzongkhag, setSelectedDzongkhag] = useState('');
+  const [selectedCaseType, setSelectedCaseType] = useState('');
+  const [selectedNatureOfCase, setSelectedNatureOfCase] = useState('');
+  const [statuses, setStatuses] = useState([])
+  const [dzongkhags, setDzongkhags] = useState([])
+  const [caseType, setCaseType] = useState([])
+  const [natureOfCase, setNatureOfCase] = useState([])
+
+  useEffect(() => {
+    if (cases && userInfo) {
+      const filteredCases = cases.filter(
+        (caseItem) =>
+          caseItem.aLawyer === userInfo.user.username &&
+          caseItem.status === "Completed"
+      );
+      setCompletedCases(filteredCases);
+
+      // Dropdowns
+      if (completedCases) {
+        const status = Array.from(
+          new Set(
+            completedCases
+              .map(c => c.status)
+              .filter(status => status !== undefined && status !== null)
+          )
+        ).sort();
+        setStatuses(status);
+
+        const dzongkhag = Array.from(
+          new Set(
+            completedCases
+              .map(c => c.pdzongkhag)
+              .filter(dzongkhag => dzongkhag !== undefined && dzongkhag !== null)
+          )
+        ).sort();
+        setDzongkhags(dzongkhag);
+
+        const caseType = Array.from(
+          new Set(
+            completedCases
+              .map(c => c.caseType)
+              .filter(caseType => caseType !== undefined && caseType !== null)
+          )
+        ).sort();
+        setCaseType(caseType);
+
+        const natureOfCase = Array.from(
+          new Set(
+            completedCases
+              .map(c => c.natureOfCase)
+              .filter(natureOfCase => natureOfCase !== undefined && natureOfCase !== null)
+          )
+        ).sort();
+        setNatureOfCase(natureOfCase);
+      }
+
+    }
+  }, [cases, userInfo]);
+
+  const filteredCases = completedCases
+    ? completedCases.filter((caseItem) => {
+      const matchesStatus = selectedStatus === '' || caseItem.status === selectedStatus;
+      const matchesDzongkhag = selectedDzongkhag === '' || caseItem.pdzongkhag === selectedDzongkhag;
+      const matchesCaseType = selectedCaseType === '' || caseItem.caseType === selectedCaseType;
+      const matchesNatureOfCase = selectedNatureOfCase === '' || caseItem.natureOfCase === selectedNatureOfCase;
+
+      return matchesStatus && matchesDzongkhag && matchesCaseType && matchesNatureOfCase;
+    })
+    : [];
+
+  const totalPages = Math.ceil(filteredCases.length / casesPerPage);
+  const indexOfLastCase = currentPage * casesPerPage;
+  const indexOfFirstCase = indexOfLastCase - casesPerPage;
+  const currentCases = filteredCases.slice(indexOfFirstCase, indexOfLastCase);
 
   const handleStatusClick = (status) => {
     setActiveStatus(status);
   };
 
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (id) => {
+    setOpen(true);
+    setSelected(id);
+  };
   const handleClose = () => setOpen(false);
 
   return (
     <div className="dashboard-container">
       <Modal open={open} onClose={handleClose}>
-        <HistoryPopup onClose={handleClose} />
+        <HistoryPopup caseId={selected} onClose={handleClose} />
       </Modal>
       <LawyerSideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">History</div>
         <div className="applications-section">
           <div className="applications-filters">
-            <div className="search-bar case-management-search">
-              <div className="search-bar-container">
-                <input type="text" placeholder="Search" />
-                <div className="search-bar-icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20px"
-                    viewBox="0 -960 960 960"
-                    width="20px"
-                    fill="#fff"
-                  >
-                    <path d="M765-144 526-383q-30 22-65.79 34.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
             <div className="filter-section">
               <div className="filter-card case-management-filter">
                 <div>Filter</div>
@@ -54,43 +130,54 @@ const History = () => {
                 </svg>
               </div>
               <div className="filter-select-wrapper case-management-select">
-                <select
-                  className="filter-select calse-management-filter-select"
-                  onChange={(e) => handleStatusClick(e.target.value)}
-                  value={activeStatus}
-                >
-                  <option value="2023">Dzongkhag</option>
-                  <option value="Thimphu">Thimphu</option>
-                  <option value="Gase">Gase</option>
-                  <option value="Paro">Paro</option>
-                  <option value="Haa">Haa</option>
+                <select className="filter-select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                  <option value="">All Applications</option>
+                  {statuses.map(status => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
                 </select>
               </div>
               <div className="filter-select-wrapper case-management-select">
                 <select
-                  className="filter-select calse-management-filter-select"
-                  onChange={(e) => handleStatusClick(e.target.value)}
-                  value={activeStatus}
+                  className="filter-select calse-management-filter-select "
+                  value={selectedDzongkhag}
+                  onChange={(e) => setSelectedDzongkhag(e.target.value)}
                 >
-                  <option value="All Case Type">All Case Type</option>
-                  <option value="Walk-In">Walk-In</option>
-                  <option value="Online">Online</option>
+                  <option value="">All Dzongkhags</option>
+                  {dzongkhags.map(dzongkhag => (
+                    <option key={dzongkhag} value={dzongkhag}>{dzongkhag}</option>
+                  ))}
                 </select>
               </div>
+
               <div className="filter-select-wrapper case-management-select">
                 <select
-                  className="filter-select calse-management-filter-select case-nature"
-                  onChange={(e) => handleStatusClick(e.target.value)}
-                  value={activeStatus}
+                  className="filter-select calse-management-filter-select"
+                  value={selectedCaseType}
+                  onChange={(e) => setSelectedCaseType(e.target.value)}
                 >
-                  <option value="All Case Nature">All Case Nature</option>
-                  <option value="Criminal">Criminal</option>
-                  <option value="Civil">Civil</option>
+                  <option value="">All Case Types</option>
+                  {caseType.map(caseType => (
+                    <option key={caseType} value={caseType}>{caseType}</option>
+                  ))}
+                </select>
+              </div>
+
+
+              <div className="filter-select-wrapper case-management-select">
+                <select
+                  className="filter-select calse-management-filter-select"
+                  value={selectedNatureOfCase}
+                  onChange={(e) => setSelectedNatureOfCase(e.target.value)}
+                >
+                  <option value="">All Nature Of Cases</option>
+                  {natureOfCase.map(natureOfCase => (
+                    <option key={natureOfCase} value={natureOfCase}>{natureOfCase}</option>
+                  ))}
                 </select>
               </div>
             </div>
           </div>
-
           <div className="application-details">
             <h3>Application Details</h3>
             <table>
@@ -105,22 +192,16 @@ const History = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr onClick={handleOpen}>
-                  <td>1121850223</td>
-                  <td>11/04/2024</td>
-                  <td>Criminal</td>
-                  <td>Thimphu</td>
-                  <td>Pending</td>
-                  <td>Walk-In</td>
-                </tr>
-                <tr onClick={handleOpen}>
-                  <td>1141005900</td>
-                  <td>11/04/2024</td>
-                  <td>Civil</td>
-                  <td>Punakha</td>
-                  <td>Granted</td>
-                  <td>Walk-In</td>
-                </tr>
+                {currentCases && currentCases.map((caseItem) => (
+                  <tr key={caseItem.cid} onClick={() => handleOpen(caseItem.id)}>
+                    <td>{caseItem.cid}</td>
+                    <td>{caseItem.aDate}</td>
+                    <td>{caseItem.natureOfCase}</td>
+                    <td>{caseItem.cdzongkhag}</td>
+                    <td>{caseItem.status}</td>
+                    <td>{caseItem.caseType}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -1,37 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import SideNav from "./DashboardNav";
-import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { usePostCaseMutation } from "../slices/caseApiSlice";
-import axios from "axios";
-import "./css/DataManagement.css";
 import Swal from "sweetalert2";
 import Loader from "../components/Loader";
 
-// Google Cloud Vision API Key
-const apiKey = "AIzaSyByQ1Wg14idjxFbWdEaiB80y35wWWSrYHY";
-const visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
-
-// DocumentItem Component
-const DocumentItem = ({ label, filename }) => (
-  <div className="lawyer-document-item">
-    <div>
-      <span className="lawyer-document-label">{label}</span>
-      <span className="lawyer-document-filename">{filename}</span>
-    </div>
-    <div className="lawyer-document-actions">
-      <button className="lawyer-icon-button lawyer-delete">
-        <Trash2 size={18} />
-      </button>
-      <button className="lawyer-icon-button lawyer-add">
-        <Plus size={18} />
-      </button>
-    </div>
-  </div>
-);
-
-// DataManagement Component
 function DataManagement() {
-  const [loading, setLoading] = useState(false);
   const [postCase, { isLoading }] = usePostCaseMutation();
   const [files, setFiles] = useState([]);
   const [expandedSections, setExpandedSections] = useState({
@@ -40,12 +14,10 @@ function DataManagement() {
     documents: true,
     caseDetails: true
   });
-  // const [isLoading, setIsLoading] = useState(false);
   const [caseInfo, setCaseInfo] = useState({
     caseType :"",
     natureOfCase : ""
   })
-  const [extractedText, setExtractedText] = useState("");
 
   const [applicantInfo, setApplicantInfo] = useState({
     cidNumber: "",
@@ -70,154 +42,7 @@ function DataManagement() {
     officialEmail: "",
   });
 
-  // Function to convert an image to Base64
-  const convertImageToBase64 = async (imageUri) => {
-    try {
-      const response = await fetch(imageUri);
-      const blob = await response.blob();
-      const reader = new FileReader();
-
-      return new Promise((resolve, reject) => {
-        reader.onloadend = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.error("Error converting image to base64:", error);
-      return null;
-    }
-  };
-
-  const processImage = async (imageUri, setExtractedText) => {
-    try {
-      // setIsLoading(true);
-
-      //set alert
-      Swal.fire({
-        icon: "success",
-        title: "Loading",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-
-      const base64Image = await convertImageToBase64(imageUri);
-
-      if (!base64Image) {
-        throw new Error("Failed to convert image to Base64.");
-      }
-
-      const requestBody = {
-        requests: [
-          {
-            image: { content: base64Image },
-            features: [{ type: "TEXT_DETECTION" }],
-          },
-        ],
-      };
-
-      const response = await axios.post(visionApiUrl, requestBody);
-      const textAnnotations = response.data.responses[0]?.textAnnotations;
-      const extractedText = textAnnotations
-        ? textAnnotations[0].description
-        : "";
-      setExtractedText(extractedText);
-      updateStateWithExtractedData(extractedText); // Update state with extracted data
-    } catch (error) {
-      console.error("Error processing image:", error.message);
-    }
-  };
-
-  const updateStateWithExtractedData = (extractedText) => {
-    const applicantInfoUpdates = {};
-    const institutionInfoUpdates = {};
-    const lines = extractedText.split("\n");
-
-    lines.forEach((line, index) => {
-      // Remove asterisks and extra spaces from the line
-      line = line
-        .replace(/\*/g, "")
-        .replace(/\.\.\.*/, "")
-        .trim();
-      // Handle applicant details
-      if (line.startsWith("1. Name:")) {
-        applicantInfoUpdates.name = line.replace("1. Name:", "").trim();
-      } else if (line.startsWith("2. CID NO.")) {
-        applicantInfoUpdates.cidNumber = line.replace("2. CID NO.", "").trim();
-      } else if (line.startsWith("3. Occupation Details:")) {
-        applicantInfoUpdates.occupation = line
-          .replace("3. Occupation Details:", "")
-          .trim();
-      } else if (line.startsWith("4. Contact No./Emergency Contact No.")) {
-        applicantInfoUpdates.contactNumber = line
-          .replace("4. Contact No./Emergency Contact No.", "")
-          .trim();
-      } else if (line.startsWith("C. Total Household Income (Nu.)")) {
-        applicantInfoUpdates.householdIncome = line
-          .replace("C. Total Household Income (Nu.)", "")
-          .trim();
-      } else if (line.startsWith("D. Total Household Member")) {
-        applicantInfoUpdates.householdMembers = line
-          .replace("D. Total Household Member", "")
-          .trim();
-      } else if (line.startsWith("5. Current Address")) {
-        const currentAddressLines = lines.slice(index + 1, index + 4);
-        if (currentAddressLines.length >= 3) {
-          applicantInfoUpdates.villageCurrent = currentAddressLines[0]
-            .replace("Village:", "")
-            .trim();
-          applicantInfoUpdates.gewogCurrent = currentAddressLines[1]
-            .replace("Gewog:", "")
-            .trim();
-          applicantInfoUpdates.dzongkhagCurrent = currentAddressLines[2]
-            .replace("Dzongkhag:", "")
-            .trim();
-          applicantInfoUpdates.dzongkhag = currentAddressLines[2]
-            .replace("Dzongkhag:", "")
-            .trim();
-        }
-      } else if (line.startsWith("6. Permanent Address")) {
-        const permanentAddressLines = lines.slice(index + 1, index + 4);
-        if (permanentAddressLines.length >= 3) {
-          applicantInfoUpdates.villagePermanent = permanentAddressLines[0]
-            .replace("Village:", "")
-            .trim();
-          applicantInfoUpdates.gewogPermanent = permanentAddressLines[1]
-            .replace("Gewog:", "")
-            .trim();
-          applicantInfoUpdates.dzongkhagPermanent = permanentAddressLines[2]
-            .replace("Dzongkhag:", "")
-            .trim();
-        }
-      } else if (line.includes("Name of the Institution")) {
-        institutionInfoUpdates.institutionName = lines[index + 1]?.trim();
-      } else if (
-        line.includes(
-          "Dealing Official/Staff Details (Name, Contact No., Email)"
-        )
-      ) {
-        const nameLine = lines[index + 1]?.trim();
-
-        // Extracting official name and email
-        const nameEmailMatch = nameLine.match(/Name:\s*(.+?)\s*Email:\s*(.+)/);
-        if (nameEmailMatch) {
-          institutionInfoUpdates.officialName =
-            nameEmailMatch[1].trim("Name :");
-          institutionInfoUpdates.officialEmail = nameEmailMatch[2].trim();
-        }
-
-        // Extracting official contact number
-        const contactLine = lines[index + 2]?.trim();
-        institutionInfoUpdates.officialContact = contactLine
-          .replace("Contact:", "")
-          .trim();
-      }
-    });
-
-    setApplicantInfo((prev) => ({ ...prev, ...applicantInfoUpdates }));
-    setInstitutionInfo((prev) => ({ ...prev, ...institutionInfoUpdates }));
-  };
-
-  const [expandedDocuments, setExpandedDocuments] = useState([
+  const [expandedDocuments] = useState([
     { label: "CID or Valid Passport", name: "cidDoc" },
     { label: "Details of Household members", name: "hMemberDoc" },
     { label: "Attachment for household income", name: "hIncomeDoc" },
@@ -255,6 +80,8 @@ function DataManagement() {
     formData.append("officialName", institutionInfo.officialName);
     formData.append("officialcNumber", institutionInfo.officialContact);
     formData.append("officialEmail", institutionInfo.officialEmail);
+    formData.append("caseType", caseInfo.caseType);
+    formData.append("natureOfCase", caseInfo.natureOfCase);
 
     // Append files based on their document names
     expandedDocuments.forEach((doc) => {
@@ -263,34 +90,71 @@ function DataManagement() {
       }
     });
 
-    try {
-      const res = await postCase(formData).unwrap();
-      Swal.fire({
-          icon: "success",
-          title: "Application Submitted",
-          text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
-        });
-    } catch (err) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error submitting the case data.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
-    }
+    Swal.fire({
+      title: "",
+      text: "Are you sure you want to add this case?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#1E306D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await postCase(formData).unwrap();
+          Swal.fire({
+            icon: "success",
+            title: "Application Submitted",
+            text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
+          });
+
+        } catch (err) {
+          Swal.fire({
+            title: "Error!",
+            text: "There was an error submitting the case data.",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      }
+    });
   };
 
   const handleFileUpload = (event, docName) => {
     const selectedFile = event.target.files[0]; // Only take the first file
-    setFiles((prevFiles) => ({
-      ...prevFiles,
-      [docName]: selectedFile,
-    }));
+    // Check file size (5MB = 5 * 1024 * 1024 bytes)
+    const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
 
-    // Process the image using OCR for image files only
-    if (selectedFile.type.startsWith("image/")) {
-      const imageUri = URL.createObjectURL(selectedFile);
-      processImage(imageUri, setExtractedText);
+    if (selectedFile) {
+      if (selectedFile.size > maxFileSize) {
+        Swal.fire({
+          icon: 'error',
+          title: 'File Too Large',
+          text: 'Please upload a PDF file smaller than 5MB',
+          confirmButtonText: 'OK'
+        });
+        // Clear the file input
+        event.target.value = '';
+        return;
+      }
+
+      // Optional: Additional file type check
+      if (selectedFile.type !== 'application/pdf') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid File Type',
+          text: 'Please upload a PDF file',
+          confirmButtonText: 'OK'
+        });
+        // Clear the file input
+        event.target.value = '';
+        return;
+      }
+
+      setFiles((prevFiles) => ({
+        ...prevFiles,
+        [docName]: selectedFile,
+      }));
     }
   };
 
@@ -298,62 +162,13 @@ function DataManagement() {
     console.log("Cancelled");
   };
 
-  const fileInputRef = useRef(null);
-  const handleScanButtonClick = () => {
-    // Programmatically click the file input
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
   return (
     <div className="dashboard-container">
       {isLoading && <Loader />}
-      {/* {isLoading && <Loader />}  */}
-      {/* <Loader/> */}
       <SideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">Data Management</div>
         <div className="lawyer-case-details-container">
-          {/* <div className="excel-header">Automated Case Data Entry</div>
-          <div className="file-btn-container">
-            <div className="file-upload-btn-container">
-              <button
-                className="scan-document-btn"
-                onClick={handleScanButtonClick} // Attach the click handler
-              >
-                Scan Document
-              </button>
-              <div className="lawyer-upload-section">
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileUpload}
-                  className="lawyer-upload-input"
-                  ref={fileInputRef} // Attach the ref to the input
-                  style={{ display: "none" }} // Hide the input
-                />
-              </div>
-            </div>
-            <div className="file-upload-btn-container">
-              <button
-                className="scan-document-btn"
-                onClick={handleScanButtonClick} // Attach the click handler
-              >
-                Upload Excel File
-              </button>
-              <div className="lawyer-upload-section">
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileUpload}
-                  className="lawyer-upload-input"
-                  ref={fileInputRef} // Attach the ref to the input
-                  style={{ display: "none" }} // Hide the input
-                />
-              </div>
-            </div>
-          </div> */}
           <div className="excel-header">Add Case Form</div>
           <div className="lawyer-section">
             <button
@@ -381,8 +196,8 @@ function DataManagement() {
                       class = "selectFields"
                     >
                       
-                      <option value="criminal">Walk In</option>
-                      <option value="civil">Referral</option>
+                      <option value="Walk In">Walk In</option>
+                      <option value="Referral">Referral</option>
                     </select>
 
                   </div>
@@ -399,8 +214,8 @@ function DataManagement() {
                       class = "selectFields"
                     >
                      
-                      <option value="criminal">Criminal</option>
-                      <option value="civil">Civil</option>
+                      <option value="Criminal">Criminal</option>
+                      <option value="Civil">Civil</option>
                     </select>
 
                   </div>

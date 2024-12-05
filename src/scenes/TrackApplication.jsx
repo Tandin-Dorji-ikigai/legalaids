@@ -129,7 +129,7 @@ function TrackApplication() {
             type="text"
             value={ID}
             onChange={(e) => setID(e.target.value)}
-            placeholder={t("institutionNamePlaceholder")}
+            placeholder={t("EnterAppId")}
           />
           <button type="submit">
           <FaSearch />

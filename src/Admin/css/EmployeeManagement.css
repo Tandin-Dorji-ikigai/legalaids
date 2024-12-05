@@ -13,15 +13,15 @@
   gap: 1rem;
 }
 
-.stats-card-container-employee-card > div:nth-child(1) {
+.stats-card-container-employee-card>div:nth-child(1) {
   background: #595cfc;
 }
 
-.stats-card-container-employee-card > div:nth-child(2) {
+.stats-card-container-employee-card>div:nth-child(2) {
   background: #8486ff;
 }
 
-.stats-card-container-employee-card > div:nth-child(3) {
+.stats-card-container-employee-card>div:nth-child(3) {
   background: #4590cf;
 }
 
@@ -32,7 +32,6 @@
 
 .stats-card {
   width: 100% !important;
-  background: #f0f0f0;
   padding: 20px;
   border-radius: 8px;
   flex: 1;
@@ -77,6 +76,7 @@
   font-weight: 600;
   font-size: 16px;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -104,7 +104,6 @@ tbody td {
 tbody tr:hover {
   background: #15605c !important;
   color: #fff;
-  cursor: pointer;
 }
 
 tbody tr:nth-child(odd) {
@@ -130,7 +129,6 @@ table tr:last-child td {
   width: 100%;
   border-radius: 6px;
   margin-left: 2px;
-  color: #acacac;
   height: 40px;
 }
 
@@ -181,10 +179,6 @@ table tr:last-child td {
   justify-content: center;
 }
 
-.edit-btn {
-  background-color: #15605c;
-  /* Different color for Edit button */
-}
 
 .add-user-btn:hover,
 .edit-btn:hover {
@@ -210,88 +204,6 @@ table tr:last-child td {
   border-radius: 10px;
   overflow: hidden;
   padding: 1rem 0;
-}
-.modal-content form{
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.modal-content{
-min-width: 400px;
-}
-.modal-content form div{
-  display: flex;
-  flex-direction: column;
-  gap: .3rem;
-}
-
-.modal-buttons .add-user-btn{
-  width: 100%;
-}
-.modal-content form input, .modal-content form select{
-  padding: 0.5rem;
-}
-/* pop css add user */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  width: 300px;
-}
-.modal-buttons button{
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: none
-}
-.modal-buttons .cancelBtn:hover{
-  background-color: #cfcfcf;
-}
-.modal-close-btn {
-  float: right;
-  border: none;
-  background: none;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.modal-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.modal-btn {
-  padding: 10px 15px;
-  margin-left: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.modal-btn-primary {
-  background-color: #15605c;
-  color: white;
 }
 
 .modal-btn-primary:disabled {
@@ -336,26 +248,205 @@ min-width: 400px;
   background: #f0f0f0;
 }
 
-.toggleEnable{
-  padding: .5rem;
-  background-color: rgb(48, 117, 48);
-}
-.toggleEnable:hover{
-  background-color: rgb(172, 249, 255);
-  color: black;
+.disable_user,
+.enable_user {
+  padding: 8px 40px;
+  border-radius: 5px;
   cursor: pointer;
-}
-.toggleDisable:hover{
-  background-color: rgb(252, 201, 201);
-  cursor: pointer;
-}
-.toggleDisable{
-  padding: .5rem;
-  background-color: rgb(226, 118, 118);
+  border: none;
+  color: white;
+  font-size: 14px;
 }
 
-.toggleEnable, .toggleDisable{
-  border: none; 
+.disable_user {
+  background: #d46f6f;
+  border: 2px solid #d46f6f;
+}
+
+.enable_user {
+  background: #15605c;
+  border: 2px solid #15605c;
+}
+
+.disable_user:hover,
+.enable_user:hover {
+  filter: brightness(0.8);
+}
+
+.enable_user:hover{
+  background: none;
+  border: 2px solid #d46f6f;
+}
+
+.whiteSpace {
+  height: 30px;
+}
+
+
+/* Modal container styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-content h2 {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Modal container styling */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.custom-modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 450px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.custom-modal-header {
+  margin: 0 0 20px;
+  font-size: 1.6rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Form elements */
+.custom-form-group {
+  margin-bottom: 15px;
+}
+
+.custom-form-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.custom-form-input,
+.custom-form-select {
+  width: 100%;
+  padding: 10px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.custom-form-input:focus,
+.custom-form-select:focus {
+  border-color: #15605c;
+}
+
+.custom-error-message {
+  font-size: 0.8rem;
+  color: red;
+  margin-top: 5px;
+}
+
+/* Buttons */
+.custom-modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.custom-button {
+  padding: 10px 0;
+  width: 150px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.custom-add-user-btn {
+  background-color: #15605c;
   color: white;
-  border-radius: 6px;
+}
+
+.custom-add-user-btn:hover {
+  background-color: #15605c;
+}
+
+.custom-cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.custom-cancel-btn:hover {
+  background-color: #c62828;
+}
+
+/* Pagination employee*/
+.pagination-employee {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.pagination-employee button {
+  margin: 0 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #09a29b;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.pagination-employee button:hover {
+  filter: brightness(0.8);
+}
+
+.pagination-employee button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-employee .active {
+  background-color: #15605C;
+  font-weight: bold;
+}
+
+.page-number {
+  padding: 10px;
 }

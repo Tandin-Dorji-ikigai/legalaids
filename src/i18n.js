@@ -34,16 +34,12 @@ i18n
           //footer
           applyForLegalAidFooter: "Apply for Legal Aid",
           getHelpToday: "Get Help Today",
-          home: "Home",
-          aboutUs: "About Us",
-          legalIssues: "Legal Issues",
           eligibility: "Eligibility",
           bhutanLegalAidCenter: "Bhutan Legal Aid Center",
 
           // home
           mainHerobannerText: "UPHOLDING RIGHTS AND STRENGTHENING FAIRNESS.",
           accessibleLegalAssistance: "ACCESSIBLE LEGAL ASSISTANCE FOR ALL.",
-          getHelpToday: "GET HELP TODAY.",
           whatWeDo: "What We Do",
           provideExpertAid:
             "We provide accessible expert legal aid to ensure justice and equality for all.",
@@ -65,7 +61,6 @@ i18n
             "We carefully review each case and assign the most suitable lawyer through the Bar Council. Detailed notifications and appointment confirmations are communicated back to the Legal Aid Centre to ensure smooth coordination.",
           trustUs:
             "Trust us to handle your case with care and precision. Together we'll work toward a successful resolution. Start your path to justice with confidence—we're here to support you every step of the way.",
-          clientApplication: "Client application for legal aid",
           caseReview: "Case Review and Lawyer Assignment",
           caseReviewAndLawyer: "Case Review and Lawyer Assignment",
           clientAppDesc:
@@ -97,6 +92,7 @@ i18n
           casesHelped: "CASES HELPED",
 
           //track your application
+          EnterAppId:"Enter Application Id",
           applicationTrack: "Track your application",
           justice:
             "We provide accessible, expert legal aid to ensure justice and equality for all.",
@@ -147,7 +143,6 @@ i18n
 
           institutionNamePlaceholder: "Institution Name",
           officialNamePlaceholder: "Name of dealing officer",
-          contactNumberPlaceholder: "Contact Number",
           emailPlaceholder: "Email",
 
           //Apply for Legal Aid Apply3
@@ -167,6 +162,13 @@ i18n
           submissionFailedTitle: "Submission Failed",
           submissionFailedText:
             "There was an error submitting your application. Please try again.",
+
+          // Terms and policy
+          termsAndPolicies: "Terms & Policies",
+          terms1: "I, the undersigned applicant, do hereby declare and affirm that the information provided in this application for legal aid is true, accurate, and complete to the best of my knowledge and belief. I understand that any false statement, omission, or misrepresentation of facts may result in the immediate termination of any legal aid granted, and could also lead to legal proceedings against me.",
+          terms2:"acknowledge that if any information provided is later found to be false, misleading, or incomplete, I may be held liable for any charges or legal fees incurred by the legal aid center as a result of this application, and I may be subject to civil or criminal penalties as provided by law.",
+          terms3:"I further understand that this declaration and any documents provided as part of this application may be used in any investigation or proceeding related to my eligibility for legal aid.",
+          oath:"By ticking the checkbox, acknowledge that I have read, understood, and agree to the terms and conditions outlined above.",
 
           // LegalIssues page
           legalAidAndSupport: "Legal aid and support",
@@ -253,7 +255,6 @@ i18n
             "ཐོབ་དབང་བདག་འཛིན་འཐབ་ནི་དང་ དྲང་བདེན་སྒྲིང་སྒྲིང་བཟོ་ནི།",
           accessibleLegalAssistance:
             "ག་ར་ལུ་འཐོབ་ཚུགས་པའི་ཁྲིམས་དོན་གྱི་རོགས་རམ།",
-          getHelpToday: "ད་རེས་གྲོགས་རམ་ཐོབ།",
           whatWeDo: "ང་བཅས་ཀྱིས་ག་ཅི་འབདཝ་སྨོ?",
           application: "ལག་ལེན་ཚུ།",
           lawyerAssignments: "ཁྲིམས་རྩོད་པའི་ལས་འགན།",
@@ -304,6 +305,7 @@ i18n
           casesHelped: "ཕན་ཐོགས་བྱུང་ཡོདཔ།",
 
           //Track  Tour Application
+          EnterAppId:"གློག་རིམ་ཨའི་ཌི་བཙུགས།",
           applicationTrack: "ཁྱོད་རའི་ཞུ་ཡིག་བརྟག་ཞིབ་འབད།",
           justice:
             "ང་བཅས་ཀྱིས་ མི་ཆ་མཉམ་ལུ་ དྲང་བདེན་དང་འདྲ་མཉམ་གྱི་དོན་ལུ་ འཐོབ་ཚུགས་པའི་ མཁས་མཆོག་ཁྲིམས་དོན་གྱི་གྲོགས་རམ་བྱིནམ་ཨིན།",
@@ -355,7 +357,6 @@ i18n
 
           institutionNamePlaceholder: "གཙུག་སྡེའི་མིང་",
           officialNamePlaceholder: "འབྲེལ་བ་འཐབ་མིའི་འགོ་དཔོན་གྱི་མིང་",
-          contactNumberPlaceholder: "འབྲེལ་བ་འཐབ་སའི་ཨང་",
           emailPlaceholder: "གློག་འཕྲིན་ཁ་བྱང་",
 
           //Apply for Legal Aid Apply3
@@ -377,6 +378,12 @@ i18n
           submissionFailedText:
             "ཁྱོད་ཀྱི་ཞུ་ཡིག་ཕུལ་ནི་ལུ་འཛོལ་བ་བྱུང་ནུག། སླར་ལོག་འབད་རྩོལ་བསྐྱེད་གནང་།",
 
+          // Terms And Policies
+          termsAndPolicies: "ཆ་རྐྱེན་དང་སྲིད་ཇུས།",
+          terms1:"ང་གིས་ འོག་ལུ་མིང་རྟགས་བཀོད་མི་ ཞུ་ཡིག་བཙུགས་མི་གིས་ ཁྲིམས་དོན་གྲོགས་རམ་གྱི་དོན་ལུ་ ཞུ་ཡིག་འདི་ནང་ བརྡ་དོན་ཚུ་ བདེན་པ་དང་ བདེན་པ་ཡོདཔ་སྦེ་ གསལ་བསྒྲགས་འབད་དེ་ ངོས་ལེན་འབདཝ་ཨིན། དང་ངེ་གི་ཤེས་བྱ་དང་ཡིད་ཆེས་དྲག་ཤོས་ལུ་མཇུག་བསྡུ། ང་གིས་ཧ་གོ་མི་ནང་ རྫུན་མའི་གཏམ་བཤད་དང་ བཏོན་བཏང་མི་ ཡང་ན་ བདེན་པ་ཚུ་ ལོག་བཤད་འབད་མི་ཚུ་ཨིན། ཁྲིམས་དོན་གྱི་གྲོགས་རམ་གང་རུང་ཅིག་ དེ་འཕྲོ་ལས་ མཇུག་བསྡུ་བཏང་ཚུགས་ནི་ཨིནམ་མ་ཚད་ ང་ལུ་ཁྲིམས་དོན་གྱི་བྱ་རིམ་ཚུ་ཡང་ འགོ་འདྲེན་འཐབ་ཚུགས་ནི་ཨིན་མས།",
+          terms2:"བརྡ་དོན་གང་རུང་ཅིག་ ཤུལ་ལས་ རྫུན་མ་དང་ འཛོལ་བ་ ཡང་ན་ མ་ཚངམ་སྦེ་ མཐོང་པ་ཅིན་ ང་གིས་ ཉེས་འཛུགས་ག་ཅི་རང་འབད་རུང་ འགན་འཁྲི་འབག་དགོཔ་འོང་ཟེར་ ངོས་ལེན་འབད་དགོ། ཡང་ན་ ཞུ་ཡིག་འདི་གི་གྲུབ་འབྲས་ལུ་བརྟེན་ ཁྲིམས་དོན་གྲོགས་རམ་ལྟེ་བ་གིས་ ཁྲིམས་དོན་གྱི་འཐུས་ཚུ་ བཏང་ཡོདཔ་ལས་ ཁྲིམས་དོན་ནང་ བཀོད་དེ་ཡོད་མི་དང་འཁྲིལ་ ཞི་བའི་ཡང་ན་ ཉེས་ཅན་གྱི་ཉེས་ཁྲིམས་ ང་ལུ་ཕོག་འོང་།",
+          terms3:"ད་རུང་ ང་གིས་ གསལ་བསྒྲགས་འདི་དང་ ཞུ་ཡིག་འདི་གི་ཆ་ཤས་ཅིག་སྦེ་ བྱིན་ཡོད་པའི་ཡིག་ཆ་ཚུ་ ངེ་གི་ཁྲིམས་དོན་གྲོགས་རམ་གྱི་འོས་འབབ་དང་འབྲེལ་བའི་ ཞིབ་དཔྱད་དང་ བྱ་རིམ་གང་རུང་ནང་ ལག་ལེན་འཐབ་ཚུགས་ཟེར་ ཧ་གོ་ཡི།",
+          oath:"བརྟག་ཞིབ་སྒྲོམ་འདི་ རྟགས་བཀལ་ཏེ་ གོང་ལས་བཀོད་ཡོད་པའི་ གནས་ཚིག་དང་གནས་སྟངས་ཚུ་ལྷག་སྟེ་ ཧ་གོ་སྟེ་ ངོས་ལེན་འབད་ཡི་ཟེར་ ངོས་ལེན་འབད།",
           // LegalIssues page
           legalAidAndSupport: "བཅའ་ཁྲིམས་རོགས་སྐྱོར་དང་རྒྱབ་སྐྱོར།",
           comprehensiveLegalAssistance:

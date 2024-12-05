@@ -1,13 +1,12 @@
 import React, { useState, forwardRef, useEffect } from "react";
-import { Plus, Minus, EyeIcon } from "lucide-react";
+import { X, Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
-import { useUpdateCaseMutation } from "../slices/caseApiSlice";
+import { useUpdateResultMutation } from "../slices/caseApiSlice";
+import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
-import { useSendEmailMutation } from "../slices/emailApiSlice";
-import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -33,49 +32,36 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   </div>
 );
 
-
-const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
+const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
+  const { data: lawyers, lerror } = useGetAllLawyerQuery();
   const { data: employees } = useGetAllEmployeeQuery();
-  const { data: councils } = useGetAllCouncilQuery();
-  const [updateCase] = useUpdateCaseMutation();
-  const [sendEmail] = useSendEmailMutation();
-  const [email, setEmail] = useState();
-
-  const [filteredEmployees, setFilteredEmployees] = useState([]);
-
-  useEffect(() => {
-    if (employees) {
-      const availableEmployees = employees.filter((employee) => employee.enabled === true);
-    
-      setFilteredEmployees(availableEmployees);
-    }
-    
-  }, [employees]);
-
-  const [caseInfo, setCaseInfo] = useState({
-    caseType: "Walk In",
-    natureOfCase: "Civil",
-    aEmployee : ""
-  })
-
-  const getEmail = (cid) => {
-    const employeeMail = employees.find((employee) => employee.cid === cid);
-    setEmail(employeeMail.email);
-  }
-
+  const [updateCase] = useUpdateResultMutation();
+  const [lawyer, setLawyer] = useState();
+  const [employee, setEmployee] = useState();
 
   const handleViewPdf = (url) => {
     window.open(url, '_blank');
   };
 
   if (fetchError) {
-    console.log(fetchError)
+    console.log(fetchError);
   }
 
+  useEffect(() => {
+    if(lerror){
+      console.log(lerror);
+    }else if(lawyers && cas && employees){
+      const selected = lawyers.find((lwy) => lwy.cid === cas.aLawyer);
+      const eSelected = employees.find((emp) => emp.cid === cas.aEmployee);
+      setLawyer(selected);
+      setEmployee(eSelected);
+    }
+  }, [cas, lawyers, lerror, fetchError, employees])
+
   const [expandedSections, setExpandedSections] = useState({
-    applicantInfo: false,
     caseDetails: true,
+    applicantInfo: false,
     institutions: false,
     documents: false,
   });
@@ -103,6 +89,15 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     officialEmail: "",
   });
 
+  const [caseInfo, setCaseInfo] = useState({
+    aLawyer: "",
+    status: "In Progress",
+    caseType: "",
+    natureOfCase: "",
+    remarks: "",
+    aEmployee: ""
+  })
+
   const [documents, setDocuments] = useState([
     { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
     { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
@@ -114,12 +109,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (cas) {
-      setCaseInfo({
-        caseType: cas.caseType,
-        natureOfCase: cas.natureOfCase,
-        aEmployee: cas.aEmployee
-      })
-
       setApplicantInfo({
         cidNumber: cas.cid,
         name: cas.name,
@@ -136,6 +125,16 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
         dzongkhagPermanent: cas.pdzongkhag,
       });
 
+      setCaseInfo({
+        aLawyer: cas.aLawyer,
+        status: cas.status,
+        caseType: cas.caseType,
+        natureOfCase: cas.natureOfCase,
+        remarks: cas.remarks,
+        outcome: cas.outcome,
+        aEmployee: cas.aEmployee
+      })
+
       setInstitutionInfo({
         institutionName: cas.institutionName,
         officialName: cas.officialName,
@@ -149,206 +148,44 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
           filename: cas[doc.docKey] || null
         }))
       );
+
     }
   }, [cas]);
+
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const notifyEmployee = async () => {
-    const to = email;
-    const subject = "Application Assignment";
-    const body = `Respected Sir/Madam, There has been a new application assigned to you. Please check the application for further details. Thank you.`;
-    await sendEmail({ to, subject, body }).unwrap();
-  }
-
-  const notifyCouncil = () => {
-    councils.map( async (council) => {
-      const to = council.email;
-      const subject = "New Application";
-      const body = `Respected Sir/Madam, There has been a new application approved. Please check the application for further details. Thank you.`;
-      await sendEmail({ to, subject, body }).unwrap();
-    });
-  }
-
   const handleConfirm = async () => {
-    const {
-      cidNumber: cid,
-      name,
-      occupation,
-      contactNumber: contactNo,
-      householdIncome: income,
-      householdMembers: member,
-      dzongkhag: cdzongkhag,
-      villageCurrent: village,
-      gewogCurrent: gewog,
-      dzongkhagCurrent: dzongkhag,
-      villagePermanent: pvillage,
-      gewogPermanent: pgewog,
-      dzongkhagPermanent: pdzongkhag
-    } = applicantInfo;
-
-    const {
-      institutionName,
-      officialName,
-      officialContact: officialcNumber,
-      officialEmail
-    } = institutionInfo;
-
-    const {
-      caseType,
-      natureOfCase,
-      aEmployee
-    } = caseInfo;
-
-    const status = "In Progress";
+    const cid = applicantInfo.cidNumber;
+    const occupation = applicantInfo.occupation;
+    const name = applicantInfo.name;
+    const contactNo = applicantInfo.contactNumber;
+    const income = applicantInfo.householdIncome;
+    const member = applicantInfo.householdMembers;
+    const cdzongkhag = applicantInfo.dzongkhag;
+    const village = applicantInfo.villageCurrent;
+    const gewog = applicantInfo.gewogCurrent;
+    const dzongkhag = applicantInfo.dzongkhagCurrent;
+    const pvillage = applicantInfo.villagePermanent;
+    const pgewog = applicantInfo.gewogPermanent;
+    const pdzongkhag = applicantInfo.dzongkhagPermanent;
+    const institutionName = institutionInfo.institutionName;
+    const officialName = institutionInfo.officialName;
+    const officialcNumber = institutionInfo.officialContact;
+    const officialEmail = institutionInfo.officialEmail;
+    const remarks = caseInfo.remarks;
+    const status = caseInfo.caseStatus;
+    const aLawyer = caseInfo.email;
+    const caseType = caseInfo.caseType;
+    const natureOfCase = caseInfo.natureOfCase;
+    const outcome = caseInfo.outcome;
+    const aEmployee = caseInfo.aEmployee;
 
     Swal.fire({
       title: "",
-      text: "Are you sure you want to accept this case?",
-      icon: "question",
-      showDenyButton: true,
-      confirmButtonColor: "#1E306D",
-      denyButtonColor: "#4590CF",
-      confirmButtonText: "Confirm",
-      denyButtonText: "Update",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await updateCase({
-            id: caseId,
-            cid,
-            occupation,
-            name,
-            contactNo,
-            income,
-            member,
-            cdzongkhag,
-            village,
-            gewog,
-            dzongkhag,
-            pvillage,
-            pgewog,
-            pdzongkhag,
-            institutionName,
-            officialName,
-            officialcNumber,
-            officialEmail,
-            caseType,
-            natureOfCase,
-            status,
-            aEmployee
-          }).unwrap();
-
-          notifyCouncil();
-          if(email){
-            notifyEmployee();
-          }
-
-          Swal.fire({
-            title: "Success!",
-            text: "The case has been updated successfully.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 2000
-          });
-          window.location.reload()
-
-        } catch (err) {
-          Swal.fire({
-            title: "Error!",
-            text: "There was an error updating the case.",
-            icon: "error",
-            confirmButtonText: "Try Again",
-          });
-        }
-      }else if(result.isDenied){
-        try {
-          
-          if(email){
-            notifyEmployee();
-          }
-
-          await updateCase({
-            id: caseId,
-            cid,
-            occupation,
-            name,
-            contactNo,
-            income,
-            member,
-            cdzongkhag,
-            village,
-            gewog,
-            dzongkhag,
-            pvillage,
-            pgewog,
-            pdzongkhag,
-            institutionName,
-            officialName,
-            officialcNumber,
-            officialEmail,
-            caseType,
-            natureOfCase,
-            aEmployee
-          }).unwrap();
-
-          Swal.fire({
-            title: "Success!",
-            text: "The case has been updated successfully.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 2000
-          });
-          window.location.reload()
-
-        } catch (err) {
-          Swal.fire({
-            title: "Error!",
-            text: "There was an error updating the case.",
-            icon: "error",
-            confirmButtonText: "Try Again",
-          });
-        }
-      }
-    });
-  };
-
-  const handleCancel = () => {
-    const {
-      cidNumber: cid,
-      name,
-      occupation,
-      contactNumber: contactNo,
-      householdIncome: income,
-      householdMembers: member,
-      dzongkhag: cdzongkhag,
-      villageCurrent: village,
-      gewogCurrent: gewog,
-      dzongkhagCurrent: dzongkhag,
-      villagePermanent: pvillage,
-      gewogPermanent: pgewog,
-      dzongkhagPermanent: pdzongkhag
-    } = applicantInfo;
-
-    const {
-      institutionName,
-      officialName,
-      officialContact: officialcNumber,
-      officialEmail
-    } = institutionInfo;
-
-    const {
-      caseType,
-      natureOfCase
-    } = caseInfo;
-
-    const status = "Dismissed";
-
-    Swal.fire({
-      title: "",
-      text: "Are you sure you want to decline this case?",
+      text: "Are you sure you want to update this case?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#1E306D",
@@ -357,49 +194,36 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          const id = caseId;
           await updateCase({
-            id: caseId,
-            cid,
-            occupation,
-            name,
-            contactNo,
-            income,
-            member,
-            cdzongkhag,
-            village,
-            gewog,
-            dzongkhag,
-            pvillage,
-            pgewog,
-            pdzongkhag,
-            institutionName,
-            officialName,
-            officialcNumber,
-            officialEmail,
-            caseType,
-            natureOfCase,
-            status
+            id, cid, occupation, name, contactNo, income, member,
+            cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
+            officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee
           }).unwrap();
-
           Swal.fire({
-            title: "Success!",
-            text: "The case has been updated successfully.",
-            icon: "success",
-            confirmButtonText: "OK",
+            title: 'Success!',
+            text: 'Case details have been updated successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK'
           });
 
+          onClose();
+          window.location.reload()
         } catch (err) {
           Swal.fire({
-            title: "Error!",
-            text: "There was an error updating the case.",
-            icon: "error",
-            confirmButtonText: "Try Again",
+            title: 'Error!',
+            text: 'Failed to update case details. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
           });
         }
       }
     });
+  }
+  const handleCancel = () => {
     onClose();
   };
+
 
   return (
     <div className="popup-overlay" ref={ref}>
@@ -409,30 +233,25 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
           <Loader />
         </div>
       ) : (
+
+
         <div className="popup-container">
           <div className="popup-header">
-            <h2>Application Details</h2>
+            <h2>Case Details</h2>
             <button onClick={onClose} className="close-button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#1C1B1F"
-              >
-                <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
-              </svg>
+              <X size={24} color="#1C1B1F" />
             </button>
           </div>
 
           <div className="popup-content">
+            {/* Case Details Section */}
             <div className="section">
               <button
                 className="section-header"
                 aria-expanded={expandedSections.caseDetails}
                 onClick={() => toggleSection("caseDetails")}
               >
-                <span>Case Details and Information</span>
+                <span>Case Details</span>
                 <div className="section-btn-container">
                   {expandedSections.caseDetails ? (
                     <Minus color="#15605C" />
@@ -443,84 +262,83 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
               </button>
               {expandedSections.caseDetails && (
                 <div className="section-content">
-                  <h3>Case Information</h3>
-                  <h4>Employee Details</h4>
-                  <div className="form-grid layer-detail-container">
+                  <h4>Lawyer & Employee Details</h4>
+                  <div className="form-grid">
+                    <div className="form-field">
+                      <label>Lawyer</label>
+                      <input
+                        type="text"
+                        value={lawyer?.userName || "No Lawyer Assigned"}
+                        readOnly
+                      />
+                    </div>
                     <div className="form-field">
                       <label>Employee</label>
-                      <select
-                        className="custom-form-select"
-                        value={caseInfo.aEmployee}
-                        required
-                        onChange={(e) => {
-                          setCaseInfo({
-                            ...caseInfo,
-                            aEmployee: e.target.value,
-                          });
-                          getEmail(e.target.value);
-                        }}
-                      >
-                        <option value="" disabled>
-                          Assign Employee
-                        </option>
-                        <option value="All">
-                          All Employee
-                        </option>
-                        {filteredEmployees &&
-                          filteredEmployees.map((employee) => (
-                            <option key={employee.id} value={employee.cid}>
-                              {employee.userName}
-                            </option>
-                          ))}
-                      </select>
+                      <input
+                        type="text"
+                        value={employee?.userName || "All Employee"}
+                        readOnly
+                      />
                     </div>
                   </div>
-                  <h4>Case Status</h4>
+
+                  <h4>Case Status and Documents</h4>
+                  <div className="form-field">
+                    <label>Case Status</label>
+                    <input
+                        type="text"
+                        value={caseInfo.status}
+                        readOnly
+                    />
+                  </div>
+
                   <div className="form-grid">
                     <div className="form-field">
                       <label>Case Type</label>
-                      <select
+                      <input type="text"
+                        readOnly
                         value={caseInfo.caseType}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            caseType: e.target.value,
-                          })
-                        }
-
-                        className="selectFields"
-                      >
-                        <option value="" disabled selected>Select Case Type</option>
-                        <option value="Walk In">Walk In</option>
-                        <option value="Referral">Referral</option>
-                      </select>
-
+                      />
                     </div>
-                    <div className="form-field">
-                      <label>Nature Of Case</label>
-                      <select
+                    <div className="form-field case-remark-container">
+                      <label>Nature of Case</label>
+                      <input type="text"
+                        readOnly
                         value={caseInfo.natureOfCase}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            natureOfCase: e.target.value,
-                          })
-                        }
-                        className="selectFields"
-                      >
-                        <option value="" disabled selected>Select Nature Of Case</option>
-                        <option value="Criminal">Criminal</option>
-                        <option value="Civil">Civil</option>
-                      </select>
-
+                      />
                     </div>
                   </div>
-
-
+                  <h4>Case Results</h4>
+                  <div className="form-grid">
+                    <div className="form-field">
+                      <label>Case Result</label>
+                      <input type="text"
+                        readOnly
+                        value={caseInfo.outcome ? caseInfo.outcome : "Outcome In Process"}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-grid remark-form-grid">
+                    <div className="form-field remark-form-field">
+                      <label>Remarks</label>
+                      <textarea
+                        className="case-remark"
+                        value={caseInfo.remarks}
+                        onChange={(e) =>
+                          setCaseInfo({
+                            ...caseInfo,
+                            remarks: e.target.value,
+                          })
+                        }
+                        placeholder="Remarks"
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
 
+            {/* Applicant Information Section */}
             <div className="section">
               <button
                 className="section-header"
@@ -547,20 +365,15 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         type="text"
                         value={applicantInfo.cidNumber}
                         readOnly
-                        onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            cidNumber: e.target.value,
-                          })
-                        }
+
                       />
                     </div>
                     <div className="form-field">
                       <label>Name</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.name}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -569,16 +382,12 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
-                  </div>
-
-                  <h4>Occupation Details</h4>
-                  <div className="form-grid">
                     <div className="form-field">
                       <label>Occupation</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.occupation}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -591,8 +400,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Contact Number</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.contactNumber}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -603,14 +412,14 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                     </div>
                   </div>
 
-                  <h4>Household Details</h4>
+                  <h4>Household Information</h4>
                   <div className="form-grid">
                     <div className="form-field">
-                      <label>Total Household Income (Nu.)</label>
+                      <label>Household Income</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.householdIncome}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -620,11 +429,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       />
                     </div>
                     <div className="form-field">
-                      <label>Total Household Members</label>
+                      <label>Household Members</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.householdMembers}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -633,12 +442,16 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
+                  </div>
+
+                  <h4>Address Information</h4>
+                  <div className="form-grid">
                     <div className="form-field">
                       <label>Dzongkhag</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.dzongkhag}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -647,16 +460,12 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
-                  </div>
-
-                  <h4>Current Addresses</h4>
-                  <div className="form-grid">
                     <div className="form-field">
-                      <label>Village</label>
+                      <label>Current Village</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.villageCurrent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -666,11 +475,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       />
                     </div>
                     <div className="form-field">
-                      <label>Gewog</label>
+                      <label>Current Gewog</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.gewogCurrent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -680,11 +489,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       />
                     </div>
                     <div className="form-field">
-                      <label>Dzongkhag</label>
+                      <label>Current Dzongkhag</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.dzongkhagCurrent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -694,15 +503,13 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       />
                     </div>
                   </div>
-
-                  <h4>Permanent Addresses</h4>
                   <div className="form-grid">
                     <div className="form-field">
-                      <label>Village</label>
+                      <label>Permanent Village</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.villagePermanent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -712,11 +519,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       />
                     </div>
                     <div className="form-field">
-                      <label>Gewog</label>
+                      <label>Permanent Gewog</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.gewogPermanent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -726,11 +533,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       />
                     </div>
                     <div className="form-field">
-                      <label>Dzongkhag</label>
+                      <label>Permanent Dzongkhag</label>
                       <input
                         type="text"
-                        readOnly
                         value={applicantInfo.dzongkhagPermanent}
+                        readOnly
                         onChange={(e) =>
                           setApplicantInfo({
                             ...applicantInfo,
@@ -744,14 +551,14 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
               )}
             </div>
 
-
+            {/* Institution Information Section */}
             <div className="section">
               <button
-                className="section-header header-btn"
+                className="section-header"
                 aria-expanded={expandedSections.institutions}
                 onClick={() => toggleSection("institutions")}
               >
-                <span>Institutions facilitating legal aid applications</span>
+                <span>Institutions</span>
                 <div className="section-btn-container">
                   {expandedSections.institutions ? (
                     <Minus color="#15605C" />
@@ -762,14 +569,14 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
               </button>
               {expandedSections.institutions && (
                 <div className="section-content">
-                  <h4>Name of the Institution</h4>
+                  <h4>Institution Details</h4>
                   <div className="form-grid">
                     <div className="form-field">
                       <label>Institution Name</label>
                       <input
                         type="text"
-                        readOnly
                         value={institutionInfo.institutionName}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
@@ -778,16 +585,12 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
-                  </div>
-
-                  <h4>Dealing Official/Staff Details</h4>
-                  <div className="form-grid">
                     <div className="form-field">
-                      <label>Name</label>
+                      <label>Official Name</label>
                       <input
                         type="text"
-                        readOnly
                         value={institutionInfo.officialName}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
@@ -796,12 +599,14 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
+                  </div>
+                  <div className="form-grid">
                     <div className="form-field">
-                      <label>Contact Number</label>
+                      <label>Official Contact</label>
                       <input
                         type="text"
-                        readOnly
                         value={institutionInfo.officialContact}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
@@ -811,11 +616,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                       />
                     </div>
                     <div className="form-field">
-                      <label>Email</label>
+                      <label>Official Email</label>
                       <input
                         type="email"
-                        readOnly
                         value={institutionInfo.officialEmail}
+                        readOnly
                         onChange={(e) =>
                           setInstitutionInfo({
                             ...institutionInfo,
@@ -829,13 +634,14 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
               )}
             </div>
 
+            {/* Document Section */}
             <div className="section">
               <button
                 className="section-header"
                 aria-expanded={expandedSections.documents}
                 onClick={() => toggleSection("documents")}
               >
-                <span>Check List of Documents</span>
+                <span>Documents</span>
                 <div className="section-btn-container">
                   {expandedSections.documents ? (
                     <Minus color="#15605C" />
@@ -861,24 +667,21 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                   </div>
                 </div>
               )}
-
             </div>
           </div>
 
           <div className="popup-footer">
             <button onClick={handleConfirm} className="confirm-button">
-              Approve
+              Update
             </button>
             <button onClick={handleCancel} className="cancel-button">
-              Decline
+              Cancel
             </button>
           </div>
         </div>
       )}
     </div>
-
   );
-
 });
 
-export default ApplicationPopup;
+export default EmployeeCasePopup;

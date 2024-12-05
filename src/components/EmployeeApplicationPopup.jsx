@@ -34,35 +34,27 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 );
 
 
-const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
+const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const { data: employees } = useGetAllEmployeeQuery();
   const { data: councils } = useGetAllCouncilQuery();
   const [updateCase] = useUpdateCaseMutation();
   const [sendEmail] = useSendEmailMutation();
-  const [email, setEmail] = useState();
-
-  const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [employee, setEmployee] = useState();
 
   useEffect(() => {
-    if (employees) {
-      const availableEmployees = employees.filter((employee) => employee.enabled === true);
-    
-      setFilteredEmployees(availableEmployees);
+    if (employees && cas) {
+        const eSelected = employees.find((emp) => emp.cid === cas.aEmployee);
+        setEmployee(eSelected);
     }
     
-  }, [employees]);
+  }, [employees, cas]);
 
   const [caseInfo, setCaseInfo] = useState({
     caseType: "Walk In",
     natureOfCase: "Civil",
     aEmployee : ""
   })
-
-  const getEmail = (cid) => {
-    const employeeMail = employees.find((employee) => employee.cid === cid);
-    setEmail(employeeMail.email);
-  }
 
 
   const handleViewPdf = (url) => {
@@ -152,17 +144,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     }
   }, [cas]);
 
-  const toggleSection = (section) => {
-    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
-
-  const notifyEmployee = async () => {
-    const to = email;
-    const subject = "Application Assignment";
-    const body = `Respected Sir/Madam, There has been a new application assigned to you. Please check the application for further details. Thank you.`;
-    await sendEmail({ to, subject, body }).unwrap();
-  }
-
   const notifyCouncil = () => {
     councils.map( async (council) => {
       const to = council.email;
@@ -171,6 +152,10 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       await sendEmail({ to, subject, body }).unwrap();
     });
   }
+
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
 
   const handleConfirm = async () => {
     const {
@@ -208,14 +193,15 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       title: "",
       text: "Are you sure you want to accept this case?",
       icon: "question",
-      showDenyButton: true,
+      showCancelButton: true,
       confirmButtonColor: "#1E306D",
-      denyButtonColor: "#4590CF",
-      confirmButtonText: "Confirm",
-      denyButtonText: "Update",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm"
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          notifyCouncil();
+          
           await updateCase({
             id: caseId,
             cid,
@@ -241,65 +227,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             aEmployee
           }).unwrap();
 
-          notifyCouncil();
-          if(email){
-            notifyEmployee();
-          }
-
           Swal.fire({
             title: "Success!",
             text: "The case has been updated successfully.",
             icon: "success",
-            showConfirmButton: false,
-            timer: 2000
-          });
-          window.location.reload()
-
-        } catch (err) {
-          Swal.fire({
-            title: "Error!",
-            text: "There was an error updating the case.",
-            icon: "error",
-            confirmButtonText: "Try Again",
-          });
-        }
-      }else if(result.isDenied){
-        try {
-          
-          if(email){
-            notifyEmployee();
-          }
-
-          await updateCase({
-            id: caseId,
-            cid,
-            occupation,
-            name,
-            contactNo,
-            income,
-            member,
-            cdzongkhag,
-            village,
-            gewog,
-            dzongkhag,
-            pvillage,
-            pgewog,
-            pdzongkhag,
-            institutionName,
-            officialName,
-            officialcNumber,
-            officialEmail,
-            caseType,
-            natureOfCase,
-            aEmployee
-          }).unwrap();
-
-          Swal.fire({
-            title: "Success!",
-            text: "The case has been updated successfully.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 2000
+            confirmButtonText: "OK",
           });
           window.location.reload()
 
@@ -341,7 +273,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
     const {
       caseType,
-      natureOfCase
+      natureOfCase,
+      aEmployee
     } = caseInfo;
 
     const status = "Dismissed";
@@ -378,7 +311,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             officialEmail,
             caseType,
             natureOfCase,
-            status
+            status,
+            aEmployee
           }).unwrap();
 
           Swal.fire({
@@ -448,71 +382,28 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                   <div className="form-grid layer-detail-container">
                     <div className="form-field">
                       <label>Employee</label>
-                      <select
-                        className="custom-form-select"
-                        value={caseInfo.aEmployee}
-                        required
-                        onChange={(e) => {
-                          setCaseInfo({
-                            ...caseInfo,
-                            aEmployee: e.target.value,
-                          });
-                          getEmail(e.target.value);
-                        }}
-                      >
-                        <option value="" disabled>
-                          Assign Employee
-                        </option>
-                        <option value="All">
-                          All Employee
-                        </option>
-                        {filteredEmployees &&
-                          filteredEmployees.map((employee) => (
-                            <option key={employee.id} value={employee.cid}>
-                              {employee.userName}
-                            </option>
-                          ))}
-                      </select>
+                      <input
+                        type="text"
+                        value={employee?.userName || "All Employee"}
+                        readOnly
+                      />
                     </div>
                   </div>
                   <h4>Case Status</h4>
                   <div className="form-grid">
                     <div className="form-field">
                       <label>Case Type</label>
-                      <select
+                      <input type="text"
+                        readOnly
                         value={caseInfo.caseType}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            caseType: e.target.value,
-                          })
-                        }
-
-                        className="selectFields"
-                      >
-                        <option value="" disabled selected>Select Case Type</option>
-                        <option value="Walk In">Walk In</option>
-                        <option value="Referral">Referral</option>
-                      </select>
-
+                      />
                     </div>
                     <div className="form-field">
                       <label>Nature Of Case</label>
-                      <select
+                      <input type="text"
+                        readOnly
                         value={caseInfo.natureOfCase}
-                        onChange={(e) =>
-                          setCaseInfo({
-                            ...caseInfo,
-                            natureOfCase: e.target.value,
-                          })
-                        }
-                        className="selectFields"
-                      >
-                        <option value="" disabled selected>Select Nature Of Case</option>
-                        <option value="Criminal">Criminal</option>
-                        <option value="Civil">Civil</option>
-                      </select>
-
+                      />
                     </div>
                   </div>
 
@@ -881,4 +772,4 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
 });
 
-export default ApplicationPopup;
+export default EmployeeApplicationPopup;

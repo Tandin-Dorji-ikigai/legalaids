@@ -61,7 +61,7 @@
   display: flex;
   flex-direction: column;
   row-gap: 16px;
-  width: 300px;
+  width: 500px;
 }
 
 .stats-card {
@@ -76,8 +76,9 @@
   color: #fff;
 }
 
-.card-stat-num {
-  font-size: 32px;
+.card-stat-nums {
+  font-size: 40px;
+  font-size: bolder;
 }
 
 .stats-card-trend-decrease {

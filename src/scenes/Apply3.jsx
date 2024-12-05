@@ -16,6 +16,9 @@ function Apply3() {
   const navigate = useNavigate();
   const [postCase, { isLoading }] = usePostCaseMutation();
 
+  const [isChecked, setIsChecked] = useState(false);
+  const [error, setError] = useState("");
+
   const [files, setFiles] = useState({
     cidDoc: null,
     hMemberDoc: null,
@@ -40,33 +43,38 @@ function Apply3() {
     async (event) => {
       event.preventDefault();
 
-      const formData = new FormData();
-
-      Object.entries(formDataPassed2).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-
-      Object.entries(files).forEach(([key, file]) => {
-        if (file) formData.append(key, file);
-      });
-
-      try {
-        const res = await postCase(formData).unwrap();
-        Swal.fire({
-          icon: "success",
-          title: "Application Submitted",
-          text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
+      if (!isChecked) {
+        setError("You must agree to the terms and conditions!");
+        return;
+      } else {
+        const formData = new FormData();
+        Object.entries(formDataPassed2).forEach(([key, value]) => {
+          formData.append(key, value);
         });
 
-        navigate("/home");
-      } catch (err) {
-        Swal.fire({
-          icon: "error",
-          title: "Submission Failed",
-          text: "There was an error submitting your application. Please try again.",
+        Object.entries(files).forEach(([key, file]) => {
+          if (file) formData.append(key, file);
         });
+
+        try {
+          const res = await postCase(formData).unwrap();
+          Swal.fire({
+            icon: "success",
+            title: "Application Submitted",
+            text: `Your application has been successfully submitted. Please use this ID ${res.appid} for application tracking.`,
+          });
+
+          navigate("/home");
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "Submission Failed",
+            text: "There was an error submitting your application. Please try again.",
+          });
+        }
       }
     },
+
     [formDataPassed2, files, postCase, navigate]
   );
 
@@ -75,14 +83,14 @@ function Apply3() {
       <div className="file-input-container" key={fieldName}>
         <label htmlFor={fieldName}>{label}</label>
         <div className="file-input-wrapper">
-        <input
-          type="file"
-          id={fieldName}
-          className="file-input"
-          accept="application/pdf"
-          onChange={handleFileChange(fieldName)}
-          required
-        />
+          <input
+            type="file"
+            id={fieldName}
+            className="file-input"
+            accept="application/pdf"
+            onChange={handleFileChange(fieldName)}
+            required
+          />
 
           <div className="file-input-placeholder">
             <FiUpload className="upload-icon" />
@@ -136,18 +144,18 @@ function Apply3() {
         <div className="form-wrapper">
           <form className="apply-form" onSubmit={handleSubmit}>
             <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('requiredDocument')}</p>
-            <div className="category-wrapper-third" style={{fontSize: currentLang === "dz"?'1.5rem':""}}>
-              {renderFileInput("cidDoc", t('cidorValidPassport'))} 
+            <div className="category-wrapper-third" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+              {renderFileInput("cidDoc", t('cidorValidPassport'))}
               {renderFileInput("hMemberDoc", t('detailsofHouse'))}
             </div>
-            <div className="category-wrapper-third" style={{fontSize: currentLang === "dz"?'1.5rem':""}}>
+            <div className="category-wrapper-third" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
               {renderFileInput("hIncomeDoc", t('attachmentforHouse'))}
               {renderFileInput(
                 "hCapitalDoc",
                 t('attachmentofDisposable')
               )}
             </div>
-            <div className="category-wrapper-third" style={{fontSize: currentLang === "dz"?'1.5rem':""}}>
+            <div className="category-wrapper-third" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
               {renderFileInput(
                 "cBackgroundDoc",
                 t('briefBackgroundCase')
@@ -157,6 +165,34 @@ function Apply3() {
                 t('evidenceofDisability')
               )}
             </div>
+
+            <div className="termsAndConditionWrapper">
+              <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('termsAndPolicies')}</p>
+              <div className="termsContainer">
+                <li style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>{t('terms1')}</li>
+                <li style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>{t('terms2')}</li>
+                <li style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>{t('terms3')}</li>
+              </div>
+            </div>
+
+            <div className="custom-form__checkbox-container">
+              <label className="custom-form__checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(e) => {
+                    setIsChecked(e.target.checked);
+                    if (e.target.checked) setError("");
+                  }}
+
+                  className="custom-checkbox"
+                />
+                <span style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>{t('oath')}</span>
+              </label>
+              {error && <p style={{ color: "red" }}>{error}</p>}
+            </div>
+
+
             <button
               type="submit"
               className="banner-cta-wrapper apply-cta-wrapper"

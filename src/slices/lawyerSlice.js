@@ -14,8 +14,25 @@ export const lawyerApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             })
-        })
+        }),
+        getLawyerById: builder.query({
+            query: (cid) => ({
+                url: LAWYER_URL + `/cid/${cid}`,
+            }),
+        }),
+        enableLawyer: builder.mutation({
+            query: (id) => ({
+              url: LAWYER_URL + `/enable/${id}`,
+              method: 'PUT',
+            }),
+        }),
+        disableLawyer: builder.mutation({
+            query: (id) => ({
+              url: LAWYER_URL + `/disable/${id}`,
+              method: 'PUT',
+            }),
+        }),
     })
 })
 
-export const { useGetAllLawyerQuery, usePostLawyerMutation } = lawyerApiSlice;
+export const { useGetAllLawyerQuery, usePostLawyerMutation, useGetLawyerByIdQuery, useDisableLawyerMutation, useEnableLawyerMutation } = lawyerApiSlice;
