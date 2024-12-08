@@ -29,7 +29,6 @@ function EmployeeApplicationManagement() {
   const [caseType, setCaseType] = useState([])
   const [natureOfCase, setNatureOfCase] = useState([])
 
-
   useEffect(() => {
     if (error) {
       console.log(error);
