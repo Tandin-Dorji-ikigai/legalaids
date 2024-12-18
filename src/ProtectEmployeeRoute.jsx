@@ -11,8 +11,6 @@ const ProtectedEmployeeRoute = ({ children }) => {
             navigate('/login');
         }else if(userInfo && userInfo.user.authorities[0].authority !== "Employee"){
             navigate('/login');
-        }else if(userInfo && userInfo.user.authorities[0].authority === "Employee"){
-            navigate('/login');
         }
     }, [userInfo, navigate]);
 

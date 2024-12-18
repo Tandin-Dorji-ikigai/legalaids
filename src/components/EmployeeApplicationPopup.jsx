@@ -107,8 +107,8 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   useEffect(() => {
     if (cas) {
       setCaseInfo({
-        caseType: cas.caseType,
-        natureOfCase: cas.natureOfCase,
+        caseType: caseInfo.caseType,
+        natureOfCase: caseInfo.natureOfCase,
         aEmployee: cas.aEmployee
       })
 

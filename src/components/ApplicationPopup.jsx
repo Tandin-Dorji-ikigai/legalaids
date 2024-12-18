@@ -142,8 +142,8 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   useEffect(() => {
     if (cas) {
       setCaseInfo({
-        caseType: cas.caseType,
-        natureOfCase: cas.natureOfCase,
+        caseType: caseInfo.caseType,
+        natureOfCase: caseInfo.natureOfCase,
         aEmployee: cas.aEmployee
       })
 
@@ -525,6 +525,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                     </div>
                     <div className="form-field">
                       <label>Nature Of Case</label>
+                      
                       <select
                         value={caseInfo.natureOfCase}
                         onChange={(e) =>
