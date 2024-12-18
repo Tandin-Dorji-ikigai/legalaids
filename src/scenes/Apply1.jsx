@@ -13,7 +13,7 @@ function Apply1() {
     const navigate = useNavigate();
     const [cid, setCid] = useState('')
 
-    const { data, error, isLoading } = useGetCensusQuery(11308006090);
+    const { data, error, isLoading } = useGetCensusQuery('11308006090');
     console.log(data)
 
     const [formData, setFormData] = useState({
