@@ -37,6 +37,10 @@ import HouseholdPopup from './components/HouseholdPopup';
 
 //NDI login page import
 import NDILogin from './scenes/NDILogin';
+import ProtectedAdminRoute from './ProtectAdminRoute';
+import ProtectedLawyerRoute from './ProtectLawyerRoute';
+import ProtectedEmployeeRoute from './ProtectEmployeeRoute';
+import ProtectedBarRoute from './ProtectedBarRoute';
 
 
 function App() {
@@ -92,24 +96,24 @@ function App() {
           <Route path='/NDILogin' element = {<NDILogin/>} />
           {/* admin route */}
           <Route path='/adminLogin' element={<AdminLogin />} />
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/employeeManagement' element={<EmployeeManagement />} />
-          <Route path='/caseManagement' element={<CaseManagement />} />
-          <Route path='/applicationManagement' element={<ApplicationManagement />} />
-          <Route path='/dataManagement' element={<DataManagement />} />
+          <Route path='/dashboard' element={<ProtectedAdminRoute><Dashboard /></ProtectedAdminRoute>} />
+          <Route path='/employeeManagement' element={<ProtectedAdminRoute><EmployeeManagement /></ProtectedAdminRoute>} />
+          <Route path='/caseManagement' element={<ProtectedAdminRoute><CaseManagement /></ProtectedAdminRoute>} />
+          <Route path='/applicationManagement' element={<ProtectedAdminRoute><ApplicationManagement /></ProtectedAdminRoute>} />
+          <Route path='/dataManagement' element={<ProtectedAdminRoute><DataManagement /></ProtectedAdminRoute>} />
           <Route path='/detailspopup' element={<DetailsPopup />} />
 
           {/* lawyer route */}
-          <Route path='/currentcases' element={<CurrentCases />} />
-          <Route path='/history' element={<History />} />
+          <Route path='/currentcases' element={<ProtectedLawyerRoute><CurrentCases /></ProtectedLawyerRoute>} />
+          <Route path='/history' element={<ProtectedLawyerRoute><History /></ProtectedLawyerRoute>} />
 
           {/* Employee route */}
-          <Route path='/employeeApplicationManagement' element={<EmployeeAppManagement />} />
-          <Route path='/employeeCaseManagement' element={<EmployeeCaseManagement />} />
-          <Route path='/employeeDataManagement' element={<EmployeeDataManagement />} />
+          <Route path='/employeeApplicationManagement' element={<ProtectedEmployeeRoute><EmployeeAppManagement /></ProtectedEmployeeRoute>} />
+          <Route path='/employeeCaseManagement' element={<ProtectedEmployeeRoute><EmployeeCaseManagement /></ProtectedEmployeeRoute>} />
+          <Route path='/employeeDataManagement' element={<ProtectedEmployeeRoute><EmployeeDataManagement /></ProtectedEmployeeRoute>} />
 
-          <Route path='/caseOverview' element={<BarCaseManagement />} />
-          <Route path='/registeredLawyers' element={<BarRegisteredLawyer />} />
+          <Route path='/caseOverview' element={<ProtectedBarRoute><BarCaseManagement /></ProtectedBarRoute>} />
+          <Route path='/registeredLawyers' element={<ProtectedBarRoute><BarRegisteredLawyer /></ProtectedBarRoute>} />
         </Routes>
       </main>
     </div>

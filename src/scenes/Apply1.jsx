@@ -16,6 +16,8 @@ function Apply1() {
     const [censusData, setCensusData] = useState([])
     const [loading, setLoading] = useState(false);
 
+    const { data, error, isLoading } = useGetCensusQuery('11308006090');
+    console.log(data)
     useEffect(() => {
         const fetchData = async () => {
             if (cid.length === 11) {
