@@ -33,6 +33,8 @@ import EmployeeDataManagement from './Employee/DataManagement'
 import BarCaseManagement from './barCouncil/CaseOverview';
 import BarRegisteredLawyer from './barCouncil/RegisteredLawyers';
 
+import HouseholdPopup from './components/HouseholdPopup';
+
 function App() {
   const [currentLang, setCurrentLang] = useState(i18n.language);
 
@@ -79,6 +81,9 @@ function App() {
           <Route path="/apply2" element={<Apply2 />} />
           <Route path="/apply3" element={<Apply3 />} />
           <Route path="/loader" element={<Loader />} />
+
+          <Route path="/householdPopup" element={<HouseholdPopup />} />
+
 
           {/* admin route */}
           <Route path='/adminLogin' element={<AdminLogin />} />

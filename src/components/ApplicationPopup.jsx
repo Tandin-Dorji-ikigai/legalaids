@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import Loader from "./Loader";
 import { useSendEmailMutation } from "../slices/emailApiSlice";
 import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
+import HouseholdPopup from "./HouseholdPopup";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -44,19 +45,43 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
 
+  const [householdNo, setHouseHoldNo] = useState("")
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (cas) {
+        try {
+          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cas.cid}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          let result = await response.json();
+          result = result.citizenDetailsResponse.citizenDetail[0]
+          setHouseHoldNo(result.householdNo)
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+    fetchData();
+  }, [cas]);
+
+  const [showPopup, setShowPopup] = useState(false);
+
+
   useEffect(() => {
     if (employees) {
       const availableEmployees = employees.filter((employee) => employee.enabled === true);
-    
+
       setFilteredEmployees(availableEmployees);
     }
-    
+
   }, [employees]);
 
   const [caseInfo, setCaseInfo] = useState({
     caseType: "Walk In",
     natureOfCase: "Civil",
-    aEmployee : ""
+    aEmployee: ""
   })
 
   const getEmail = (cid) => {
@@ -164,7 +189,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   }
 
   const notifyCouncil = () => {
-    councils.map( async (council) => {
+    councils.map(async (council) => {
       const to = council.email;
       const subject = "New Application";
       const body = `Respected Sir/Madam, There has been a new application approved. Please check the application for further details. Thank you.`;
@@ -242,7 +267,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
           }).unwrap();
 
           notifyCouncil();
-          if(email){
+          if (email) {
             notifyEmployee();
           }
 
@@ -263,10 +288,10 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             confirmButtonText: "Try Again",
           });
         }
-      }else if(result.isDenied){
+      } else if (result.isDenied) {
         try {
-          
-          if(email){
+
+          if (email) {
             notifyEmployee();
           }
 
@@ -863,6 +888,24 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
               )}
 
             </div>
+
+            {householdNo ?
+              <div>
+                <button
+                  onClick={() => setShowPopup(true)}
+                  className="show-popup-btn household-show-popup-btn"
+                >
+                  Show Family Tree
+                </button>
+
+                {showPopup && (
+                  <HouseholdPopup
+                    householdNumber={householdNo}
+                    closePopup={() => setShowPopup(false)}
+                  />
+                )}
+              </div> : null
+            }
           </div>
 
           <div className="popup-footer">

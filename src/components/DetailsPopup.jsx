@@ -1,6 +1,7 @@
 import React, { useState, forwardRef, useEffect } from "react";
 import { X, Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
+import "../components/householdPopup.css"
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
@@ -8,6 +9,7 @@ import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
+import HouseholdPopup from "./HouseholdPopup";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -41,8 +43,31 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [lawyer, setLawyer] = useState();
   const [sendEmail] = useSendEmailMutation();
   const [email, setEmail] = useState();
+  const [householdNo, setHouseHoldNo] = useState("")
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (cas) {
+        try {
+          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cas.cid}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          let result = await response.json();
+          result = result.citizenDetailsResponse.citizenDetail[0]
+          setHouseHoldNo(result.householdNo)
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+    fetchData();
+  }, [cas]);
+
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
+
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleViewPdf = (url) => {
     window.open(url, '_blank');
@@ -58,9 +83,9 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   }
 
   useEffect(() => {
-    if(lerror){
+    if (lerror) {
       console.log(lerror);
-    }else if(lawyers && cas && employees){
+    } else if (lawyers && cas && employees) {
       const selected = lawyers.find((lwy) => lwy.cid === cas.aLawyer);
       const availableEmployees = employees.filter((employee) => employee.enabled === true);
       setFilteredEmployees(availableEmployees);
@@ -211,7 +236,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         try {
           const id = caseId;
 
-          if(email){
+          if (email) {
             notifyEmployee();
           }
 
@@ -730,6 +755,25 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                 </div>
               )}
             </div>
+
+            {householdNo ?
+              <div>
+                <button
+                  onClick={() => setShowPopup(true)}
+                  className="show-popup-btn household-show-popup-btn"
+                >
+                  Show Family Tree
+                </button>
+
+                {showPopup && (
+                  <HouseholdPopup
+                    householdNumber={householdNo}
+                    closePopup={() => setShowPopup(false)}
+                  />
+                )}
+              </div> : null
+            }
+
           </div>
 
           <div className="popup-footer">
