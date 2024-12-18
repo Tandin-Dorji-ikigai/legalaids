@@ -1,0 +1,13 @@
+.ndi-login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    background: #f1f1f1;
+}
+
+.qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}

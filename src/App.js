@@ -35,6 +35,10 @@ import BarRegisteredLawyer from './barCouncil/RegisteredLawyers';
 
 import HouseholdPopup from './components/HouseholdPopup';
 
+//NDI login page import
+import NDILogin from './scenes/NDILogin';
+
+
 function App() {
   const [currentLang, setCurrentLang] = useState(i18n.language);
 
@@ -85,6 +89,7 @@ function App() {
           <Route path="/householdPopup" element={<HouseholdPopup />} />
 
 
+          <Route path='/NDILogin' element = {<NDILogin/>} />
           {/* admin route */}
           <Route path='/adminLogin' element={<AdminLogin />} />
           <Route path='/dashboard' element={<Dashboard />} />
