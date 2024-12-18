@@ -78,8 +78,10 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   }
 
   const getEmail = (cid) => {
-    const employeeMail = employees.find((employee) => employee.cid === cid);
-    setEmail(employeeMail.email);
+    if(cid !== "All"){
+      const employeeMail = employees.find((employee) => employee.cid === cid);
+      setEmail(employeeMail.email);
+    }
   }
 
   useEffect(() => {

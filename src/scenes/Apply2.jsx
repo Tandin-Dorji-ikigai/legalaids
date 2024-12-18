@@ -128,7 +128,7 @@ function Apply2() {
                             </div>
                         </div>
                         <button type="submit" className='banner-cta-wrapper apply-cta-wrapper'>
-                            <div className="banner-cta" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+                            <div className="banner-cta banner-ctaa" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
                                 {t("proceed")}
                                 <div className="icon-container">
                                     <MdExpandMore className='exapnd-more' />

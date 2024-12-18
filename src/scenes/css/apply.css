@@ -164,8 +164,8 @@
   background: none;
 }
 
-.apply-cta-wrapper .banner-cta {
-  width: 200px;
+.apply-cta-wrapper .banner-ctaa {
+  width: 200px !important;
   height: 45px;
   font-size: clamp(14px, 3vw, 18px);
 }

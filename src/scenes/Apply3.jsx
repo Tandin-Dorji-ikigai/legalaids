@@ -75,7 +75,7 @@ function Apply3() {
       }
     },
 
-    [formDataPassed2, files, postCase, navigate]
+    [formDataPassed2, files, postCase, navigate, isChecked]
   );
 
   const renderFileInput = useCallback(
@@ -192,15 +192,11 @@ function Apply3() {
               {error && <p style={{ color: "red" }}>{error}</p>}
             </div>
 
-
-            <button
-              type="submit"
-              className="banner-cta-wrapper apply-cta-wrapper"
-            >
-              <div className="banner-cta" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
-                {t('apply3apply')}
+            <button type="submit" className='banner-cta-wrapper apply-cta-wrapper'>
+              <div className="banner-cta banner-ctaa" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+                {t("apply3apply")}
                 <div className="icon-container">
-                  <MdExpandMore className="expand-more" />
+                  <MdExpandMore className='exapnd-more' />
                 </div>
               </div>
             </button>

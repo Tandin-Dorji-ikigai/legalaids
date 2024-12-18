@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp, EyeIcon} from "lucide-react";
+import { ChevronDown, ChevronUp, EyeIcon } from "lucide-react";
 import LawyerSideNav from "./LawyerDashboardNav";
 import "./css/CurrentCases.css";
 import { useSelector } from "react-redux";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+import HouseholdPopup from "../components/HouseholdPopup";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -30,9 +31,32 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
 );
 
 const CurrentCases = () => {
-  const { data:cases, error: fetchError, isLoading } = useGetAllCaseQuery();
+  const { data: cases, error: fetchError, isLoading } = useGetAllCaseQuery();
   const { userInfo } = useSelector((state) => state.auth);
   const [cas, setCase] = useState([]);
+
+  const [householdNo, setHouseHoldNo] = useState("")
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (cas) {
+        try {
+          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cas.cid}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          let result = await response.json();
+          result = result.citizenDetailsResponse.citizenDetail[0]
+          setHouseHoldNo(result.householdNo)
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+    fetchData();
+  }, [cas]);
+
+  const [showPopup, setShowPopup] = useState(false);
 
   if (fetchError) {
     console.log(fetchError)
@@ -77,7 +101,7 @@ const CurrentCases = () => {
     officialContact: "",
     officialEmail: "",
   });
-  
+
   const [documents, setDocuments] = useState([
     { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
     { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
@@ -440,17 +464,35 @@ const CurrentCases = () => {
                 <div className="document-list">
                   {documents.map((doc, index) => (
                     <DocumentItem
-                    key={index}
-                    label={doc.label}
-                    filename={doc.filename}
-                    isLoading={isLoading}
-                    onViewPdf={handleViewPdf}
-                  />
+                      key={index}
+                      label={doc.label}
+                      filename={doc.filename}
+                      isLoading={isLoading}
+                      onViewPdf={handleViewPdf}
+                    />
                   ))}
                 </div>
               </div>
             )}
           </div>
+
+          {householdNo ?
+            <div>
+              <button
+                onClick={() => setShowPopup(true)}
+                className="show-popup-btn household-show-popup-btn"
+              >
+                Show Family Tree
+              </button>
+
+              {showPopup && (
+                <HouseholdPopup
+                  householdNumber={householdNo}
+                  closePopup={() => setShowPopup(false)}
+                />
+              )}
+            </div> : null
+          }
         </div>
       </div>
     </div>
