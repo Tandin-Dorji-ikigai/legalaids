@@ -34,16 +34,12 @@ i18n
           //footer
           applyForLegalAidFooter: "Apply for Legal Aid",
           getHelpToday: "Get Help Today",
-          home: "Home",
-          aboutUs: "About Us",
-          legalIssues: "Legal Issues",
           eligibility: "Eligibility",
           bhutanLegalAidCenter: "Bhutan Legal Aid Center",
 
           // home
           mainHerobannerText: "UPHOLDING RIGHTS AND STRENGTHENING FAIRNESS.",
           accessibleLegalAssistance: "ACCESSIBLE LEGAL ASSISTANCE FOR ALL.",
-          getHelpToday: "GET HELP TODAY.",
           whatWeDo: "What We Do",
           provideExpertAid:
             "We provide accessible expert legal aid to ensure justice and equality for all.",
@@ -65,7 +61,6 @@ i18n
             "We carefully review each case and assign the most suitable lawyer through the Bar Council. Detailed notifications and appointment confirmations are communicated back to the Legal Aid Centre to ensure smooth coordination.",
           trustUs:
             "Trust us to handle your case with care and precision. Together we'll work toward a successful resolution. Start your path to justice with confidence—we're here to support you every step of the way.",
-          clientApplication: "Client application for legal aid",
           caseReview: "Case Review and Lawyer Assignment",
           caseReviewAndLawyer: "Case Review and Lawyer Assignment",
           clientAppDesc:
@@ -148,7 +143,6 @@ i18n
 
           institutionNamePlaceholder: "Institution Name",
           officialNamePlaceholder: "Name of dealing officer",
-          contactNumberPlaceholder: "Contact Number",
           emailPlaceholder: "Email",
 
           //Apply for Legal Aid Apply3
@@ -261,7 +255,6 @@ i18n
             "ཐོབ་དབང་བདག་འཛིན་འཐབ་ནི་དང་ དྲང་བདེན་སྒྲིང་སྒྲིང་བཟོ་ནི།",
           accessibleLegalAssistance:
             "ག་ར་ལུ་འཐོབ་ཚུགས་པའི་ཁྲིམས་དོན་གྱི་རོགས་རམ།",
-          getHelpToday: "ད་རེས་གྲོགས་རམ་ཐོབ།",
           whatWeDo: "ང་བཅས་ཀྱིས་ག་ཅི་འབདཝ་སྨོ?",
           application: "ལག་ལེན་ཚུ།",
           lawyerAssignments: "ཁྲིམས་རྩོད་པའི་ལས་འགན།",
@@ -364,7 +357,6 @@ i18n
 
           institutionNamePlaceholder: "གཙུག་སྡེའི་མིང་",
           officialNamePlaceholder: "འབྲེལ་བ་འཐབ་མིའི་འགོ་དཔོན་གྱི་མིང་",
-          contactNumberPlaceholder: "འབྲེལ་བ་འཐབ་སའི་ཨང་",
           emailPlaceholder: "གློག་འཕྲིན་ཁ་བྱང་",
 
           //Apply for Legal Aid Apply3

@@ -8,6 +8,7 @@ import { useGetAllCaseQuery } from "../slices/caseApiSlice";
 import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
+import HouseholdPopup from "./HouseholdPopup";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -41,6 +42,30 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [email, setEmail] = useState();
   const [filteredLawyers, setFilteredLawyers] = useState([]);
 
+
+  const [householdNo, setHouseHoldNo] = useState("")
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (cas) {
+        try {
+          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cas.cid}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          let result = await response.json();
+          result = result.citizenDetailsResponse.citizenDetail[0]
+          setHouseHoldNo(result.householdNo)
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+    fetchData();
+  }, [cas]);
+
+  const [showPopup, setShowPopup] = useState(false);
+
   useEffect(() => {
     if (lawyers && cases) {
       const availableLawyers = lawyers.filter((lawyer) => {
@@ -55,10 +80,10 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
           assignedCases.every((caseItem) => caseItem.status === "Completed")
         );
       });
-    
+
       setFilteredLawyers(availableLawyers);
     }
-    
+
   }, [lawyers, cases]);
 
   const handleViewPdf = (url) => {
@@ -232,8 +257,8 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
       if (result.isConfirmed) {
         try {
           const id = caseId;
-          
-          if(email){
+
+          if (email) {
             notifyLawyer();
           }
 
@@ -328,27 +353,27 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Lawyer</label>
                       {caseInfo.aLawyer ? (
                         <select
-                        className="custom-form-select"
-                        value={caseInfo.aLawyer}
-                        required
-                        onChange={(e) => {
-                          setCaseInfo({
-                            ...caseInfo,
-                            aLawyer: e.target.value,
-                          });
-                          getEmail(e.target.value);
-                        }}
-                      >
-                        <option value="" disabled>
-                          Assign Lawyer
-                        </option>
-                        {lawyers &&
-                          lawyers.map((lawyer) => (
-                            <option key={lawyer.id} value={lawyer.cid}>
-                              {lawyer.userName}
-                            </option>
-                          ))}
-                      </select>                
+                          className="custom-form-select"
+                          value={caseInfo.aLawyer}
+                          required
+                          onChange={(e) => {
+                            setCaseInfo({
+                              ...caseInfo,
+                              aLawyer: e.target.value,
+                            });
+                            getEmail(e.target.value);
+                          }}
+                        >
+                          <option value="" disabled>
+                            Assign Lawyer
+                          </option>
+                          {lawyers &&
+                            lawyers.map((lawyer) => (
+                              <option key={lawyer.id} value={lawyer.cid}>
+                                {lawyer.userName}
+                              </option>
+                            ))}
+                        </select>
                       ) : (
                         <select
                           className="custom-form-select"
@@ -784,6 +809,24 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                 </div>
               )}
             </div>
+
+            {householdNo ?
+              <div>
+                <button
+                  onClick={() => setShowPopup(true)}
+                  className="show-popup-btn household-show-popup-btn"
+                >
+                  Show Family Tree
+                </button>
+
+                {showPopup && (
+                  <HouseholdPopup
+                    householdNumber={householdNo}
+                    closePopup={() => setShowPopup(false)}
+                  />
+                )}
+              </div> : null
+            }
           </div>
 
           <div className="popup-footer">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideNav from "./DashboardNav";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { usePostCaseMutation } from "../slices/caseApiSlice";
@@ -12,8 +12,35 @@ import Loader from "../components/Loader";
 function DataManagement() {
   const [postCase, { isLoading }] = usePostCaseMutation();
   const { data: admins } = useGetAllAdminQuery();
-  const [sendEmail, {isMailLoading}] = useSendEmailMutation();
+  const [sendEmail, { isMailLoading }] = useSendEmailMutation();
   const [files, setFiles] = useState([]);
+
+  // citizienship details
+  const [cid, setCid] = useState('')
+  const [censusData, setCensusData] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (cid.length === 11) {
+        setLoading(true);
+        try {
+          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cid}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          let result = await response.json();
+          result = result.citizenDetailsResponse.citizenDetail[0]
+          setCensusData(result);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchData();
+  }, [cid]);
 
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: true,
@@ -38,9 +65,9 @@ function DataManagement() {
     villageCurrent: "",
     gewogCurrent: "",
     dzongkhagCurrent: "",
-    villagePermanent: "",
-    gewogPermanent: "",
-    dzongkhagPermanent: "",
+    villagePermanent: censusData?.villageName || "",
+    gewogPermanent: censusData?.gewogName || "",
+    dzongkhagPermanent: censusData?.dzongkhagName | "",
   });
 
   const [institutionInfo, setInstitutionInfo] = useState({
@@ -67,10 +94,31 @@ function DataManagement() {
       ...prev,
       [section]: !prev[section],
     }));
+
   };
 
+  const handleChangeCid = (e) => {
+    const { value } = e.target;
+    setApplicantInfo(prev => ({
+      ...prev,
+      cidNumber: value
+    }));
+    setCid(value);
+  };
+
+  useEffect(() => {
+    if (censusData) {
+      setApplicantInfo((prevFormData) => ({
+        ...prevFormData,
+        dzongkhagPermanent: censusData?.dzongkhagName || '',
+        gewogPermanent: censusData?.gewogName || '',
+        villagePermanent: censusData?.villageName || '',
+      }));
+    }
+  }, [censusData]);
+
   const notifyAdmin = (id) => {
-    admins.map( async (admin) => {
+    admins.map(async (admin) => {
       const to = admin.email;
       const subject = "New Application";
       const body = `Respected Sir/Madam, There has been a new application applied with Application ID ${id}. Please check the application for further details. Thank you.`;
@@ -118,7 +166,7 @@ function DataManagement() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          
+
           const res = await postCase(formData).unwrap();
           notifyAdmin(res.appid);
 
@@ -188,6 +236,7 @@ function DataManagement() {
   return (
     <div className="dashboard-container">
       {isLoading && <Loader />}
+      {loading && <Loader />}
       {isMailLoading && <Loader />}
       <SideNav />
       <div className="dashboard-content">
@@ -261,16 +310,11 @@ function DataManagement() {
                   <div className="lawyer-form-field">
                     <label>CID Number</label>
                     <input
-                      type="text"
+                      type="number"
                       placeholder="eg.11308231453"
                       value={applicantInfo.cidNumber}
                       required
-                      onChange={(e) =>
-                        setApplicantInfo({
-                          ...applicantInfo,
-                          cidNumber: e.target.value,
-                        })
-                      }
+                      onChange={handleChangeCid}
                     />
                   </div>
                   <div className="lawyer-form-field">
@@ -421,48 +465,34 @@ function DataManagement() {
                     <label>Village</label>
                     <input
                       type="text"
-                      value={applicantInfo.villagePermanent}
+                      value={applicantInfo.villagePermanent || "Enter Village"}
                       required
-                      onChange={(e) =>
-                        setApplicantInfo({
-                          ...applicantInfo,
-                          villagePermanent: e.target.value,
-                        })
-                      }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
                     <label>Gewog</label>
                     <input
                       type="text"
-                      value={applicantInfo.gewogPermanent}
+                      value={applicantInfo.gewogPermanent || "Enter Gewog"}
                       required
-                      onChange={(e) =>
-                        setApplicantInfo({
-                          ...applicantInfo,
-                          gewogPermanent: e.target.value,
-                        })
-                      }
+                      readOnly
                     />
                   </div>
                   <div className="lawyer-form-field">
                     <label>Dzongkhag</label>
                     <input
                       type="text"
-                      value={applicantInfo.dzongkhagPermanent}
+                      value={applicantInfo.dzongkhagPermanent || "Enter Dzongkhag"}
                       required
-                      onChange={(e) =>
-                        setApplicantInfo({
-                          ...applicantInfo,
-                          dzongkhagPermanent: e.target.value,
-                        })
-                      }
+                      readOnly
                     />
                   </div>
                 </div>
               </div>
             )}
           </div>
+
 
           <div className="lawyer-section">
             <button
