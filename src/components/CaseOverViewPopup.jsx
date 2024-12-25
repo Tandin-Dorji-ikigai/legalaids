@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useEffect } from "react";
-import { X, Plus, Minus, EyeIcon } from "lucide-react";
+import { X, Plus, Minus } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
@@ -8,31 +8,7 @@ import { useGetAllCaseQuery } from "../slices/caseApiSlice";
 import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
-import HouseholdPopup from "./HouseholdPopup";
 
-const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
-  <div className="document-item">
-    <div>
-      <span className="document-label">{label}</span>
-      {isLoading ? (
-        <span className="document-filename">Loading...</span>
-      ) : (
-        <span className="document-filename">
-          {filename ? filename.split("/").pop() : "No file"}
-        </span>
-      )}
-    </div>
-    <div className="document-actions">
-      <button
-        className="icon-button add"
-        disabled={isLoading || !filename}
-        onClick={() => filename && onViewPdf(filename)}
-      >
-        <EyeIcon size={18} />
-      </button>
-    </div>
-  </div>
-);
 const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const { data: lawyers } = useGetAllLawyerQuery();
@@ -43,7 +19,6 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [filteredLawyers, setFilteredLawyers] = useState([]);
 
 
-  const [householdNo, setHouseHoldNo] = useState("")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,9 +28,6 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          let result = await response.json();
-          result = result.citizenDetailsResponse.citizenDetail[0]
-          setHouseHoldNo(result.householdNo)
         } catch (err) {
           console.log(err);
         }
@@ -64,7 +36,6 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     fetchData();
   }, [cas]);
 
-  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     if (lawyers && cases) {
@@ -86,9 +57,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   }, [lawyers, cases]);
 
-  const handleViewPdf = (url) => {
-    window.open(url, "_blank");
-  };
+  
 
   if (fetchError) {
     console.log(fetchError);
@@ -137,34 +106,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     remarks: "",
   });
 
-  const [documents, setDocuments] = useState([
-    { label: "CID or Valid Passport", filename: null, docKey: "cidDoc" },
-    {
-      label: "Details of Household members",
-      filename: null,
-      docKey: "hMemberDoc",
-    },
-    {
-      label: "Attachment for household income",
-      filename: null,
-      docKey: "hIncomeDoc",
-    },
-    {
-      label: "Attachment for household disposable capital",
-      filename: null,
-      docKey: "hCapitalDoc",
-    },
-    {
-      label: "Brief Background of the Case*",
-      filename: null,
-      docKey: "cBackgroundDoc",
-    },
-    {
-      label: "Evidence of any form of disability.",
-      filename: null,
-      docKey: "disabilityDoc",
-    },
-  ]);
+ 
 
   useEffect(() => {
     if (cas) {
@@ -199,13 +141,6 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
         officialContact: cas.officialcNumber,
         officialEmail: cas.officialEmail,
       });
-
-      setDocuments((prev) =>
-        prev.map((doc) => ({
-          ...doc,
-          filename: cas[doc.docKey] || null,
-        }))
-      );
     }
   }, [cas]);
 
