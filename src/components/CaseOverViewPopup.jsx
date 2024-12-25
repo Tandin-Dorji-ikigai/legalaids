@@ -348,7 +348,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
               {expandedSections.caseDetails && (
                 <div className="section-content">
                   <h4>Lawyer Details</h4>
-                  <div className="form-grid layer-detail-container">
+                  <div className="form-grid">
                     <div className="form-field">
                       <label>Lawyer</label>
                       {caseInfo.aLawyer ? (
@@ -397,7 +397,22 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                             ))}
                         </select>
                       )}
+
                     </div>
+
+                    <div className="form-field">
+                      <label>Service Provider Scheme</label>
+                      <select
+                        className="selectFields"
+                      >
+                        <option value="" disabled selected>
+                          Select Scheme
+                        </option>
+                        <option value="Probono">Probono</option>
+                        <option value="Fee-based">Fee-Based</option>
+                      </select>
+                    </div>
+
                   </div>
 
                   <h4>Case Status and Documents</h4>
@@ -524,7 +539,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
-                    <div className="form-field">
+                    {/* <div className="form-field">
                       <label>Occupation</label>
                       <input
                         type="text"
@@ -687,14 +702,14 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                           })
                         }
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}
             </div>
 
             {/* Institution Information Section */}
-            <div className="section">
+            {/* <div className="section">
               <button
                 className="section-header"
                 aria-expanded={expandedSections.institutions}
@@ -774,10 +789,10 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Document Section */}
-            <div className="section">
+            {/* <div className="section">
               <button
                 className="section-header"
                 aria-expanded={expandedSections.documents}
@@ -808,9 +823,9 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
-            {householdNo ?
+            {/* {householdNo ?
               <div>
                 <button
                   onClick={() => setShowPopup(true)}
@@ -826,7 +841,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                   />
                 )}
               </div> : null
-            }
+            } */}
           </div>
 
           <div className="popup-footer">

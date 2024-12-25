@@ -78,7 +78,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   }
 
   const getEmail = (cid) => {
-    if(cid !== "All"){
+    if (cid !== "All") {
       const employeeMail = employees.find((employee) => employee.cid === cid);
       setEmail(employeeMail.email);
     }
@@ -356,9 +356,9 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       value={caseInfo.status}
                       className="selectFields"
                       onChange={(e) =>
-                        caseInfo({
+                        setCaseInfo({
                           ...caseInfo,
-                          status: e.target.value,
+                          status: e.target.value, // Update the 'status' field in the state
                         })
                       }
                     >
@@ -366,9 +366,9 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                       <option value="In Progress">In Progress</option>
                       <option value="Completed">Completed</option>
                       <option value="Dismissed">Dismissed</option>
-
                     </select>
                   </div>
+
 
                   <div className="form-grid">
                     <div className="form-field">

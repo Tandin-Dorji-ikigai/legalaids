@@ -144,10 +144,7 @@ function Apply3() {
         <div className="form-wrapper">
           <form className="apply-form" onSubmit={handleSubmit}>
             <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('requiredDocument')}</p>
-            <div className="category-wrapper-third" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
-              {renderFileInput("cidDoc", t('cidorValidPassport'))}
-              {renderFileInput("hMemberDoc", t('detailsofHouse'))}
-            </div>
+
             <div className="category-wrapper-third" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
               {renderFileInput("hIncomeDoc", t('attachmentforHouse'))}
               {renderFileInput(
@@ -165,7 +162,9 @@ function Apply3() {
                 t('evidenceofDisability')
               )}
             </div>
-
+            <div className="category-wrapper-third category-wrapper-thirds" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+              {renderFileInput("hMemberDoc", t('detailsofHouse'))}
+            </div>
             <div className="termsAndConditionWrapper">
               <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('termsAndPolicies')}</p>
               <div className="termsContainer">

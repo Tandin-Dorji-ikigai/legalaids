@@ -17,6 +17,7 @@
   background-color: #15605c;
   /* Green background */
   color: white;
+
   .lawyer-confirm,
   .lawyer-cancel,
   .lawyer-button-confirm,
@@ -85,8 +86,10 @@
 
   /* Loader Styles */
   .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
+    border: 16px solid #f3f3f3;
+    /* Light grey */
+    border-top: 16px solid #3498db;
+    /* Blue */
     border-radius: 50%;
     width: 120px;
     height: 120px;
@@ -102,6 +105,7 @@
     0% {
       transform: rotate(0deg);
     }
+
     100% {
       transform: rotate(360deg);
     }
@@ -122,10 +126,12 @@
     .file-upload-btn-container {
       width: 30%;
     }
+
     .file-upload-btn-container button {
       width: 150%;
     }
   }
+
   @media (max-width: 670px) {
     .file-btn-container {
       column-gap: 80px;

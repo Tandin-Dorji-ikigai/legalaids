@@ -179,11 +179,10 @@ function CaseManagement() {
               <thead>
                 <tr>
                   <th>CID</th>
-                  <th>Date</th>
+                  <th>Name</th>
                   <th>Nature of Case</th>
-                  <th>Dzongkhag</th>
-                  <th>Lawyer Assigned</th>
                   <th>Case Status</th>
+                  <th>Case Type</th>
                   <th>Case Result</th>
                 </tr>
               </thead>
@@ -191,9 +190,8 @@ function CaseManagement() {
                 {currentCases.map((caseItem) => (
                   <tr key={caseItem.id} onClick={() => handleOpen(caseItem.id)}>
                     <td>{caseItem.cid}</td>
-                    <td>{caseItem.contactNo}</td>
+                    <td>{caseItem.name}</td>
                     <td>{caseItem.natureOfCase}</td>
-                    <td>{caseItem.pdzongkhag}</td>
                     <td>{caseItem.status}</td>
                     <td>{caseItem.caseType}</td>
                     <td>{caseItem.outcome || "None"}</td>

@@ -180,6 +180,9 @@
   gap: 50px;
   margin: 30px 0;
 }
+.category-wrapper-thirds {
+  width: 50%;
+}
 
 .file-upload-form {
   display: flex;
