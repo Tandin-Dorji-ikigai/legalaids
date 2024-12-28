@@ -75,7 +75,7 @@ function Apply3() {
       }
     },
 
-    [formDataPassed2, files, postCase, navigate]
+    [formDataPassed2, files, postCase, navigate, isChecked]
   );
 
   const renderFileInput = useCallback(
@@ -144,10 +144,7 @@ function Apply3() {
         <div className="form-wrapper">
           <form className="apply-form" onSubmit={handleSubmit}>
             <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('requiredDocument')}</p>
-            <div className="category-wrapper-third" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
-              {renderFileInput("cidDoc", t('cidorValidPassport'))}
-              {renderFileInput("hMemberDoc", t('detailsofHouse'))}
-            </div>
+
             <div className="category-wrapper-third" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
               {renderFileInput("hIncomeDoc", t('attachmentforHouse'))}
               {renderFileInput(
@@ -165,7 +162,9 @@ function Apply3() {
                 t('evidenceofDisability')
               )}
             </div>
-
+            <div className="category-wrapper-third category-wrapper-thirds" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+              {renderFileInput("hMemberDoc", t('detailsofHouse'))}
+            </div>
             <div className="termsAndConditionWrapper">
               <p className={`apply-title ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('termsAndPolicies')}</p>
               <div className="termsContainer">
@@ -192,15 +191,11 @@ function Apply3() {
               {error && <p style={{ color: "red" }}>{error}</p>}
             </div>
 
-
-            <button
-              type="submit"
-              className="banner-cta-wrapper apply-cta-wrapper"
-            >
-              <div className="banner-cta" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
-                {t('apply3apply')}
+            <button type="submit" className='banner-cta-wrapper apply-cta-wrapper'>
+              <div className="banner-cta banner-ctaa" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+                {t("apply3apply")}
                 <div className="icon-container">
-                  <MdExpandMore className="expand-more" />
+                  <MdExpandMore className='exapnd-more' />
                 </div>
               </div>
             </button>

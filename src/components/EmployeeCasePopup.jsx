@@ -8,6 +8,7 @@ import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
+
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
     <div>
@@ -39,6 +40,7 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
   const [updateCase] = useUpdateResultMutation();
   const [lawyer, setLawyer] = useState();
   const [employee, setEmployee] = useState();
+
 
   const handleViewPdf = (url) => {
     window.open(url, '_blank');

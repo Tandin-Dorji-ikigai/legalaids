@@ -16,6 +16,8 @@ function Apply1() {
     const [censusData, setCensusData] = useState([])
     const [loading, setLoading] = useState(false);
 
+    const { data, error, isLoading } = useGetCensusQuery('11308006090');
+    console.log(data)
     useEffect(() => {
         const fetchData = async () => {
             if (cid.length === 11) {
@@ -343,7 +345,7 @@ function Apply1() {
                                     </div>
                                 </div>
                                 <button type="submit" className='banner-cta-wrapper apply-cta-wrapper'>
-                                    <div className="banner-cta " style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
+                                    <div className="banner-cta banner-ctaa" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
                                         {t("proceed")}
                                         <div className="icon-container">
                                             <MdExpandMore className='exapnd-more' />

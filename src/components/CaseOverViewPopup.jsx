@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useEffect } from "react";
-import { X, Plus, Minus, EyeIcon } from "lucide-react";
+import { X, Plus, Minus } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
@@ -9,29 +9,6 @@ import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 
-const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
-  <div className="document-item">
-    <div>
-      <span className="document-label">{label}</span>
-      {isLoading ? (
-        <span className="document-filename">Loading...</span>
-      ) : (
-        <span className="document-filename">
-          {filename ? filename.split("/").pop() : "No file"}
-        </span>
-      )}
-    </div>
-    <div className="document-actions">
-      <button
-        className="icon-button add"
-        disabled={isLoading || !filename}
-        onClick={() => filename && onViewPdf(filename)}
-      >
-        <EyeIcon size={18} />
-      </button>
-    </div>
-  </div>
-);
 const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
   const { data: lawyers } = useGetAllLawyerQuery();
@@ -40,6 +17,25 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [sendEmail] = useSendEmailMutation();
   const [email, setEmail] = useState();
   const [filteredLawyers, setFilteredLawyers] = useState([]);
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (cas) {
+        try {
+          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cas.cid}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+    fetchData();
+  }, [cas]);
+
 
   useEffect(() => {
     if (lawyers && cases) {
@@ -55,15 +51,13 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
           assignedCases.every((caseItem) => caseItem.status === "Completed")
         );
       });
-    
+
       setFilteredLawyers(availableLawyers);
     }
-    
+
   }, [lawyers, cases]);
 
-  const handleViewPdf = (url) => {
-    window.open(url, "_blank");
-  };
+  
 
   if (fetchError) {
     console.log(fetchError);
@@ -112,34 +106,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     remarks: "",
   });
 
-  const [documents, setDocuments] = useState([
-    { label: "CID or Valid Passport", filename: null, docKey: "cidDoc" },
-    {
-      label: "Details of Household members",
-      filename: null,
-      docKey: "hMemberDoc",
-    },
-    {
-      label: "Attachment for household income",
-      filename: null,
-      docKey: "hIncomeDoc",
-    },
-    {
-      label: "Attachment for household disposable capital",
-      filename: null,
-      docKey: "hCapitalDoc",
-    },
-    {
-      label: "Brief Background of the Case*",
-      filename: null,
-      docKey: "cBackgroundDoc",
-    },
-    {
-      label: "Evidence of any form of disability.",
-      filename: null,
-      docKey: "disabilityDoc",
-    },
-  ]);
+ 
 
   useEffect(() => {
     if (cas) {
@@ -174,13 +141,6 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
         officialContact: cas.officialcNumber,
         officialEmail: cas.officialEmail,
       });
-
-      setDocuments((prev) =>
-        prev.map((doc) => ({
-          ...doc,
-          filename: cas[doc.docKey] || null,
-        }))
-      );
     }
   }, [cas]);
 
@@ -232,8 +192,8 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
       if (result.isConfirmed) {
         try {
           const id = caseId;
-          
-          if(email){
+
+          if (email) {
             notifyLawyer();
           }
 
@@ -323,32 +283,32 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
               {expandedSections.caseDetails && (
                 <div className="section-content">
                   <h4>Lawyer Details</h4>
-                  <div className="form-grid layer-detail-container">
+                  <div className="form-grid">
                     <div className="form-field">
                       <label>Lawyer</label>
                       {caseInfo.aLawyer ? (
                         <select
-                        className="custom-form-select"
-                        value={caseInfo.aLawyer}
-                        required
-                        onChange={(e) => {
-                          setCaseInfo({
-                            ...caseInfo,
-                            aLawyer: e.target.value,
-                          });
-                          getEmail(e.target.value);
-                        }}
-                      >
-                        <option value="" disabled>
-                          Assign Lawyer
-                        </option>
-                        {lawyers &&
-                          lawyers.map((lawyer) => (
-                            <option key={lawyer.id} value={lawyer.cid}>
-                              {lawyer.userName}
-                            </option>
-                          ))}
-                      </select>                
+                          className="custom-form-select"
+                          value={caseInfo.aLawyer}
+                          required
+                          onChange={(e) => {
+                            setCaseInfo({
+                              ...caseInfo,
+                              aLawyer: e.target.value,
+                            });
+                            getEmail(e.target.value);
+                          }}
+                        >
+                          <option value="" disabled>
+                            Assign Lawyer
+                          </option>
+                          {lawyers &&
+                            lawyers.map((lawyer) => (
+                              <option key={lawyer.id} value={lawyer.cid}>
+                                {lawyer.userName}
+                              </option>
+                            ))}
+                        </select>
                       ) : (
                         <select
                           className="custom-form-select"
@@ -372,7 +332,22 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                             ))}
                         </select>
                       )}
+
                     </div>
+
+                    <div className="form-field">
+                      <label>Service Provider Scheme</label>
+                      <select
+                        className="selectFields"
+                      >
+                        <option value="" disabled selected>
+                          Select Scheme
+                        </option>
+                        <option value="Probono">Probono</option>
+                        <option value="Fee-based">Fee-Based</option>
+                      </select>
+                    </div>
+
                   </div>
 
                   <h4>Case Status and Documents</h4>
@@ -499,7 +474,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
-                    <div className="form-field">
+                    {/* <div className="form-field">
                       <label>Occupation</label>
                       <input
                         type="text"
@@ -662,14 +637,14 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                           })
                         }
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}
             </div>
 
             {/* Institution Information Section */}
-            <div className="section">
+            {/* <div className="section">
               <button
                 className="section-header"
                 aria-expanded={expandedSections.institutions}
@@ -749,10 +724,10 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Document Section */}
-            <div className="section">
+            {/* <div className="section">
               <button
                 className="section-header"
                 aria-expanded={expandedSections.documents}
@@ -783,7 +758,25 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
+
+            {/* {householdNo ?
+              <div>
+                <button
+                  onClick={() => setShowPopup(true)}
+                  className="show-popup-btn household-show-popup-btn"
+                >
+                  Show Family Tree
+                </button>
+
+                {showPopup && (
+                  <HouseholdPopup
+                    householdNumber={householdNo}
+                    closePopup={() => setShowPopup(false)}
+                  />
+                )}
+              </div> : null
+            } */}
           </div>
 
           <div className="popup-footer">

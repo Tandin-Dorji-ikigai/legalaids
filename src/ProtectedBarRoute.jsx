@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-const ProtectedAdminRoute = ({ children }) => {
+const ProtectedBarRoute = ({ children }) => {
     const { userInfo } = useSelector(state => state.auth);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!userInfo) {
             navigate('/login');
-        }else if(userInfo && userInfo.user.authorities[0].authority !== "Admin"){
+        }else if(userInfo && userInfo.user.authorities[0].authority !== "Bar Council"){
             navigate('/login');
         }
     }, [userInfo, navigate]);
@@ -22,4 +22,4 @@ const ProtectedAdminRoute = ({ children }) => {
     return children;
 };
 
-export default ProtectedAdminRoute;
+export default ProtectedBarRoute;
