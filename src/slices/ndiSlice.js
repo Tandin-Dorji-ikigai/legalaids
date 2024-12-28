@@ -59,14 +59,12 @@ export const ndiApiSlice = apiSlice.injectEndpoints({
             }),
         }),
 
-        // Handle Webhook
-        handleWebhook: builder.mutation({
-            query: (payload) => ({
-                url: `${NDI_URL}/webhook`,
-                method: "POST",
-                body: payload,
+        checklogin: builder.mutation({
+            query: () => ({
+                url: `${NDI_URL}/ndilogin`,
+                method: "GET",
             }),
-        }),
+        })
     }),
 });
 
@@ -79,5 +77,5 @@ export const {
     useUnsubscribeWebhookMutation,
     useSubscribeWebhookMutation,
     useRegisterWebhookMutation,
-    useHandleWebhookMutation,
+    useCheckloginMutation,
 } = ndiApiSlice;
