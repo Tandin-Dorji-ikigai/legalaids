@@ -43,6 +43,8 @@ import ProtectedEmployeeRoute from './ProtectEmployeeRoute';
 import ProtectedBarRoute from './ProtectedBarRoute';
 
 
+import Profile from './scenes/profile';
+
 function App() {
   const [currentLang, setCurrentLang] = useState(i18n.language);
 
@@ -89,7 +91,7 @@ function App() {
           <Route path="/apply2" element={<Apply2 />} />
           <Route path="/apply3" element={<Apply3 />} />
           <Route path="/loader" element={<Loader />} />
-
+          <Route path="/profile" element={<Profile/>} />
           <Route path="/householdPopup" element={<HouseholdPopup />} />
 
 
