@@ -104,6 +104,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     caseType: "",
     natureOfCase: "",
     remarks: "",
+    scheme: "",
   });
 
  
@@ -133,6 +134,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
         natureOfCase: cas.natureOfCase,
         remarks: cas.remarks,
         outcome: cas.outcome,
+        scheme: cas.scheme,
       });
 
       setInstitutionInfo({
@@ -179,6 +181,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     const caseType = caseInfo.caseType;
     const natureOfCase = caseInfo.natureOfCase;
     const outcome = caseInfo.outcome;
+    const scheme = caseInfo.scheme;
     console.log(email);
     Swal.fire({
       title: "",
@@ -222,6 +225,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
             caseType,
             natureOfCase,
             outcome,
+            scheme
           }).unwrap();
           Swal.fire({
             title: "Success!",
@@ -338,7 +342,14 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                     <div className="form-field">
                       <label>Service Provider Scheme</label>
                       <select
+                      value={caseInfo.scheme}
                         className="selectFields"
+                        onChange={(e) =>
+                          setCaseInfo({
+                            ...caseInfo,
+                            scheme: e.target.value,
+                          })
+                        }
                       >
                         <option value="" disabled selected>
                           Select Scheme
