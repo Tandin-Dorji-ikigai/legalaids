@@ -1,8 +1,112 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./css/profile.css";
 import NavBar from "../components/Nav";
 import Footer from "../components/Footer";
-function Profile() {
+import { useGetAllAdminQuery } from "../slices/adminSlice";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { useUpdateAdminMutation } from "../slices/adminSlice";
+import { useDispatch } from "react-redux";
+import { useLogoutMutation } from "../slices/authApiSlice";
+import { logout } from "../slices/authSlice";
+import { useNavigate } from "react-router-dom";
+
+const Profile = () => {
+    const {data: users, error} = useGetAllAdminQuery();
+    const [updatePassword] = useUpdateAdminMutation()
+    const {userInfo} = useSelector((state) => state.auth);
+    const [user, setUser] = useState();
+    const [password, setPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [logoutCall] = useLogoutMutation();
+
+    useEffect(() => {
+        if (error) {
+            Swal.fire({
+                title: "Error!",
+                text: "Error logging out",
+                icon: "error",
+                confirmButtonColor: "#1E306D",
+                confirmButtonText: "OK",
+            });
+        } else if (users && userInfo) {
+          const adm = users.find((user) => user.cid === userInfo.user.username);
+          setUser(adm);
+          console.log(adm)
+        }
+    }, [error, users, userInfo]);
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+    };
+    
+    const handleNewPasswordChange = (e) => {
+        setNewPassword(e.target.value);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (password !== "" || newPassword !== "") {
+            Swal.fire({
+                title: "",
+                text: "Are you sure you want to update your password?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#1E306D",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Confirm",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const id = user.id;
+                        const res = await updatePassword({
+                        id,
+                        password,
+                        newPassword
+                        });
+                        if (res.error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Password Update Failed!",
+                            text:
+                            res.error.data?.message ||
+                            "An error occurred during update. Please try again.",
+                        });
+                        } else {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Password Update Successful!",
+                            text: "Your password has been updated successfully! Please login again!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+
+                        await logoutCall().unwrap();
+                        dispatch(logout());
+                        navigate("/login");
+                        }
+                    } catch (err) {
+                        Swal.fire({
+                        icon: "error",
+                        title: "Password Update Failed!",
+                        text:
+                            err.data?.message ||
+                            "An error occurred during password update. Please try again.",
+                        });
+                }
+                }
+            })
+        } else {
+          Swal.fire({
+            icon: "warning",
+            title: "Invalid Input",
+            text: "Please ensure all fields are filled correctly.",
+          });
+        }
+      };
+
     return (
         <>
             <NavBar currentPage="profile" />
@@ -23,20 +127,20 @@ function Profile() {
                 <div>
                     <div className="profile-details-container">
                         <div className="profile-details">
-                            <h4 >
+                            <h4>
                                 Username
                             </h4>
-                            <div className="profile-user-name">
-                                Tandin Dorji
-                            </div>
+                            {user &&<div className="profile-cid-no">
+                                {user.userName}
+                            </div>}
                         </div>
                         <div className="profile-details">
                             <h4>
-                                Cid
+                                CID
                             </h4>
-                            <div className="profile-cid-no">
-                                12312314
-                            </div>
+                            {user &&<div className="profile-cid-no">
+                                {user.cid}
+                            </div>}
                         </div>
                     </div>
                     <div className="profile-details-container">
@@ -44,17 +148,17 @@ function Profile() {
                             <h4>
                                 Phone Number
                             </h4>
-                            <div className="profile-user-name">
-                                1234433
-                            </div>
+                            {user && <div className="profile-user-name">
+                                {user.contactNo}
+                            </div>}
                         </div>
                         <div className="profile-details">
                             <h4>
-                                DOB
+                                Email
                             </h4>
-                            <div className="profile-cid-no">
-                                23/23/3003
-                            </div>
+                            {user && <div className="profile-cid-no">
+                                {user.email}
+                            </div>}
                         </div>
                     </div>
                 </div>
@@ -71,21 +175,21 @@ function Profile() {
                     <div className="profile-line-sm">
                     </div>
 
-                    <form action="" className="profile-update-form">
+                    <form className="profile-update-form">
                         <div className="profile-update-items">
                             <div className="profile-form-item">
                                 <label htmlFor="password">Current Password</label>
-                                <input type="password" placeholder="password" className="profile-update-input-field" />
+                                <input value={password} onChange={handlePasswordChange} type="password" placeholder="current password" className="profile-update-input-field" />
                             </div>
                             <div className="profile-form-item">
                                 <label htmlFor="password">New Password</label>
-                                <input type="password" placeholder="password" className="profile-update-input-field" />
+                                <input value={newPassword} onChange={handleNewPasswordChange} type="password" placeholder="new password" className="profile-update-input-field" />
 
                             </div>
                         </div>
                         <div className="update-btn-container">
                             <button className="update-cancel-btn"> Cancel </button>
-                            <button className="update-confirm-btn">Save Changes</button>
+                            <button onClick={handleSubmit} className="update-confirm-btn">Save Changes</button>
                         </div>
 
 

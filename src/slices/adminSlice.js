@@ -32,7 +32,14 @@ export const adminApiSlice = apiSlice.injectEndpoints({
               method: 'PUT',
             }),
         }),
+        updateAdmin: builder.mutation({
+            query: ({ id, ...data }) => ({
+              url: ADMIN_URL + `/updatepass/${id}`,
+              method: 'PUT',
+              body: data,
+            }),
+        }),
     })
 })
 
-export const { useGetAllAdminQuery, usePostAdminMutation, useGetAdminByIdQuery, useDisableAdminMutation, useEnableAdminMutation } = adminApiSlice;
+export const { useGetAllAdminQuery, usePostAdminMutation, useUpdateAdminMutation, useGetAdminByIdQuery, useDisableAdminMutation, useEnableAdminMutation } = adminApiSlice;
