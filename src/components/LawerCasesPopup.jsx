@@ -350,7 +350,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                                             <label>Employee</label>
                                             <input
                                                 type="text"
-                                                value={employee?.userName || "No Employee Assigned"}
+                                                value={cas.aEmployee === "All" ? "All Employee" : employee?.userName || "No Employee Assigned"}
                                                 readOnly
                                             />
 

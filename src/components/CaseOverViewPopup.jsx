@@ -88,6 +88,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   const [caseInfo, setCaseInfo] = useState({
     aLawyer: "",
+    aEmployee: "",
     status: "In Progress",
     caseType: "",
     natureOfCase: "",
@@ -123,6 +124,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
         remarks: cas.remarks,
         outcome: cas.outcome,
         scheme: cas.scheme,
+        aEmployee: cas.aEmployee,
       });
 
       setInstitutionInfo({
@@ -166,6 +168,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     const remarks = caseInfo.remarks;
     const status = caseInfo.status;
     const aLawyer = caseInfo.aLawyer;
+    const aEmployee = caseInfo.aEmployee;
     const caseType = caseInfo.caseType;
     const natureOfCase = caseInfo.natureOfCase;
     const outcome = caseInfo.outcome;
@@ -210,6 +213,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
             remarks,
             status,
             aLawyer,
+            aEmployee,
             caseType,
             natureOfCase,
             outcome,

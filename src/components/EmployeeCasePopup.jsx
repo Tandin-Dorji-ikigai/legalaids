@@ -278,7 +278,7 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
                       <label>Employee</label>
                       <input
                         type="text"
-                        value={employee?.userName || "All Employee"}
+                        value={cas.aEmployee === "All" ? "All Employee" : employee?.userName}
                         readOnly
                       />
                     </div>
