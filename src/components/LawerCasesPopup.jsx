@@ -9,6 +9,7 @@ import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 import HouseholdPopup from "./HouseholdPopup";
+import { useGetAllDocQuery, usePostDocMutation } from "../slices/documentSlice";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
     <div className="document-item">
@@ -38,7 +39,9 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
     const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
     const { data: lawyers, lerror } = useGetAllLawyerQuery();
     const { data: employees } = useGetAllEmployeeQuery();
+    const { data: docs} = useGetAllDocQuery();
     const [updateCase] = useUpdateResultMutation();
+    const [postDoc, {isLoading1}] = usePostDocMutation();
     const [lawyer, setLawyer] = useState();
     const [employee, setEmployee] = useState();
     const [householdNo, setHouseHoldNo] = useState("")
@@ -47,15 +50,16 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
     const [existingAdditionalDocs, setExistingAdditionalDocs] = useState([]);
 
     // use when additional Document field is added 
-    // useEffect(() => {
-    //     if (cas && cas.additionalDocuments) {
-    //         setExistingAdditionalDocs(cas.additionalDocuments);
-    //     }
-    // }, [cas]);
+    useEffect(() => {
+        if (cas && docs) {
+            const filterDocs = docs.filter((doc) => doc.cases === caseId)
+            setExistingAdditionalDocs(filterDocs);
+        }
+    }, [cas, docs]);
 
 
     const handleAddDocument = () => {
-        setAdditionalDocuments([...additionalDocuments, { id: Date.now(), file: null, description: '' }]);
+        setAdditionalDocuments([...additionalDocuments, { id: Date.now(), file: null}]);
     };
 
     const handleRemoveDocument = (id) => {
@@ -68,11 +72,11 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
         ));
     };
 
-    const handleDescriptionChange = (id, description) => {
-        setAdditionalDocuments(additionalDocuments.map(doc =>
-            doc.id === id ? { ...doc, description } : doc
-        ));
-    };
+    // const handleDescriptionChange = (id, description) => {
+    //     setAdditionalDocuments(additionalDocuments.map(doc =>
+    //         doc.id === id ? { ...doc, description } : doc
+    //     ));
+    // };
 
 
     useEffect(() => {
@@ -215,6 +219,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
     };
 
     const handleConfirm = async () => {
+        console.log(additionalDocuments)
         const cid = applicantInfo.cidNumber;
         const occupation = applicantInfo.occupation;
         const name = applicantInfo.name;
@@ -234,11 +239,11 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
         const officialEmail = institutionInfo.officialEmail;
         const remarks = caseInfo.remarks;
         const status = caseInfo.status;
-        const aLawyer = caseInfo.email;
         const caseType = caseInfo.caseType;
         const natureOfCase = caseInfo.natureOfCase;
         const outcome = caseInfo.outcome;
         const aEmployee = caseInfo.aEmployee;
+        const aLawyer = caseInfo.aLawyer;
 
         Swal.fire({
             title: "",
@@ -258,6 +263,17 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                         cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
                         officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee
                     }).unwrap();
+
+                    for (const doc of additionalDocuments){
+                        if (doc.file) {
+                            const formData = new FormData();
+                            formData.append("docName", doc.file);
+                            formData.append("cases", caseId.toString());
+    
+                            await postDoc(formData).unwrap();
+                        }
+                    }
+
                     Swal.fire({
                         title: 'Success!',
                         text: 'Case details have been updated successfully.',
@@ -285,7 +301,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
 
     return (
         <div className="popup-overlay" ref={ref}>
-
+            {isLoading1 && <Loader/>}
             {isLoading ? (
                 <div className="loading-container">
                     <Loader />
@@ -758,7 +774,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                                             <DocumentItem
                                                 key={`existing-${index}`}
                                                 label={doc.description || `Additional Document ${index + 1}`}
-                                                filename={doc.filename}
+                                                filename={doc.docName}
                                                 isLoading={isLoading}
                                                 onViewPdf={handleViewPdf}
                                             />

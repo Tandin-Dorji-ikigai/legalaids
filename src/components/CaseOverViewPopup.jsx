@@ -39,19 +39,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (lawyers && cases) {
-      const availableLawyers = lawyers.filter((lawyer) => {
-        if (!lawyer.enabled) {
-          return false;
-        }
-        const assignedCases = cases.filter(
-          (caseItem) => caseItem.aLawyer === lawyer.cid
-        );
-        return (
-          assignedCases.length === 0 ||
-          assignedCases.every((caseItem) => caseItem.status === "Completed")
-        );
-      });
-
+      const availableLawyers = lawyers.filter((lawyer) => lawyer.enabled === true);
       setFilteredLawyers(availableLawyers);
     }
 

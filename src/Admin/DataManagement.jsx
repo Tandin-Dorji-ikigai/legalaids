@@ -126,6 +126,7 @@ function DataManagement() {
   }
 
   const handleConfirm = async () => {
+    console.log(files)
     const formData = new FormData();
     formData.append("cid", applicantInfo.cidNumber);
     formData.append("occupation", applicantInfo.occupation);

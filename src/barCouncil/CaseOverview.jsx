@@ -11,30 +11,30 @@ function CaseManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const casesPerPage = 10;
 
-
   // Filter dropdown
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedDzongkhag, setSelectedDzongkhag] = useState('');
-  const [selectedCaseType, setSelectedCaseType] = useState('');
-  const [selectedNatureOfCase, setSelectedNatureOfCase] = useState('');
-  const [statuses, setStatuses] = useState([])
-  const [dzongkhags, setDzongkhags] = useState([])
-  const [caseType, setCaseType] = useState([])
-  const [natureOfCase, setNatureOfCase] = useState([])
-
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedDzongkhag, setSelectedDzongkhag] = useState("");
+  const [selectedCaseType, setSelectedCaseType] = useState("");
+  const [selectedNatureOfCase, setSelectedNatureOfCase] = useState("");
+  const [statuses, setStatuses] = useState([]);
+  const [dzongkhags, setDzongkhags] = useState([]);
+  const [caseType, setCaseType] = useState([]);
+  const [natureOfCase, setNatureOfCase] = useState([]);
 
   useEffect(() => {
     if (error) {
       console.log(error);
     } else if (cases) {
-      const pendingCases = cases.filter(c => c.status === "In Progress" || c.status === "Completed");
+      const pendingCases = cases.filter(
+        (c) => c.status === "In Progress" || c.status === "Completed"
+      );
       setSelectedCases(pendingCases);
       if (selectedCases) {
         const status = Array.from(
           new Set(
             selectedCases
-              .map(c => c.status)
-              .filter(status => status !== undefined && status !== null)
+              .map((c) => c.status)
+              .filter((status) => status !== undefined && status !== null)
           )
         ).sort();
         setStatuses(status);
@@ -42,8 +42,10 @@ function CaseManagement() {
         const dzongkhag = Array.from(
           new Set(
             selectedCases
-              .map(c => c.pdzongkhag)
-              .filter(dzongkhag => dzongkhag !== undefined && dzongkhag !== null)
+              .map((c) => c.pdzongkhag)
+              .filter(
+                (dzongkhag) => dzongkhag !== undefined && dzongkhag !== null
+              )
           )
         ).sort();
         setDzongkhags(dzongkhag);
@@ -51,8 +53,8 @@ function CaseManagement() {
         const caseType = Array.from(
           new Set(
             selectedCases
-              .map(c => c.caseType)
-              .filter(caseType => caseType !== undefined && caseType !== null)
+              .map((c) => c.caseType)
+              .filter((caseType) => caseType !== undefined && caseType !== null)
           )
         ).sort();
         setCaseType(caseType);
@@ -60,8 +62,11 @@ function CaseManagement() {
         const natureOfCase = Array.from(
           new Set(
             selectedCases
-              .map(c => c.natureOfCase)
-              .filter(natureOfCase => natureOfCase !== undefined && natureOfCase !== null)
+              .map((c) => c.natureOfCase)
+              .filter(
+                (natureOfCase) =>
+                  natureOfCase !== undefined && natureOfCase !== null
+              )
           )
         ).sort();
         setNatureOfCase(natureOfCase);
@@ -71,13 +76,23 @@ function CaseManagement() {
 
   const filteredCases = selectedCases
     ? selectedCases.filter((caseItem) => {
-      const matchesStatus = selectedStatus === '' || caseItem.status === selectedStatus;
-      const matchesDzongkhag = selectedDzongkhag === '' || caseItem.pdzongkhag === selectedDzongkhag;
-      const matchesCaseType = selectedCaseType === '' || caseItem.caseType === selectedCaseType;
-      const matchesNatureOfCase = selectedNatureOfCase === '' || caseItem.natureOfCase === selectedNatureOfCase;
+        const matchesStatus =
+          selectedStatus === "" || caseItem.status === selectedStatus;
+        const matchesDzongkhag =
+          selectedDzongkhag === "" || caseItem.pdzongkhag === selectedDzongkhag;
+        const matchesCaseType =
+          selectedCaseType === "" || caseItem.caseType === selectedCaseType;
+        const matchesNatureOfCase =
+          selectedNatureOfCase === "" ||
+          caseItem.natureOfCase === selectedNatureOfCase;
 
-      return matchesStatus && matchesDzongkhag && matchesCaseType && matchesNatureOfCase;
-    })
+        return (
+          matchesStatus &&
+          matchesDzongkhag &&
+          matchesCaseType &&
+          matchesNatureOfCase
+        );
+      })
     : [];
 
   const totalPages = Math.ceil(filteredCases.length / casesPerPage);
@@ -123,10 +138,16 @@ function CaseManagement() {
                 </div>
 
                 <div className="filter-select-wrapper case-management-select">
-                  <select className="filter-select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                  <select
+                    className="filter-select"
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                  >
                     <option value="">All Applications</option>
-                    {statuses.map(status => (
-                      <option key={status} value={status}>{status}</option>
+                    {statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -138,8 +159,10 @@ function CaseManagement() {
                     onChange={(e) => setSelectedDzongkhag(e.target.value)}
                   >
                     <option value="">All Dzongkhags</option>
-                    {dzongkhags.map(dzongkhag => (
-                      <option key={dzongkhag} value={dzongkhag}>{dzongkhag}</option>
+                    {dzongkhags.map((dzongkhag) => (
+                      <option key={dzongkhag} value={dzongkhag}>
+                        {dzongkhag}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -151,12 +174,13 @@ function CaseManagement() {
                     onChange={(e) => setSelectedCaseType(e.target.value)}
                   >
                     <option value="">All Case Types</option>
-                    {caseType.map(caseType => (
-                      <option key={caseType} value={caseType}>{caseType}</option>
+                    {caseType.map((caseType) => (
+                      <option key={caseType} value={caseType}>
+                        {caseType}
+                      </option>
                     ))}
                   </select>
                 </div>
-
 
                 <div className="filter-select-wrapper case-management-select">
                   <select
@@ -165,8 +189,10 @@ function CaseManagement() {
                     onChange={(e) => setSelectedNatureOfCase(e.target.value)}
                   >
                     <option value="">All Nature Of Cases</option>
-                    {natureOfCase.map(natureOfCase => (
-                      <option key={natureOfCase} value={natureOfCase}>{natureOfCase}</option>
+                    {natureOfCase.map((natureOfCase) => (
+                      <option key={natureOfCase} value={natureOfCase}>
+                        {natureOfCase}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -200,15 +226,25 @@ function CaseManagement() {
               </tbody>
             </table>
             <div className="pagination">
-              <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+              <button
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
                 Previous
               </button>
               {Array.from({ length: totalPages }, (_, index) => (
-                <button key={index + 1} onClick={() => setCurrentPage(index + 1)} className={currentPage === index + 1 ? 'active' : ''}>
+                <button
+                  key={index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={currentPage === index + 1 ? "active" : ""}
+                >
                   {index + 1}
                 </button>
               ))}
-              <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
                 Next
               </button>
             </div>
