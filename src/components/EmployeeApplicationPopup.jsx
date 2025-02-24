@@ -184,7 +184,11 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     const {
       caseType,
       natureOfCase,
-      aEmployee
+      aEmployee,
+      scheme,
+      aLawyer,
+      outcome,
+      remarks
     } = caseInfo;
 
     const status = "In Progress";
@@ -224,7 +228,11 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             caseType,
             natureOfCase,
             status,
-            aEmployee
+            aEmployee,
+            scheme,
+            aLawyer,
+            outcome,
+            remarks
           }).unwrap();
 
           Swal.fire({
@@ -274,7 +282,11 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     const {
       caseType,
       natureOfCase,
-      aEmployee
+      aEmployee,
+      scheme,
+      aLawyer,
+      outcome,
+      remarks
     } = caseInfo;
 
     const status = "Dismissed";
@@ -312,7 +324,11 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             caseType,
             natureOfCase,
             status,
-            aEmployee
+            aEmployee,
+            scheme,
+            aLawyer,
+            outcome,
+            remarks
           }).unwrap();
 
           Swal.fire({

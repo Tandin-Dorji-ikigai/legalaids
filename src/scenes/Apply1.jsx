@@ -16,14 +16,14 @@ function Apply1() {
     const [censusData, setCensusData] = useState([])
     const [loading, setLoading] = useState(false);
 
-    const { data, error, isLoading } = useGetCensusQuery('11308006090');
-    console.log(data)
+    // const { data, error, isLoading } = useGetCensusQuery('11308006090');
+    // console.log(data)
     useEffect(() => {
         const fetchData = async () => {
             if (cid.length === 11) {
                 setLoading(true);
                 try {
-                    const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cid}`);
+                    const response = await fetch(`http://localhost:8080/api/proxy/citizendetails/${cid}`);
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }

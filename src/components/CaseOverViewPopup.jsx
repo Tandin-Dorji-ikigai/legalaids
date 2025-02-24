@@ -94,6 +94,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
     natureOfCase: "",
     remarks: "",
     scheme: "",
+    outcome: ""
   });
 
  

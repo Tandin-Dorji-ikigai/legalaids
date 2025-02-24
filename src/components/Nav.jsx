@@ -19,7 +19,7 @@ function NavBar({ currentPage }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const verified = localStorage.getItem("verified");
-  console.log(verified)
+
   const [logoutCall] = useLogoutMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();

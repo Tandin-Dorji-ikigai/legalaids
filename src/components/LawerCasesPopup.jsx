@@ -9,7 +9,7 @@ import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 import HouseholdPopup from "./HouseholdPopup";
-import { useGetAllDocQuery, usePostDocMutation } from "../slices/documentSlice";
+import { useGetAllDocQuery, usePostDocMutation, useGetDocQuery } from "../slices/documentSlice";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
     <div className="document-item">
@@ -49,7 +49,27 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
     const [additionalDocuments, setAdditionalDocuments] = useState([]);
     const [existingAdditionalDocs, setExistingAdditionalDocs] = useState([]);
 
-    // use when additional Document field is added 
+    const [filename, setSelectedFile] = useState(null);
+    // const { data: fileData, refetch } = useGetDocQuery(filename, { skip: !filename, refetchOnMountOrArgChange: true, });
+
+
+    // useEffect(() => {
+    //     if (filename) {
+    //         console.log('refetched')
+    //         refetch();
+    //     }
+    // }, [filename, refetch]);
+
+    // useEffect(() => {
+    //     console.log("useEffect", fileData)
+    //     if (fileData) {
+    //         console.log("useEffect")
+    //         const blob = new Blob([fileData], { type: "application/pdf" });
+    //         const url = URL.createObjectURL(blob);
+    //         window.open(url, "_blank");
+    //     }
+    // }, [fileData, filename]);
+
     useEffect(() => {
         if (cas && docs) {
             const filterDocs = docs.filter((doc) => doc.cases === caseId)
@@ -98,19 +118,31 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
         fetchData();
     }, [cas]);
 
-
-
     const [showPopup, setShowPopup] = useState(false);
 
-    const handleViewPdf = (url) => {
-        window.open(url, '_blank');
+    const handleViewPdf = async (filename) => {
+        console.log("Fetching file:", filename);
+        const file = filename.split('/').pop();
+        
+        try {
+            const response = await fetch(`http://localhost:8765/CASEMICROSERVICE/api/document/file/${file}`);
+            if (!response.ok) throw new Error("Failed to fetch document");
+    
+            const blob = await response.blob();
+            console.log("blob", blob)
+            const url = URL.createObjectURL(blob);
+            console.log("url", url)
+            window.open(url, "_blank");
+        } catch (error) {
+            console.error("Error fetching document:", error);
+        }
     };
+
+
 
     if (fetchError) {
         console.log(fetchError);
     }
-
-    console.log(cas)
 
     useEffect(() => {
         if (lerror) {
@@ -160,7 +192,9 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
         caseType: "",
         natureOfCase: "",
         remarks: "",
-        aEmployee: ""
+        aEmployee: "",
+        scheme: "",
+        outcome:""
     })
 
     const [documents, setDocuments] = useState([
@@ -193,7 +227,8 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                 natureOfCase: cas.natureOfCase,
                 remarks: cas.remarks,
                 outcome: cas.outcome,
-                aEmployee: cas.aEmployee
+                aEmployee: cas.aEmployee,
+                scheme: cas.scheme
             })
 
             setInstitutionInfo({
@@ -244,7 +279,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
         const outcome = caseInfo.outcome;
         const aEmployee = caseInfo.aEmployee;
         const aLawyer = caseInfo.aLawyer;
-
+        const scheme = caseInfo.scheme;
         Swal.fire({
             title: "",
             text: "Are you sure you want to update this case?",
@@ -261,7 +296,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                     await updateCase({
                         id, cid, occupation, name, contactNo, income, member,
                         cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
-                        officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee
+                        officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee, scheme
                     }).unwrap();
 
                     for (const doc of additionalDocuments){

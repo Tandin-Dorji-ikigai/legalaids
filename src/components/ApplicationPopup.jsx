@@ -81,7 +81,12 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [caseInfo, setCaseInfo] = useState({
     caseType: "Walk In",
     natureOfCase: "Civil",
-    aEmployee: ""
+    aEmployee: "",
+    aLawyer: "",
+    status: "",
+    remarks: "",
+    outcome: "",
+    scheme: "",
   })
 
   const getEmail = (cid) => {
@@ -144,7 +149,12 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       setCaseInfo({
         caseType: caseInfo.caseType,
         natureOfCase: caseInfo.natureOfCase,
-        aEmployee: cas.aEmployee
+        aEmployee: cas.aEmployee,
+        remarks: cas.remarks,
+        outcome: cas.outcome,
+        scheme: cas.scheme,
+        aLawyer: cas.aLawyer,
+        status: cas.status
       })
 
       setApplicantInfo({
@@ -226,7 +236,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     const {
       caseType,
       natureOfCase,
-      aEmployee
+      aEmployee,
+      scheme,
+      aLawyer,
+      outcome,
+      remarks
     } = caseInfo;
 
     const status = "In Progress";
@@ -265,7 +279,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             caseType,
             natureOfCase,
             status,
-            aEmployee
+            aEmployee,
+            scheme,
+            aLawyer,
+            outcome,
+            remarks
           }).unwrap();
 
           notifyCouncil();
@@ -318,7 +336,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             officialEmail,
             caseType,
             natureOfCase,
-            aEmployee
+            aEmployee,
+            scheme,
+            aLawyer,
+            outcome,
+            remarks
           }).unwrap();
 
           Swal.fire({
@@ -368,7 +390,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
     const {
       caseType,
-      natureOfCase
+      natureOfCase,
+      scheme,
+      aLawyer,
+      outcome,
+      remarks
     } = caseInfo;
 
     const status = "Dismissed";
@@ -405,7 +431,11 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             officialEmail,
             caseType,
             natureOfCase,
-            status
+            status,
+            scheme,
+            aLawyer,
+            outcome,
+            remarks
           }).unwrap();
 
           Swal.fire({

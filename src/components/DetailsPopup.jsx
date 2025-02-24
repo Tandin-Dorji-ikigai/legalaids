@@ -131,7 +131,9 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     caseType: "",
     natureOfCase: "",
     remarks: "",
-    aEmployee: ""
+    aEmployee: "",
+    outcome: "",
+    scheme: ""
   })
 
   const [documents, setDocuments] = useState([
@@ -168,7 +170,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         natureOfCase: cas.natureOfCase,
         remarks: cas.remarks,
         outcome: cas.outcome,
-        aEmployee: cas.aEmployee
+        aEmployee: cas.aEmployee,
+        scheme: cas.scheme
       })
 
       setInstitutionInfo({
@@ -219,12 +222,12 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     const officialEmail = institutionInfo.officialEmail;
     const remarks = caseInfo.remarks;
     const status = caseInfo.status;
-    const aLawyer = caseInfo.email;
+    const aLawyer = caseInfo.aLawyer;
     const caseType = caseInfo.caseType;
     const natureOfCase = caseInfo.natureOfCase;
     const outcome = caseInfo.outcome;
     const aEmployee = caseInfo.aEmployee;
-
+    const scheme = caseInfo.scheme;
     Swal.fire({
       title: "",
       text: "Are you sure you want to update this case?",
@@ -245,7 +248,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
           await updateCase({
             id, cid, occupation, name, contactNo, income, member,
             cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
-            officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee
+            officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee, scheme
           }).unwrap();
           Swal.fire({
             title: 'Success!',

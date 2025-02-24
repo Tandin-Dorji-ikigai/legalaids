@@ -15,8 +15,12 @@ export const docApiSlice = apiSlice.injectEndpoints({
                 body: data
             })
         }),
-
+        getDoc: builder.query({
+            query: (filename) => ({
+                url: DOC_URL+ `/file/${filename}`,
+            })
+        }),
     })
 })
 
-export const { useGetAllDocQuery, usePostDocMutation} = docApiSlice;
+export const { useGetAllDocQuery, usePostDocMutation, useGetDocQuery} = docApiSlice;
