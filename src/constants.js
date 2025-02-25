@@ -9,6 +9,6 @@ export const EMPLOYEE_URL = '/USERSERVICE/api/employee'
 export const LAWYER_URL = '/USERSERVICE/api/lawyer'
 export const COUNCIL_URL = '/USERSERVICE/api/council'
 export const ROLE_URL = '/USERSERVICE/api/roles'
-export const CENSUS_URL = '/APISERVICE/api/proxy'
+export const CENSUS_URL = "/APISERVICE/api/proxy"
 export const EMAIL_URL = '/EMAILSERVICE/api/mail/send'
 export const NDI_URL = "/APISERVICE/api/ndi"

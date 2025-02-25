@@ -101,8 +101,10 @@ function App() {
           <Route path='/dashboard' element={<ProtectedAdminRoute><Dashboard /></ProtectedAdminRoute>} />
           <Route path='/employeeManagement' element={<ProtectedAdminRoute><EmployeeManagement /></ProtectedAdminRoute>} />
           <Route path='/caseManagement' element={<ProtectedAdminRoute><CaseManagement /></ProtectedAdminRoute>} />
-          <Route path='/applicationManagement' element={<ProtectedAdminRoute><ApplicationManagement /></ProtectedAdminRoute>} />
+          <Route path='/applicationManagement' element={<ProtectedAdminRoute><ApplicationManagement /></ProtectedAdminRoute>} />\
+          
           <Route path='/dataManagement' element={<ProtectedAdminRoute><DataManagement /></ProtectedAdminRoute>} />
+
           <Route path='/detailspopup' element={<DetailsPopup />} />
 
           {/* lawyer route */}

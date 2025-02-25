@@ -12,52 +12,55 @@ import Loader from '../components/Loader';
 
 function Apply1() {
     const navigate = useNavigate();
-    const [cid, setCid] = useState('')
-    const [censusData, setCensusData] = useState([])
+    const [cid, setCid] = useState('');
+    const [censusData, setCensusData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
 
-    // const { data, error, isLoading } = useGetCensusQuery('11308006090');
-    // console.log(data)
+    const { data, error, isLoading, isFetching } = useGetCensusQuery(cid, {
+        skip: !shouldFetch
+    });
+
     useEffect(() => {
-        const fetchData = async () => {
-            if (cid.length === 11) {
-                setLoading(true);
-                try {
-                    const response = await fetch(`http://localhost:8080/api/proxy/citizendetails/${cid}`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    let result = await response.json();
-                    result = result.citizenDetailsResponse.citizenDetail[0]
-                    setCensusData(result);
-                } catch (err) {
-                    console.log(err);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
-        fetchData();
-    }, [cid]);
+        setLoading(isLoading || isFetching);
+    }, [isLoading, isFetching]);
 
+    useEffect(() => {
+        if (data && data.citizenDetailsResponse && data.citizenDetailsResponse.citizenDetail && data.citizenDetailsResponse.citizenDetail[0]) {
+            setCensusData(data.citizenDetailsResponse.citizenDetail[0]);
+        }
+    }, [data]);
+
+    // Initialize form data with empty values
     const [formData, setFormData] = useState({
         cid: '',
         name: '',
         occupation: '',
         contactNo: '',
-
         dzongkhag: '',
         gewog: '',
         village: '',
-
-        pdzongkhag:censusData?.dzongkhagName,
-        pgewog: censusData?.gewogName,
-        pvillage: censusData?.villageName,
-
+        pdzongkhag: '',
+        pgewog: '',
+        pvillage: '',
         income: '',
         member: '',
         cdzongkhag: ''
     });
+
+    // Update form data when census data changes
+    useEffect(() => {
+        if (censusData) {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                // Use proper property from census data (name instead of firstName)
+                name: censusData.name || '',
+                pdzongkhag: censusData.dzongkhagName || '',
+                pgewog: censusData.gewogName || '',
+                pvillage: censusData.villageName || '',
+            }));
+        }
+    }, [censusData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -66,20 +69,41 @@ function Apply1() {
             [name]: value
         });
 
+        // Check if the input is CID
         if (name === "cid") {
-            setCid(value)
+            const cidValue = value.trim();
+            setCid(cidValue);
+
+            // Check if CID length is exactly 11 to trigger the API call
+            if (cidValue.length === 11) {
+                setShouldFetch(true);
+            } else {
+                setShouldFetch(false);
+                // Clear census data if CID is invalid
+                if (censusData) {
+                    setCensusData(null);
+                    // Reset name and permanent address fields
+                    setFormData(prevFormData => ({
+                        ...prevFormData,
+                        name: '',
+                        pdzongkhag: '',
+                        pgewog: '',
+                        pvillage: '',
+                    }));
+                }
+            }
         }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData, "passed from 1");
         navigate('/apply2', { state: formData });
     };
 
+    // Reset Gewog and Village when Dzongkhag changes
     useEffect(() => {
         if (formData.dzongkhag) {
-            setFormData((prevData) => ({
+            setFormData(prevData => ({
                 ...prevData,
                 gewog: '',
                 village: ''
@@ -87,26 +111,15 @@ function Apply1() {
         }
     }, [formData.dzongkhag]);
 
+    // Reset Village when Gewog changes
     useEffect(() => {
         if (formData.gewog) {
-            setFormData((prevData) => ({
+            setFormData(prevData => ({
                 ...prevData,
                 village: ''
             }));
         }
-    }, [formData.selectedGewog]);
-
-    useEffect(() => {
-        if (censusData) {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                pdzongkhag: censusData?.dzongkhagName || '',
-                pgewog: censusData?.gewogName || '',
-                pvillage: censusData?.villageName || '',
-            }));
-        }
-    }, [censusData]);
-
+    }, [formData.gewog]); // Fixed: Watch formData.gewog instead of formData.selectedGewog
 
     const { t } = useTranslation();
     const [currentLang, setCurrentLang] = useState(i18n.language);
@@ -123,13 +136,9 @@ function Apply1() {
         };
     }, []);
 
-
     return (
         <>
-            {loading ? <Loader />
-
-                :
-
+            {loading ? <Loader /> :
                 <>
                     <NavBar currentPage="apply1" className="apply-page" />
                     <div className="navheight"></div>
@@ -163,10 +172,10 @@ function Apply1() {
 
                         <div className="form-wrapper">
                             <form className='apply-form' onSubmit={handleSubmit}>
-                                <p className={`apply-title ${currentLang === "dz" ? "font-xsmall-dz" : ""}`} >{t("applyTitle")}</p>
+                                <p className={`apply-title ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("applyTitle")}</p>
                                 <div className="category-wrapper">
 
-                                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`} >{t("legalLabelApplicationDetails")}</label>
+                                    <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("legalLabelApplicationDetails")}</label>
                                     <div className="legal-form-row legal-form-row-first">
                                         <input
                                             className='form-input'
@@ -182,9 +191,9 @@ function Apply1() {
                                             className='form-input'
                                             type="text"
                                             name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
+                                            value={formData.name || ''}
                                             placeholder={t('namePlaceholder')}
+                                            readOnly
                                             required
                                         />
                                     </div>
@@ -274,7 +283,8 @@ function Apply1() {
                                             className='form-input'
                                             type="text"
                                             name="pdzongkhag"
-                                            value={formData.pdzongkhag||t('selectDzongkhag')}
+                                            value={formData.pdzongkhag || ''}
+                                            placeholder={t('selectDzongkhag')}
                                             required
                                             readOnly
                                         />
@@ -283,7 +293,8 @@ function Apply1() {
                                             className='form-input'
                                             type="text"
                                             name="pgewog"
-                                            value={formData?.pgewog||t('selectGewog')}
+                                            value={formData.pgewog || ''}
+                                            placeholder={t('selectGewog')}
                                             readOnly
                                             required
                                         />
@@ -294,8 +305,8 @@ function Apply1() {
                                             className='form-input'
                                             type="text"
                                             name="pvillage"
-                                            value={formData?.pvillage||t('selectVillage')}
-                                            onChange={handleChange}
+                                            value={formData.pvillage || ''}
+                                            placeholder={t('selectVillage')}
                                             required
                                             readOnly
                                         />
@@ -303,7 +314,6 @@ function Apply1() {
                                 </div>
 
                                 <div className="category-wrapper">
-
                                     <label className={`legal-label ${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t("legalLabelHouseholdDetails")}</label>
                                     <div className="legal-form-row legal-form-row-first">
                                         <input
@@ -352,10 +362,9 @@ function Apply1() {
                                         </div>
                                     </div>
                                 </button>
-
                             </form>
                         </div>
-                    </div >
+                    </div>
                     <div className="whitespace"></div>
                     <Footer />
                 </>
@@ -363,7 +372,5 @@ function Apply1() {
         </>
     );
 }
+
 export default Apply1;
-
-
-

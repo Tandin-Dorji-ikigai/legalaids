@@ -7,6 +7,7 @@ import { useGetAllAdminQuery } from "../slices/adminSlice";
 import "./css/DataManagement.css";
 import Swal from "sweetalert2";
 import Loader from "../components/Loader";
+import { useGetCensusQuery } from "../slices/censusSlice";
 
 // DataManagement Component
 function DataManagement() {
@@ -16,31 +17,30 @@ function DataManagement() {
   const [files, setFiles] = useState([]);
 
   // citizienship details
-  const [cid, setCid] = useState('')
-  const [censusData, setCensusData] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [cid, setCid] = useState('');
+  const [censusData, setCensusData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const shouldFetch = cid.length === 11;
+  const { data, error, isLoading: isFetching } = useGetCensusQuery(cid, { skip: !shouldFetch });
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (cid.length === 11) {
-        setLoading(true);
-        try {
-          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cid}`);
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          let result = await response.json();
-          result = result.citizenDetailsResponse.citizenDetail[0]
-          setCensusData(result);
-        } catch (err) {
-          console.log(err);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    fetchData();
-  }, [cid]);
+    if (data) {
+      const result = data?.citizenDetailsResponse?.citizenDetail?.[0] || {};
+      setCensusData(result);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (censusData && cid.length === 11) {
+      setApplicantInfo((prevFormData) => ({
+        ...prevFormData,
+        dzongkhagPermanent: censusData?.dzongkhagName || '',
+        gewogPermanent: censusData?.gewogName || '',
+        villagePermanent: censusData?.villageName || '',
+      }));
+    }
+  }, [censusData, cid]);
 
   const [expandedSections, setExpandedSections] = useState({
     applicantInfo: true,
@@ -52,7 +52,7 @@ function DataManagement() {
   const [caseInfo, setCaseInfo] = useState({
     caseType: "",
     natureOfCase: ""
-  })
+  });
 
   const [applicantInfo, setApplicantInfo] = useState({
     cidNumber: "",
@@ -65,9 +65,9 @@ function DataManagement() {
     villageCurrent: "",
     gewogCurrent: "",
     dzongkhagCurrent: "",
-    villagePermanent: censusData?.villageName || "",
-    gewogPermanent: censusData?.gewogName || "",
-    dzongkhagPermanent: censusData?.dzongkhagName | "",
+    villagePermanent: "",
+    gewogPermanent: "",
+    dzongkhagPermanent: "",
   });
 
   const [institutionInfo, setInstitutionInfo] = useState({
@@ -93,7 +93,6 @@ function DataManagement() {
       ...prev,
       [section]: !prev[section],
     }));
-
   };
 
   const handleChangeCid = (e) => {
@@ -105,17 +104,6 @@ function DataManagement() {
     setCid(value);
   };
 
-  useEffect(() => {
-    if (censusData) {
-      setApplicantInfo((prevFormData) => ({
-        ...prevFormData,
-        dzongkhagPermanent: censusData?.dzongkhagName || '',
-        gewogPermanent: censusData?.gewogName || '',
-        villagePermanent: censusData?.villageName || '',
-      }));
-    }
-  }, [censusData]);
-
   const notifyAdmin = (id) => {
     admins.map(async (admin) => {
       const to = admin.email;
@@ -123,10 +111,9 @@ function DataManagement() {
       const body = `Respected Sir/Madam, There has been a new application applied with Application ID ${id}. Please check the application for further details. Thank you.`;
       await sendEmail({ to, subject, body }).unwrap();
     });
-  }
+  };
 
   const handleConfirm = async () => {
-    console.log(files)
     const formData = new FormData();
     formData.append("cid", applicantInfo.cidNumber);
     formData.append("occupation", applicantInfo.occupation);
@@ -148,7 +135,6 @@ function DataManagement() {
     formData.append("caseType", caseInfo.caseType);
     formData.append("natureOfCase", caseInfo.natureOfCase);
 
-    // Append files based on their document names
     expandedDocuments.forEach((doc) => {
       if (files[doc.name]) {
         formData.append(doc.name, files[doc.name]);
@@ -166,7 +152,6 @@ function DataManagement() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-
           const res = await postCase(formData).unwrap();
           notifyAdmin(res.appid);
 
@@ -177,8 +162,7 @@ function DataManagement() {
             showConfirmButton: false,
             timer: 2000
           });
-          window.location.reload()
-
+          window.location.reload();
         } catch (error) {
           Swal.fire({
             title: "Error!",
@@ -193,8 +177,6 @@ function DataManagement() {
 
   const handleFileUpload = (event, docName) => {
     const selectedFile = event.target.files[0];
-
-    // Check file size (5MB = 5 * 1024 * 1024 bytes)
     const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
 
     if (selectedFile) {
@@ -205,7 +187,6 @@ function DataManagement() {
           text: 'Please upload a PDF file smaller than 5MB',
           confirmButtonText: 'OK'
         });
-        // Clear the file input
         event.target.value = '';
         return;
       }
@@ -217,7 +198,6 @@ function DataManagement() {
           text: 'Please upload a PDF file',
           confirmButtonText: 'OK'
         });
-        // Clear the file input
         event.target.value = '';
         return;
       }
@@ -230,7 +210,7 @@ function DataManagement() {
   };
 
   const handleCancel = () => {
-    return
+    return;
   };
 
   return (
@@ -238,6 +218,7 @@ function DataManagement() {
       {isLoading && <Loader />}
       {loading && <Loader />}
       {isMailLoading && <Loader />}
+      {isFetching && <Loader />}
       <SideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">Data Management</div>
@@ -282,13 +263,12 @@ function DataManagement() {
                           natureOfCase: e.target.value,
                         })
                       }
-                      class="selectFields"
+                      className="selectFields"
                     >
                       <option value="" disabled>Select Nature Of Case</option>
                       <option value="Criminal">Criminal</option>
                       <option value="Civil">Civil</option>
                     </select>
-
                   </div>
                 </div>
               </div>
@@ -493,7 +473,6 @@ function DataManagement() {
             )}
           </div>
 
-
           <div className="section">
             <button
               className="section-header"
@@ -554,8 +533,7 @@ function DataManagement() {
                         className="document-filename"
                         required
                         onChange={(e) => handleFileUpload(e, doc.name)}
-                        maxsize={5 * 1024 * 1024
-                        }
+                        maxsize={5 * 1024 * 1024}
                       />
                     </div>
                   ))}
