@@ -191,9 +191,7 @@ function Apply1() {
                                             className='form-input'
                                             type="text"
                                             name="name"
-                                            value={formData.name || ''}
                                             placeholder={t('namePlaceholder')}
-                                            readOnly
                                             required
                                         />
                                     </div>
