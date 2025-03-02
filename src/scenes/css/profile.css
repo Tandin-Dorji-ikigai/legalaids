@@ -116,3 +116,7 @@
     background: transparent;
     color: #15605c;
 }
+
+.profile-item-container{
+    display: flex;
+}

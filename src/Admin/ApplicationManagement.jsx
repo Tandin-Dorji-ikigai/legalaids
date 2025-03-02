@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import SideNav from "./DashboardNav"; // Assuming you have a SideNav component
-import "./css/ApplicationManagement.css"; // Ensure you have a CSS file for styles
+import SideNav from "./DashboardNav"; 
+import "./css/ApplicationManagement.css";
 import { Modal } from "@mui/material";
 import ApplicationPopup from "../components/ApplicationPopup";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
