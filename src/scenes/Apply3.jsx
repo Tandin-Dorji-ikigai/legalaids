@@ -47,6 +47,7 @@ function Apply3() {
         setError("You must agree to the terms and conditions!");
         return;
       } else {
+        console.log(formDataPassed2)
         const formData = new FormData();
         Object.entries(formDataPassed2).forEach(([key, value]) => {
           formData.append(key, value);

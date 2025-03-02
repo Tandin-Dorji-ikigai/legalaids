@@ -198,7 +198,7 @@ function TrackApplication() {
                         className="form-input"
                         type="text"
                         name="caseType"
-                        value={formData.caseType ? formData.caseType : "Case Type Not Defined"}
+                        value={formData.caseType && formData.caseType !== 'null' ? formData.caseType : "Case Type Not Defined"}
                         readOnly
                       />
                     </label>

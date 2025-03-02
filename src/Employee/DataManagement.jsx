@@ -26,7 +26,6 @@ function DataManagement() {
     contactNumber: "",
     householdIncome: "",
     householdMembers: "",
-    dzongkhag: "",
     villageCurrent: "",
     gewogCurrent: "",
     dzongkhagCurrent: "",
@@ -43,7 +42,6 @@ function DataManagement() {
   });
 
   const [expandedDocuments] = useState([
-    { label: "CID or Valid Passport", name: "cidDoc" },
     { label: "Details of Household members", name: "hMemberDoc" },
     { label: "Attachment for household income", name: "hIncomeDoc" },
     {
@@ -69,7 +67,6 @@ function DataManagement() {
     formData.append("contactNo", applicantInfo.contactNumber);
     formData.append("income", applicantInfo.householdIncome);
     formData.append("member", applicantInfo.householdMembers);
-    formData.append("cdzongkhag", applicantInfo.dzongkhag);
     formData.append("village", applicantInfo.villageCurrent);
     formData.append("gewog", applicantInfo.gewogCurrent);
     formData.append("dzongkhag", applicantInfo.dzongkhagCurrent);
@@ -168,18 +165,18 @@ function DataManagement() {
       <SideNav />
       <div className="dashboard-content">
         <div className="dashboard-header">Data Management</div>
-        <div className="lawyer-case-details-container">
+        <div className="case-details-container">
           <div className="excel-header">Add Case Form</div>
-          <div className="lawyer-section">
+          <div className="section">
             <button
-              className="lawyer-section-header"
+              className="section-header"
               onClick={() => toggleSection("caseDetails")}
             >
               <span>Case Information and Details</span>
               {expandedSections.caseDetails ? <ChevronUp /> : <ChevronDown />}
             </button>
             {expandedSections.caseDetails && (
-              <div className="lawyer-section-content">
+              <div className="section-content">
                 <h3>Case Information</h3>
                 <div className="form-grid">
                   <div className="form-field">
@@ -223,20 +220,20 @@ function DataManagement() {
               </div>
             )}
           </div>
-          <div className="lawyer-section">
+          <div className="section">
             <button
-              className="lawyer-section-header"
+              className="section-header"
               onClick={() => toggleSection("applicantInfo")}
             >
               <span>Applicant Information and Details</span>
               {expandedSections.applicantInfo ? <ChevronUp /> : <ChevronDown />}
             </button>
             {expandedSections.applicantInfo && (
-              <div className="lawyer-section-content">
+              <div className="section-content">
                 <h3>Personal Information and Details of Applicant</h3>
                 <h4>Applicant Details</h4>
-                <div className="lawyer-form-grid">
-                  <div className="lawyer-form-field">
+                <div className="form-grid">
+                  <div className="form-field">
                     <label>CID Number</label>
                     <input
                       type="text"
@@ -249,7 +246,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Name</label>
                     <input
                       type="text"
@@ -262,7 +259,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Occupation</label>
                     <input
                       type="text"
@@ -275,7 +272,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Contact Number</label>
                     <input
                       type="text"
@@ -289,11 +286,11 @@ function DataManagement() {
                     />
                   </div>
                 </div>
-                <div className="lawyer-form-grid"></div>
+                <div className="form-grid"></div>
 
                 <h4>Household Details</h4>
-                <div className="lawyer-form-grid">
-                  <div className="lawyer-form-field">
+                <div className="form-grid">
+                  <div className="form-field">
                     <label>Total Household Income (Nu.)</label>
                     <input
                       type="text"
@@ -306,7 +303,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Total Household Members</label>
                     <input
                       type="text"
@@ -319,24 +316,11 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
-                    <label>Dzongkhag</label>
-                    <input
-                      type="text"
-                      value={applicantInfo.dzongkhag}
-                      onChange={(e) =>
-                        setApplicantInfo({
-                          ...applicantInfo,
-                          dzongkhag: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
                 </div>
 
                 <h4>Current Addresses</h4>
-                <div className="lawyer-form-grid">
-                  <div className="lawyer-form-field">
+                <div className="form-grid">
+                  <div className="form-field">
                     <label>Village</label>
                     <input
                       type="text"
@@ -349,7 +333,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Gewog</label>
                     <input
                       type="text"
@@ -362,7 +346,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Dzongkhag</label>
                     <input
                       type="text"
@@ -378,8 +362,8 @@ function DataManagement() {
                 </div>
 
                 <h4>Permanent Addresses</h4>
-                <div className="lawyer-form-grid">
-                  <div className="lawyer-form-field">
+                <div className="form-grid">
+                  <div className="form-field">
                     <label>Village</label>
                     <input
                       type="text"
@@ -392,7 +376,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Gewog</label>
                     <input
                       type="text"
@@ -405,7 +389,7 @@ function DataManagement() {
                       }
                     />
                   </div>
-                  <div className="lawyer-form-field">
+                  <div className="form-field">
                     <label>Dzongkhag</label>
                     <input
                       type="text"
@@ -423,20 +407,20 @@ function DataManagement() {
             )}
           </div>
 
-          <div className="lawyer-section">
+          <div className="section">
             <button
-              className="lawyer-section-header"
+              className="section-header"
               onClick={() => toggleSection("institutions")}
             >
               <span>Institutions and Their Details</span>
               {expandedSections.institutions ? <ChevronUp /> : <ChevronDown />}
             </button>
             {expandedSections.institutions && (
-              <div className="lawyer-section-content">
+              <div className="section-content">
                 <h3>Institution Information</h3>
-                <div className="lawyer-form-grid">
+                <div className="form-grid">
                   {Object.keys(institutionInfo).map((key) => (
-                    <div className="lawyer-form-field" key={key}>
+                    <div className="form-field" key={key}>
                       <label>
                         {key.replace(/([A-Z])/g, " $1").toUpperCase()}
                       </label>
@@ -460,42 +444,46 @@ function DataManagement() {
             )}
           </div>
 
-          <div className="lawyer-section">
+          <div className="section">
             <button
-              className="lawyer-section-header"
+              className="section-header"
               onClick={() => toggleSection("documents")}
             >
               <span>Check List of Documents</span>
               {expandedSections.documents ? <ChevronUp /> : <ChevronDown />}
             </button>
             {expandedSections.documents && (
-              <div className="lawyer-section-content">
+              <div className="section-content">
                 <h3>Check List of Documents*</h3>
-                <div className="lawyer-document-list">
+                <div className="document-list">
                   {expandedDocuments.map((doc, index) => (
-                    <div key={index} className="document-upload-item">
-                      <label>{doc.label}</label>
-                      <input
-                        type="file"
-                        name={doc.name}
-                        onChange={(e) => handleFileUpload(e, doc.name)}
-                      />
-                    </div>
+                    <div key={index} className="document-item-submit">
+                    <label className="document-label">{doc.label}</label>
+                    <input
+                      type="file"
+                      name={doc.name}
+                      accept=".pdf, application/pdf"
+                      className="document-filename"
+                      required
+                      onChange={(e) => handleFileUpload(e, doc.name)}
+                      maxsize={5 * 1024 * 1024}
+                    />
+                  </div>
                   ))}
                 </div>
               </div>
             )}
           </div>
         </div>
-        <div className="lawyer-action-buttons">
+        <div className="action-buttons">
           <button
             onClick={handleConfirm}
-            className="lawyer-confirm-button"
+            className="confirm-button"
             disabled={isLoading}
           >
             {isLoading ? 'Submitting...' : 'Confirm'}
           </button>
-          <button onClick={handleCancel} className="lawyer-cancel-button">
+          <button onClick={handleCancel} className="cancel-button">
             Cancel
           </button>
         </div>

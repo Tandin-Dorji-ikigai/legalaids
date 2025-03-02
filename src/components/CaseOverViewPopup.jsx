@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useEffect } from "react";
-import { X, Plus, Minus } from "lucide-react";
+import { X, Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
@@ -8,6 +8,31 @@ import { useGetAllCaseQuery } from "../slices/caseApiSlice";
 import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
+import { useGetAllDocQuery } from "../slices/documentSlice";
+
+const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
+  <div className="document-item">
+    <div>
+      <span className="document-label">{label}</span>
+      {isLoading ? (
+        <span className="document-filename">Loading...</span>
+      ) : (
+        <span className="document-filename">
+          {filename ? filename.split("/").pop() : "No file"}
+        </span>
+      )}
+    </div>
+    <div className="document-actions">
+      <button
+        className="icon-button add"
+        disabled={isLoading || !filename}
+        onClick={() => filename && onViewPdf(filename)}
+      >
+        <EyeIcon size={18} />
+      </button>
+    </div>
+  </div>
+);
 
 const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const { data: cas, error: fetchError, isLoading } = useGetCaseIdQuery(caseId);
@@ -17,8 +42,16 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [sendEmail] = useSendEmailMutation();
   const [email, setEmail] = useState();
   const [filteredLawyers, setFilteredLawyers] = useState([]);
+  const { data: docs } = useGetAllDocQuery();
 
+  const [existingAdditionalDocs, setExistingAdditionalDocs] = useState([]);
 
+  useEffect(() => {
+    if (cas && docs) {
+      const filterDocs = docs.filter((doc) => doc.cases === caseId);
+      setExistingAdditionalDocs(filterDocs);
+    }
+  }, [cas, docs]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,7 +78,22 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   }, [lawyers, cases]);
 
-  
+  const handleViewPdf = async (filename) => {
+    const file = filename.split("/").pop();
+
+    try {
+      const response = await fetch(
+        `http://localhost:8765/CASEMICROSERVICE/api/document/file/${file}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch document");
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Error fetching document:", error);
+    }
+  };
 
   if (fetchError) {
     console.log(fetchError);
@@ -302,7 +350,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                           {lawyers &&
                             lawyers.map((lawyer) => (
                               <option key={lawyer.id} value={lawyer.cid}>
-                                {lawyer.userName}
+                                {lawyer.userName + " (" + lawyer.regNo + ")"}
                               </option>
                             ))}
                         </select>
@@ -324,7 +372,7 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                           {filteredLawyers &&
                             filteredLawyers.map((lawyer) => (
                               <option key={lawyer.id} value={lawyer.cid}>
-                                {lawyer.userName}
+                                {lawyer.userName + " (" + lawyer.regNo + ")"}
                               </option>
                             ))}
                         </select>
@@ -357,23 +405,11 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                   <h4>Case Status and Documents</h4>
                   <div className="form-field">
                     <label>Case Status</label>
-                    <select
-                      value={caseInfo.status}
-                      className="selectFields"
-                      onChange={(e) =>
-                        setCaseInfo({
-                          ...caseInfo,
-                          status: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="" disabled selected>
-                        Select Case Status
-                      </option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Dismissed">Dismissed</option>
-                    </select>
+                    <input
+                        type="text"
+                        readOnly
+                        value={caseInfo.status}
+                      />
                   </div>
 
                   <div className="form-grid">
@@ -781,6 +817,42 @@ const CaseOverViewPopup = forwardRef(({ caseId, onClose }, ref) => {
                 )}
               </div> : null
             } */}
+
+            {existingAdditionalDocs && <div className="section">
+              <button
+                className="section-header"
+                aria-expanded={expandedSections.additionalDocuments}
+                onClick={() => toggleSection("additionalDocuments")}
+              >
+                <span>Additional Documents</span>
+                <div className="section-btn-container">
+                  {expandedSections.additionalDocuments ? (
+                    <Minus color="#15605C" />
+                  ) : (
+                    <Plus color="#15605C" />
+                  )}
+                </div>
+              </button>
+              {expandedSections.additionalDocuments && (
+                <div className="section-content">
+                  <h3>Check List of Additional Documents*</h3>
+                  <div>
+                    {/* Existing Additional Documents */}
+                    {existingAdditionalDocs.map((doc, index) => (
+                      <DocumentItem
+                        key={`existing-${index}`}
+                        label={
+                          doc.description || `Additional Document ${index + 1}`
+                        }
+                        filename={doc.docName}
+                        isLoading={isLoading}
+                        onViewPdf={handleViewPdf}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>}
           </div>
 
           <div className="popup-footer">

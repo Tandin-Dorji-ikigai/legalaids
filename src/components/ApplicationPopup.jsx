@@ -44,7 +44,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [email, setEmail] = useState();
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
-
   const [householdNo, setHouseHoldNo] = useState("")
 
   useEffect(() => {
@@ -97,9 +96,20 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   }
 
 
-  const handleViewPdf = (url) => {
-    window.open(url, '_blank');
-  };
+  const handleViewPdf = async (filename) => {
+    const file = filename.split('/').pop();
+    
+    try {
+        const response = await fetch(`http://localhost:8765/CASEMICROSERVICE/api/document/file/${file}`);
+        if (!response.ok) throw new Error("Failed to fetch document");
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+    } catch (error) {
+        console.error("Error fetching document:", error);
+    }
+};
 
   if (fetchError) {
     console.log(fetchError)
@@ -119,7 +129,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
     contactNumber: "",
     householdIncome: "",
     householdMembers: "",
-    dzongkhag: "",
     villageCurrent: "",
     gewogCurrent: "",
     dzongkhagCurrent: "",
@@ -136,7 +145,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   });
 
   const [documents, setDocuments] = useState([
-    { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
     { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
     { label: "Attachment for household income", filename: null, docKey: 'hIncomeDoc' },
     { label: "Attachment for household disposable capital", filename: null, docKey: 'hCapitalDoc' },
@@ -164,7 +172,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
         contactNumber: cas.contactNo,
         householdIncome: cas.income,
         householdMembers: cas.member,
-        dzongkhag: cas.cdzongkhag,
         villageCurrent: cas.village,
         gewogCurrent: cas.gewog,
         dzongkhagCurrent: cas.dzongkhag,
@@ -217,7 +224,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       contactNumber: contactNo,
       householdIncome: income,
       householdMembers: member,
-      dzongkhag: cdzongkhag,
       villageCurrent: village,
       gewogCurrent: gewog,
       dzongkhagCurrent: dzongkhag,
@@ -265,7 +271,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             contactNo,
             income,
             member,
-            cdzongkhag,
             village,
             gewog,
             dzongkhag,
@@ -323,7 +328,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             contactNo,
             income,
             member,
-            cdzongkhag,
             village,
             gewog,
             dzongkhag,
@@ -372,7 +376,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       contactNumber: contactNo,
       householdIncome: income,
       householdMembers: member,
-      dzongkhag: cdzongkhag,
       villageCurrent: village,
       gewogCurrent: gewog,
       dzongkhagCurrent: dzongkhag,
@@ -418,7 +421,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             contactNo,
             income,
             member,
-            cdzongkhag,
             village,
             gewog,
             dzongkhag,
@@ -691,20 +693,6 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       />
                     </div>
-                    <div className="form-field">
-                      <label>Dzongkhag</label>
-                      <input
-                        type="text"
-                        readOnly
-                        value={applicantInfo.dzongkhag}
-                        onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            dzongkhag: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
                   </div>
 
                   <h4>Current Addresses</h4>
@@ -803,7 +791,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
             </div>
 
 
-            <div className="section">
+            {institutionInfo.institutionName && <div className="section">
               <button
                 className="section-header header-btn"
                 aria-expanded={expandedSections.institutions}
@@ -885,7 +873,7 @@ const ApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div>}
 
             <div className="section">
               <button

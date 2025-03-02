@@ -9,7 +9,7 @@ import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 import HouseholdPopup from "./HouseholdPopup";
-import { useGetAllDocQuery, usePostDocMutation, useGetDocQuery } from "../slices/documentSlice";
+import { useGetAllDocQuery, usePostDocMutation} from "../slices/documentSlice";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
     <div className="document-item">
@@ -49,27 +49,6 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
     const [additionalDocuments, setAdditionalDocuments] = useState([]);
     const [existingAdditionalDocs, setExistingAdditionalDocs] = useState([]);
 
-    const [filename, setSelectedFile] = useState(null);
-    // const { data: fileData, refetch } = useGetDocQuery(filename, { skip: !filename, refetchOnMountOrArgChange: true, });
-
-
-    // useEffect(() => {
-    //     if (filename) {
-    //         console.log('refetched')
-    //         refetch();
-    //     }
-    // }, [filename, refetch]);
-
-    // useEffect(() => {
-    //     console.log("useEffect", fileData)
-    //     if (fileData) {
-    //         console.log("useEffect")
-    //         const blob = new Blob([fileData], { type: "application/pdf" });
-    //         const url = URL.createObjectURL(blob);
-    //         window.open(url, "_blank");
-    //     }
-    // }, [fileData, filename]);
-
     useEffect(() => {
         if (cas && docs) {
             const filterDocs = docs.filter((doc) => doc.cases === caseId)
@@ -91,13 +70,6 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
             doc.id === id ? { ...doc, file } : doc
         ));
     };
-
-    // const handleDescriptionChange = (id, description) => {
-    //     setAdditionalDocuments(additionalDocuments.map(doc =>
-    //         doc.id === id ? { ...doc, description } : doc
-    //     ));
-    // };
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -408,7 +380,6 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                                             <option value="" disabled selected>Select Case Status</option>
                                             <option value="In Progress">In Progress</option>
                                             <option value="Completed">Completed</option>
-                                            <option value="Dismissed">Dismissed</option>
                                         </select>
                                     </div>
 
@@ -667,7 +638,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                         </div>
 
                         {/* Institution Information Section */}
-                        <div className="section">
+                        {institutionInfo.institutionName && <div className="section">
                             <button
                                 className="section-header"
                                 aria-expanded={expandedSections.institutions}
@@ -747,7 +718,7 @@ const LawerCasesPopup = forwardRef(({ caseId, onClose }, ref) => {
                                     </div>
                                 </div>
                             )}
-                        </div>
+                        </div>}
 
                         {/* Document Section */}
                         <div className="section">

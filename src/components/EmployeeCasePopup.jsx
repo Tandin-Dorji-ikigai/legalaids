@@ -42,8 +42,19 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
   const [employee, setEmployee] = useState();
 
 
-  const handleViewPdf = (url) => {
-    window.open(url, '_blank');
+  const handleViewPdf = async (filename) => {
+    const file = filename.split('/').pop();
+    
+    try {
+        const response = await fetch(`http://localhost:8765/CASEMICROSERVICE/api/document/file/${file}`);
+        if (!response.ok) throw new Error("Failed to fetch document");
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+    } catch (error) {
+        console.error("Error fetching document:", error);
+    }
   };
 
   if (fetchError) {
@@ -75,7 +86,6 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
     contactNumber: "",
     householdIncome: "",
     householdMembers: "",
-    dzongkhag: "",
     villageCurrent: "",
     gewogCurrent: "",
     dzongkhagCurrent: "",
@@ -101,7 +111,6 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
   })
 
   const [documents, setDocuments] = useState([
-    { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
     { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
     { label: "Attachment for household income", filename: null, docKey: 'hIncomeDoc' },
     { label: "Attachment for household disposable capital", filename: null, docKey: 'hCapitalDoc' },
@@ -118,7 +127,6 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
         contactNumber: cas.contactNo,
         householdIncome: cas.income,
         householdMembers: cas.member,
-        dzongkhag: cas.cdzongkhag,
         villageCurrent: cas.village,
         gewogCurrent: cas.gewog,
         dzongkhagCurrent: cas.dzongkhag,
@@ -167,7 +175,6 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
     const contactNo = applicantInfo.contactNumber;
     const income = applicantInfo.householdIncome;
     const member = applicantInfo.householdMembers;
-    const cdzongkhag = applicantInfo.dzongkhag;
     const village = applicantInfo.villageCurrent;
     const gewog = applicantInfo.gewogCurrent;
     const dzongkhag = applicantInfo.dzongkhagCurrent;
@@ -200,8 +207,7 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
         try {
           const id = caseId;
           await updateCase({
-            id, cid, occupation, name, contactNo, income, member,
-            cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
+            id, cid, occupation, name, contactNo, income, member,village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
             officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee, scheme
           }).unwrap();
           Swal.fire({
@@ -451,20 +457,6 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
                   <h4>Address Information</h4>
                   <div className="form-grid">
                     <div className="form-field">
-                      <label>Dzongkhag</label>
-                      <input
-                        type="text"
-                        value={applicantInfo.dzongkhag}
-                        readOnly
-                        onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            dzongkhag: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="form-field">
                       <label>Current Village</label>
                       <input
                         type="text"
@@ -556,7 +548,7 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
             </div>
 
             {/* Institution Information Section */}
-            <div className="section">
+            {institutionInfo.institutionName && <div className="section">
               <button
                 className="section-header"
                 aria-expanded={expandedSections.institutions}
@@ -637,6 +629,7 @@ const EmployeeCasePopup = forwardRef(({ caseId, onClose }, ref) => {
                 </div>
               )}
             </div>
+            }
 
             {/* Document Section */}
             <div className="section">

@@ -44,6 +44,7 @@ function EmployeeManagement() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [roleName, setRoleName] = useState("");
+  const [regNo, setRegNo] = useState("");
   const [postEmployee] = usePostEmployeeMutation();
   const [postLawyer] = usePostLawyerMutation();
   const [postCouncil] = usePostCouncilMutation();
@@ -155,7 +156,8 @@ function EmployeeManagement() {
               email,
               password,
               enabled,
-              roles
+              roles,
+              regNo
             })
             Swal.fire({
               title: "Success!",
@@ -539,6 +541,35 @@ function EmployeeManagement() {
               <div className="custom-modal-content">
                 <h2 className="custom-modal-header">Add User</h2>
                 <form>
+                <div className="custom-form-group">
+                    <label className="custom-form-label">Role</label>
+                    <select
+                      className="custom-form-select"
+                      value={role}
+                      required
+                      onChange={(e) => {
+                        const selectedRole = roles.find(
+                          (role) => role.id === Number(e.target.value)
+                        );
+                        setRole(e.target.value);
+                        setRoleName(selectedRole?.name || "");
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select role
+                      </option>
+                      {roles &&
+                        roles
+                          .filter(
+                            (role) => role.name !== "Admin" && role.name !== "User"
+                          )
+                          .map((role) => (
+                            <option key={role.id} value={role.id}>
+                              {role.name}
+                            </option>
+                          ))}
+                    </select>
+                  </div>
                   <div className="custom-form-group">
                     <label className="custom-form-label">CID</label>
                     <input
@@ -602,35 +633,18 @@ function EmployeeManagement() {
                     />
                   </div>
 
-                  <div className="custom-form-group">
-                    <label className="custom-form-label">Role</label>
-                    <select
-                      className="custom-form-select"
-                      value={role}
-                      required
-                      onChange={(e) => {
-                        const selectedRole = roles.find(
-                          (role) => role.id === Number(e.target.value)
-                        );
-                        setRole(e.target.value);
-                        setRoleName(selectedRole?.name || "");
-                      }}
-                    >
-                      <option value="" disabled>
-                        Select role
-                      </option>
-                      {roles &&
-                        roles
-                          .filter(
-                            (role) => role.name !== "Admin" && role.name !== "User"
-                          )
-                          .map((role) => (
-                            <option key={role.id} value={role.id}>
-                              {role.name}
-                            </option>
-                          ))}
-                    </select>
+                  {roleName === "Lawyer" && <div className="custom-form-group">
+                      <label className="custom-form-label">Registration Number</label>
+                      <input
+                        className="custom-form-input"
+                        type="text"
+                        placeholder="Enter Registration Number"
+                        value={regNo}
+                        required
+                        onChange={(e) => setRegNo(e.target.value)}
+                      />
                   </div>
+                  }
 
                   <div className="custom-modal-buttons">
                     <button

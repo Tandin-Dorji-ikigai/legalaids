@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useEffect } from "react";
 import { X, Plus, Minus, EyeIcon } from "lucide-react";
 import "./DetailsPopup.css";
-import "../components/householdPopup.css"
+import "../components/householdPopup.css";
 import { useGetCaseIdQuery } from "../slices/caseApiSlice";
 import { useUpdateResultMutation } from "../slices/caseApiSlice";
 import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
@@ -10,6 +10,7 @@ import { useSendEmailMutation } from "../slices/emailApiSlice";
 import Swal from "sweetalert2";
 import Loader from "./Loader";
 import HouseholdPopup from "./HouseholdPopup";
+import { useGetAllDocQuery } from "../slices/documentSlice";
 
 const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
   <div className="document-item">
@@ -19,7 +20,7 @@ const DocumentItem = ({ label, filename, isLoading, onViewPdf }) => (
         <span className="document-filename">Loading...</span>
       ) : (
         <span className="document-filename">
-          {filename ? filename.split('/').pop() : 'No file'}
+          {filename ? filename.split("/").pop() : "No file"}
         </span>
       )}
     </div>
@@ -43,19 +44,31 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   const [lawyer, setLawyer] = useState();
   const [sendEmail] = useSendEmailMutation();
   const [email, setEmail] = useState();
-  const [householdNo, setHouseHoldNo] = useState("")
+  const [householdNo, setHouseHoldNo] = useState("");
+  const { data: docs } = useGetAllDocQuery();
+
+  const [existingAdditionalDocs, setExistingAdditionalDocs] = useState([]);
+
+  useEffect(() => {
+    if (cas && docs) {
+      const filterDocs = docs.filter((doc) => doc.cases === caseId);
+      setExistingAdditionalDocs(filterDocs);
+    }
+  }, [cas, docs]);
 
   useEffect(() => {
     const fetchData = async () => {
       if (cas) {
         try {
-          const response = await fetch(`http://localhost:8081/api/proxy/citizendetails/${cas.cid}`);
+          const response = await fetch(
+            `http://localhost:8081/api/proxy/citizendetails/${cas.cid}`
+          );
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
           let result = await response.json();
-          result = result.citizenDetailsResponse.citizenDetail[0]
-          setHouseHoldNo(result.householdNo)
+          result = result.citizenDetailsResponse.citizenDetail[0];
+          setHouseHoldNo(result.householdNo);
         } catch (err) {
           console.log(err);
         }
@@ -64,13 +77,25 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     fetchData();
   }, [cas]);
 
-
   const [filteredEmployees, setFilteredEmployees] = useState([]);
 
   const [showPopup, setShowPopup] = useState(false);
 
-  const handleViewPdf = (url) => {
-    window.open(url, '_blank');
+  const handleViewPdf = async (filename) => {
+    const file = filename.split("/").pop();
+
+    try {
+      const response = await fetch(
+        `http://localhost:8765/CASEMICROSERVICE/api/document/file/${file}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch document");
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Error fetching document:", error);
+    }
   };
 
   if (fetchError) {
@@ -82,18 +107,20 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
       const employeeMail = employees.find((employee) => employee.cid === cid);
       setEmail(employeeMail.email);
     }
-  }
+  };
 
   useEffect(() => {
     if (lerror) {
       console.log(lerror);
     } else if (lawyers && cas && employees) {
       const selected = lawyers.find((lwy) => lwy.cid === cas.aLawyer);
-      const availableEmployees = employees.filter((employee) => employee.enabled === true);
+      const availableEmployees = employees.filter(
+        (employee) => employee.enabled === true
+      );
       setFilteredEmployees(availableEmployees);
       setLawyer(selected);
     }
-  }, [cas, lawyers, lerror, fetchError, employees])
+  }, [cas, lawyers, lerror, fetchError, employees]);
 
   const [expandedSections, setExpandedSections] = useState({
     caseDetails: true,
@@ -109,7 +136,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     contactNumber: "",
     householdIncome: "",
     householdMembers: "",
-    dzongkhag: "",
     villageCurrent: "",
     gewogCurrent: "",
     dzongkhagCurrent: "",
@@ -133,16 +159,35 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     remarks: "",
     aEmployee: "",
     outcome: "",
-    scheme: ""
-  })
+    scheme: "",
+  });
 
   const [documents, setDocuments] = useState([
-    { label: "CID or Valid Passport", filename: null, docKey: 'cidDoc' },
-    { label: "Details of Household members", filename: null, docKey: 'hMemberDoc' },
-    { label: "Attachment for household income", filename: null, docKey: 'hIncomeDoc' },
-    { label: "Attachment for household disposable capital", filename: null, docKey: 'hCapitalDoc' },
-    { label: "Brief Background of the Case*", filename: null, docKey: 'cBackgroundDoc' },
-    { label: "Evidence of any form of disability.", filename: null, docKey: 'disabilityDoc' },
+    {
+      label: "Details of Household members",
+      filename: null,
+      docKey: "hMemberDoc",
+    },
+    {
+      label: "Attachment for household income",
+      filename: null,
+      docKey: "hIncomeDoc",
+    },
+    {
+      label: "Attachment for household disposable capital",
+      filename: null,
+      docKey: "hCapitalDoc",
+    },
+    {
+      label: "Brief Background of the Case*",
+      filename: null,
+      docKey: "cBackgroundDoc",
+    },
+    {
+      label: "Evidence of any form of disability.",
+      filename: null,
+      docKey: "disabilityDoc",
+    },
   ]);
 
   useEffect(() => {
@@ -154,7 +199,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         contactNumber: cas.contactNo,
         householdIncome: cas.income,
         householdMembers: cas.member,
-        dzongkhag: cas.cdzongkhag,
         villageCurrent: cas.village,
         gewogCurrent: cas.gewog,
         dzongkhagCurrent: cas.dzongkhag,
@@ -171,8 +215,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         remarks: cas.remarks,
         outcome: cas.outcome,
         aEmployee: cas.aEmployee,
-        scheme: cas.scheme
-      })
+        scheme: cas.scheme,
+      });
 
       setInstitutionInfo({
         institutionName: cas.institutionName,
@@ -181,13 +225,12 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
         officialEmail: cas.officialEmail,
       });
 
-      setDocuments(prev =>
-        prev.map(doc => ({
+      setDocuments((prev) =>
+        prev.map((doc) => ({
           ...doc,
-          filename: cas[doc.docKey] || null
+          filename: cas[doc.docKey] || null,
         }))
       );
-
     }
   }, [cas]);
 
@@ -196,7 +239,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     const subject = "Application Assignment";
     const body = `Respected Sir/Madam, There has been a new application assigned to you. Please check the application for further details. Thank you.`;
     await sendEmail({ to, subject, body }).unwrap();
-  }
+  };
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -209,7 +252,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
     const contactNo = applicantInfo.contactNumber;
     const income = applicantInfo.householdIncome;
     const member = applicantInfo.householdMembers;
-    const cdzongkhag = applicantInfo.dzongkhag;
     const village = applicantInfo.villageCurrent;
     const gewog = applicantInfo.gewogCurrent;
     const dzongkhag = applicantInfo.dzongkhagCurrent;
@@ -246,45 +288,63 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
           }
 
           await updateCase({
-            id, cid, occupation, name, contactNo, income, member,
-            cdzongkhag, village, gewog, dzongkhag, pvillage, pgewog, pdzongkhag, institutionName, officialName, officialcNumber,
-            officialEmail, remarks, status, aLawyer, caseType, natureOfCase, outcome, aEmployee, scheme
+            id,
+            cid,
+            occupation,
+            name,
+            contactNo,
+            income,
+            member,
+            village,
+            gewog,
+            dzongkhag,
+            pvillage,
+            pgewog,
+            pdzongkhag,
+            institutionName,
+            officialName,
+            officialcNumber,
+            officialEmail,
+            remarks,
+            status,
+            aLawyer,
+            caseType,
+            natureOfCase,
+            outcome,
+            aEmployee,
+            scheme,
           }).unwrap();
           Swal.fire({
-            title: 'Success!',
-            text: 'Case details have been updated successfully.',
-            icon: 'success',
-            confirmButtonText: 'OK'
+            title: "Success!",
+            text: "Case details have been updated successfully.",
+            icon: "success",
+            confirmButtonText: "OK",
           });
 
           onClose();
-          window.location.reload()
+          window.location.reload();
         } catch (err) {
           Swal.fire({
-            title: 'Error!',
-            text: 'Failed to update case details. Please try again.',
-            icon: 'error',
-            confirmButtonText: 'OK'
+            title: "Error!",
+            text: "Failed to update case details. Please try again.",
+            icon: "error",
+            confirmButtonText: "OK",
           });
         }
       }
     });
-  }
+  };
   const handleCancel = () => {
     onClose();
   };
 
-
   return (
     <div className="popup-overlay" ref={ref}>
-
       {isLoading ? (
         <div className="loading-container">
           <Loader />
         </div>
       ) : (
-
-
         <div className="popup-container">
           <div className="popup-header">
             <h2>Case Details</h2>
@@ -339,9 +399,7 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                         <option value="" disabled>
                           Assign Employee
                         </option>
-                        <option value="All">
-                          All Employee
-                        </option>
+                        <option value="All">All Employee</option>
                         {filteredEmployees &&
                           filteredEmployees.map((employee) => (
                             <option key={employee.id} value={employee.cid}>
@@ -355,35 +413,22 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                   <h4>Case Status and Documents</h4>
                   <div className="form-field">
                     <label>Case Status</label>
-                    <select
-                      value={caseInfo.status}
-                      className="selectFields"
-                      onChange={(e) =>
-                        setCaseInfo({
-                          ...caseInfo,
-                          status: e.target.value, // Update the 'status' field in the state
-                        })
-                      }
-                    >
-                      <option value="" disabled selected>Select Case Status</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Dismissed">Dismissed</option>
-                    </select>
+                    <input
+                        type="text"
+                        readOnly
+                        value={caseInfo.status}
+                      />
                   </div>
-
 
                   <div className="form-grid">
                     <div className="form-field">
                       <label>Case Type</label>
-                      <input type="text"
-                        readOnly
-                        value={caseInfo.caseType}
-                      />
+                      <input type="text" readOnly value={caseInfo.caseType} />
                     </div>
                     <div className="form-field case-remark-container">
                       <label>Nature of Case</label>
-                      <input type="text"
+                      <input
+                        type="text"
                         readOnly
                         value={caseInfo.natureOfCase}
                       />
@@ -404,8 +449,12 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       >
                         <option disabled>Select Case Result</option>
-                        <option value="Sentence Reduction">Sentence Reduction</option>
-                        <option value="Case Negotiation">Case Negotiation</option>
+                        <option value="Sentence Reduction">
+                          Sentence Reduction
+                        </option>
+                        <option value="Case Negotiation">
+                          Case Negotiation
+                        </option>
                         <option value="Acquittal">Acquittal</option>
                       </select>
                     </div>
@@ -457,7 +506,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                         type="text"
                         value={applicantInfo.cidNumber}
                         readOnly
-
                       />
                     </div>
                     <div className="form-field">
@@ -538,20 +586,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
                   <h4>Address Information</h4>
                   <div className="form-grid">
-                    <div className="form-field">
-                      <label>Dzongkhag</label>
-                      <input
-                        type="text"
-                        value={applicantInfo.dzongkhag}
-                        readOnly
-                        onChange={(e) =>
-                          setApplicantInfo({
-                            ...applicantInfo,
-                            dzongkhag: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
                     <div className="form-field">
                       <label>Current Village</label>
                       <input
@@ -644,87 +678,89 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
             </div>
 
             {/* Institution Information Section */}
-            <div className="section">
-              <button
-                className="section-header"
-                aria-expanded={expandedSections.institutions}
-                onClick={() => toggleSection("institutions")}
-              >
-                <span>Institutions</span>
-                <div className="section-btn-container">
-                  {expandedSections.institutions ? (
-                    <Minus color="#15605C" />
-                  ) : (
-                    <Plus color="#15605C" />
-                  )}
-                </div>
-              </button>
-              {expandedSections.institutions && (
-                <div className="section-content">
-                  <h4>Institution Details</h4>
-                  <div className="form-grid">
-                    <div className="form-field">
-                      <label>Institution Name</label>
-                      <input
-                        type="text"
-                        value={institutionInfo.institutionName}
-                        readOnly
-                        onChange={(e) =>
-                          setInstitutionInfo({
-                            ...institutionInfo,
-                            institutionName: e.target.value,
-                          })
-                        }
-                      />
+            {institutionInfo.institutionName && (
+              <div className="section">
+                <button
+                  className="section-header"
+                  aria-expanded={expandedSections.institutions}
+                  onClick={() => toggleSection("institutions")}
+                >
+                  <span>Institutions</span>
+                  <div className="section-btn-container">
+                    {expandedSections.institutions ? (
+                      <Minus color="#15605C" />
+                    ) : (
+                      <Plus color="#15605C" />
+                    )}
+                  </div>
+                </button>
+                {expandedSections.institutions && (
+                  <div className="section-content">
+                    <h4>Institution Details</h4>
+                    <div className="form-grid">
+                      <div className="form-field">
+                        <label>Institution Name</label>
+                        <input
+                          type="text"
+                          value={institutionInfo.institutionName}
+                          readOnly
+                          onChange={(e) =>
+                            setInstitutionInfo({
+                              ...institutionInfo,
+                              institutionName: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="form-field">
+                        <label>Official Name</label>
+                        <input
+                          type="text"
+                          value={institutionInfo.officialName}
+                          readOnly
+                          onChange={(e) =>
+                            setInstitutionInfo({
+                              ...institutionInfo,
+                              officialName: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
                     </div>
-                    <div className="form-field">
-                      <label>Official Name</label>
-                      <input
-                        type="text"
-                        value={institutionInfo.officialName}
-                        readOnly
-                        onChange={(e) =>
-                          setInstitutionInfo({
-                            ...institutionInfo,
-                            officialName: e.target.value,
-                          })
-                        }
-                      />
+                    <div className="form-grid">
+                      <div className="form-field">
+                        <label>Official Contact</label>
+                        <input
+                          type="text"
+                          value={institutionInfo.officialContact}
+                          readOnly
+                          onChange={(e) =>
+                            setInstitutionInfo({
+                              ...institutionInfo,
+                              officialContact: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="form-field">
+                        <label>Official Email</label>
+                        <input
+                          type="email"
+                          value={institutionInfo.officialEmail}
+                          readOnly
+                          onChange={(e) =>
+                            setInstitutionInfo({
+                              ...institutionInfo,
+                              officialEmail: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="form-grid">
-                    <div className="form-field">
-                      <label>Official Contact</label>
-                      <input
-                        type="text"
-                        value={institutionInfo.officialContact}
-                        readOnly
-                        onChange={(e) =>
-                          setInstitutionInfo({
-                            ...institutionInfo,
-                            officialContact: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="form-field">
-                      <label>Official Email</label>
-                      <input
-                        type="email"
-                        value={institutionInfo.officialEmail}
-                        readOnly
-                        onChange={(e) =>
-                          setInstitutionInfo({
-                            ...institutionInfo,
-                            officialEmail: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
             {/* Document Section */}
             <div className="section">
@@ -755,13 +791,49 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                         onViewPdf={handleViewPdf}
                       />
                     ))}
-
                   </div>
                 </div>
               )}
             </div>
 
-            {householdNo ?
+            {/* Additional Document Section */}
+            {existingAdditionalDocs && <div className="section">
+              <button
+                className="section-header"
+                aria-expanded={expandedSections.additionalDocuments}
+                onClick={() => toggleSection("additionalDocuments")}
+              >
+                <span>Additional Documents</span>
+                <div className="section-btn-container">
+                  {expandedSections.additionalDocuments ? (
+                    <Minus color="#15605C" />
+                  ) : (
+                    <Plus color="#15605C" />
+                  )}
+                </div>
+              </button>
+              {expandedSections.additionalDocuments && (
+                <div className="section-content">
+                  <h3>Check List of Additional Documents*</h3>
+                  <div>
+                    {/* Existing Additional Documents */}
+                    {existingAdditionalDocs.map((doc, index) => (
+                      <DocumentItem
+                        key={`existing-${index}`}
+                        label={
+                          doc.description || `Additional Document ${index + 1}`
+                        }
+                        filename={doc.docName}
+                        isLoading={isLoading}
+                        onViewPdf={handleViewPdf}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>}
+
+            {householdNo ? (
               <div>
                 <button
                   onClick={() => setShowPopup(true)}
@@ -776,9 +848,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                     closePopup={() => setShowPopup(false)}
                   />
                 )}
-              </div> : null
-            }
-
+              </div>
+            ) : null}
           </div>
 
           <div className="popup-footer">

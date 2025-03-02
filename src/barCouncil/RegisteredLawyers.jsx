@@ -101,6 +101,7 @@ function RegisteredLawyers() {
   const [cid, setCid] = useState("");
   const [userName, setUsername] = useState("");
   const [contactNo, setContactNo] = useState("");
+  const [regNo, setRegNo] = useState("");
   const [password, setPassword] = useState("");
   const [roleId, setRoleId] = useState()
 
@@ -160,6 +161,7 @@ function RegisteredLawyers() {
             cid,
             userName,
             contactNo,
+            regNo,
             email,
             password,
             enabled,
@@ -255,6 +257,18 @@ function RegisteredLawyers() {
                     </div>
 
                     <div className="custom-form-group">
+                      <label className="custom-form-label">Registration Number</label>
+                      <input
+                        className="custom-form-input"
+                        type="text"
+                        placeholder="Enter Registration Number"
+                        value={regNo}
+                        required
+                        onChange={(e) => setRegNo(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="custom-form-group">
                       <label className="custom-form-label">Contact No</label>
                       <input
                         className="custom-form-input"
@@ -327,6 +341,7 @@ function RegisteredLawyers() {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Contact Number</th>
+                    <th>Registration Number</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -337,6 +352,7 @@ function RegisteredLawyers() {
                       <td>{lawyer.userName}</td>
                       <td>{lawyer.email}</td>
                       <td>{lawyer.contactNo}</td>
+                      <td>{lawyer.regNo}</td>
                       <td>
                         {lawyer.enabled ? (
                           <button

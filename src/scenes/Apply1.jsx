@@ -191,6 +191,8 @@ function Apply1() {
                                             className='form-input'
                                             type="text"
                                             name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
                                             placeholder={t('namePlaceholder')}
                                             required
                                         />
@@ -335,22 +337,6 @@ function Apply1() {
                                         />
                                     </div>
 
-                                    <div className="legal-form-row">
-                                        <select
-                                            className='form-input apply1-last'
-                                            name="cdzongkhag"
-                                            value={formData.cdzongkhag}
-                                            onChange={handleChange}
-                                            required
-                                        >
-                                            <option value="">{t('selectDzongkhag')}</option>
-                                            {dzongkhags.map((dzongkhag) => (
-                                                <option key={dzongkhag} value={dzongkhag}>
-                                                    {dzongkhag}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
                                 </div>
                                 <button type="submit" className='banner-cta-wrapper apply-cta-wrapper'>
                                     <div className="banner-cta banner-ctaa" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>

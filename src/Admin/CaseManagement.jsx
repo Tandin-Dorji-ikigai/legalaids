@@ -244,10 +244,10 @@ function CaseManagement() {
                   <tr key={caseItem.id} onClick={() => handleOpen(caseItem.id)}>
                     <td>{caseItem.cid}</td>
                     <td>{caseItem.contactNo}</td>
-                    <td>{caseItem.natureOfCase}</td>
+                    <td>{caseItem.natureOfCase && caseItem.natureOfCase !== 'null' ? caseItem.natureOfCase : "Nature of Case Not Defined"}</td>
                     <td>{caseItem.pdzongkhag}</td>
                     <td>{caseItem.status}</td>
-                    <td>{caseItem.caseType}</td>
+                    <td>{caseItem.caseType && caseItem.caseType !== 'null' ? caseItem.caseType : "Case Type Not Defined"}</td>
                     <td>{caseItem.outcome || "None"}</td>
                   </tr>
                 ))}

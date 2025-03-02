@@ -61,7 +61,6 @@ function DataManagement() {
     contactNumber: "",
     householdIncome: "",
     householdMembers: "",
-    dzongkhag: "",
     villageCurrent: "",
     gewogCurrent: "",
     dzongkhagCurrent: "",
@@ -121,7 +120,6 @@ function DataManagement() {
     formData.append("contactNo", applicantInfo.contactNumber);
     formData.append("income", applicantInfo.householdIncome);
     formData.append("member", applicantInfo.householdMembers);
-    formData.append("cdzongkhag", applicantInfo.dzongkhag);
     formData.append("village", applicantInfo.villageCurrent);
     formData.append("gewog", applicantInfo.gewogCurrent);
     formData.append("dzongkhag", applicantInfo.dzongkhagCurrent);
@@ -373,20 +371,6 @@ function DataManagement() {
                         setApplicantInfo({
                           ...applicantInfo,
                           householdMembers: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-field">
-                    <label>Dzongkhag</label>
-                    <input
-                      type="text"
-                      value={applicantInfo.dzongkhag}
-                      required
-                      onChange={(e) =>
-                        setApplicantInfo({
-                          ...applicantInfo,
-                          dzongkhag: e.target.value,
                         })
                       }
                     />
