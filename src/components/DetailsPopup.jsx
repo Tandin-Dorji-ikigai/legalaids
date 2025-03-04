@@ -194,7 +194,6 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (cas) {
-      console.log(cas)
       setApplicantInfo({
         cidNumber: cas.cid,
         name: cas.name,
