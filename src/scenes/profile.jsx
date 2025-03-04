@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./css/profile.css";
-import Footer from "../components/Footer";
 import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -13,9 +12,15 @@ import AdminSideNav from "../Admin/DashboardNav";
 import BarCouncilSideNav from "../barCouncil/DashboardNav";
 import EmployeeSideNav from "../Employee/DashboardNav";
 import LawyerSideNav from "../Lawyer/LawyerDashboardNav";
+import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
+import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
+import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
 
 const Profile = () => {
-    const { data: users, error } = useGetAllAdminQuery();
+    const { data: admins, error } = useGetAllAdminQuery();
+    const { data: councils } = useGetAllCouncilQuery();
+    const { data: employees } = useGetAllEmployeeQuery();
+    const { data: lawyers } = useGetAllLawyerQuery();
     const [updatePassword] = useUpdateAdminMutation()
     const { userInfo } = useSelector((state) => state.auth);
     const [user, setUser] = useState();
@@ -34,12 +39,20 @@ const Profile = () => {
                 confirmButtonColor: "#1E306D",
                 confirmButtonText: "OK",
             });
-        } else if (users && userInfo) {
-            const adm = users.find((user) => user.cid === userInfo.user.username);
-            setUser(adm);
-            console.log(adm)
+        } else if (admins && userInfo.user.authorities[0].authority === "Admin") {
+            const adm = admins.find((user) => user.cid === userInfo.user.username);
+            setUser(adm);   
+        }else if (councils && userInfo.user.authorities[0].authority === "Bar Council") {
+            const adm = councils.find((user) => user.cid === userInfo.user.username);
+            setUser(adm);   
+        }else if (employees && userInfo.user.authorities[0].authority === "Lawyer") {
+            const adm = employees.find((user) => user.cid === userInfo.user.username);
+            setUser(adm);   
+        }else if (lawyers && userInfo.user.authorities[0].authority === "Employee") {
+            const adm = lawyers.find((user) => user.cid === userInfo.user.username);
+            setUser(adm);   
         }
-    }, [error, users, userInfo]);
+    }, [error, admins, lawyers, councils, employees, userInfo]);
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
@@ -109,20 +122,15 @@ const Profile = () => {
             });
         }
     };
-    const dummyUserInfo = {
-        user: {
-            role: "admin",
-        },
-    };
     const renderSideNav = () => {
-        switch (dummyUserInfo.user.role) {
-            case "admin":
+        switch (user && userInfo.user.authorities[0].authority) {
+            case "Admin":
                 return <AdminSideNav />;
-            case "barCouncil":
+            case "Bar Council":
                 return <BarCouncilSideNav />;
-            case "employee":
+            case "Employee":
                 return <EmployeeSideNav />;
-            case "lawyer":
+            case "Lawyer":
                 return <LawyerSideNav />;
             default:
                 return null;
