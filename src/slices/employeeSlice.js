@@ -32,7 +32,14 @@ export const employeeApiSlice = apiSlice.injectEndpoints({
               method: 'PUT',
             }),
         }),
+        updateEmployee: builder.mutation({
+            query: ({ id, ...data }) => ({
+                url: EMPLOYEE_URL + `/updatepass/${id}`,
+                method: 'PUT',
+                body: data,
+            }),
+        }),
     })
 })
 
-export const { useGetAllEmployeeQuery, usePostEmployeeMutation, useGetEmployeeByIdQuery, useDisableEmployeeMutation, useEnableEmployeeMutation } = employeeApiSlice;
+export const { useGetAllEmployeeQuery, usePostEmployeeMutation, useGetEmployeeByIdQuery, useDisableEmployeeMutation, useEnableEmployeeMutation, useUpdateEmployeeMutation } = employeeApiSlice;

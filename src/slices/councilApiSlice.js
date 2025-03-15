@@ -32,7 +32,14 @@ export const councilApiSlice = apiSlice.injectEndpoints({
               method: 'PUT',
             }),
         }),
+        updateCouncil: builder.mutation({
+            query: ({ id, ...data }) => ({
+                url: COUNCIL_URL + `/updatepass/${id}`,
+                method: 'PUT',
+                body: data,
+            }),
+        }),
     })
 })
 
-export const { useGetAllCouncilQuery, usePostCouncilMutation, useLazyGetCouncilByIdQuery, useDisableCouncilMutation, useEnableCouncilMutation } = councilApiSlice;
+export const { useGetAllCouncilQuery, usePostCouncilMutation, useLazyGetCouncilByIdQuery, useDisableCouncilMutation, useEnableCouncilMutation, useUpdateCouncilMutation } = councilApiSlice;

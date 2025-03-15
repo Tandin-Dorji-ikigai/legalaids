@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "./css/profile.css";
-import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import { useUpdateAdminMutation } from "../slices/adminSlice";
 import { useDispatch } from "react-redux";
 import { useLogoutMutation } from "../slices/authApiSlice";
 import { logout } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import AdminSideNav from "../Admin/DashboardNav";
+import SideNav from '../Employee/DashboardNav';
+import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
+import { useUpdateEmployeeMutation } from "../slices/employeeSlice";
 
-const Profile = () => {
-    const { data: admins, error } = useGetAllAdminQuery();
-    const [updatePassword] = useUpdateAdminMutation()
+const EmployeeProfile = () => {
+    const { data: employees, error } = useGetAllEmployeeQuery();
+    const [updatePassword] = useUpdateEmployeeMutation()
     const { userInfo } = useSelector((state) => state.auth);
     const [user, setUser] = useState();
     const [password, setPassword] = useState("");
@@ -29,12 +29,12 @@ const Profile = () => {
                 icon: "error",
                 confirmButtonColor: "#1E306D",
                 confirmButtonText: "OK",
-            });
-        } else if (admins) {
-            const adm = admins.find((user) => user.cid === userInfo.user.username);
+            });   
+        }else if (employees) {
+            const adm = employees.find((user) => user.cid === userInfo.user.username);
             setUser(adm);   
         }
-    }, [error, admins]);
+    }, [error, employees]);
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
@@ -104,11 +104,11 @@ const Profile = () => {
             });
         }
     };
-
+    
     return (
         <>
             <div className="profile-item-container">
-                <AdminSideNav/>
+                <SideNav/>
                 <div className="profile-container">
 
                     <h2>
@@ -203,4 +203,4 @@ const Profile = () => {
 }
 
 
-export default Profile;
+export default EmployeeProfile;

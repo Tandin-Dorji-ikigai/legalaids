@@ -51,7 +51,9 @@ function SideNav() {
     if (error) {
       console.log(error);
     } else if (councils && userInfo) {
-      const adm = councils.find((council) => council.cid === userInfo.user.username);
+      const adm = councils.find(
+        (council) => council.cid === userInfo.user.username
+      );
       setUser(adm);
     }
   }, [error, councils, userInfo]);
@@ -74,13 +76,11 @@ function SideNav() {
         <div className="side-nav-item-container">
           <div className="side-nav-header">Main Menu</div>
           <div className="nav-items">
-
             <Link
               to="/caseOverview"
-              className={`nav-link ${location.pathname === "/caseOverview"
-                  ? "nav-active"
-                  : ""
-                }`}
+              className={`nav-link ${
+                location.pathname === "/caseOverview" ? "nav-active" : ""
+              }`}
             >
               <div className="nav-item-container">
                 <svg
@@ -101,8 +101,9 @@ function SideNav() {
             </Link>
             <Link
               to="/registeredLawyers"
-              className={`nav-link ${location.pathname === "/registeredLawyers" ? "nav-active" : ""
-                }`}
+              className={`nav-link ${
+                location.pathname === "/registeredLawyers" ? "nav-active" : ""
+              }`}
             >
               <div className="nav-item-container">
                 <svg
@@ -121,7 +122,7 @@ function SideNav() {
                 <div className="nav-item-name">Registered Lawyers</div>
               </div>
             </Link>
-            <Link to="/profile" className={`nav-link ${location.pathname === "/profile" ? "nav-active" : ""}`}>
+            {/* <Link to="/profile" className={`nav-link ${location.pathname === "/profile" ? "nav-active" : ""}`}>
               <div className="nav-item-container">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -134,12 +135,17 @@ function SideNav() {
                 </svg>
                 <div className="nav-item-name">Profile</div>
               </div>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
       <div className="admin-logout-container" style={{ marginBottom: "1vh" }}>
-        <div className="user-icon-container">
+        <Link
+          to="/barProfile"
+          className={`nav-link user-icon-container ${
+            location.pathname === "/barProfile"
+          }`}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="32px"
@@ -153,7 +159,7 @@ function SideNav() {
             <div className="user-detail-header">Bar Council</div>
             {user && <div className="user-detail-name">{user.userName}</div>}
           </div>
-        </div>
+        </Link>
         <button onClick={logOutHandler} className="admin-logout-btn">
           Logout
         </button>

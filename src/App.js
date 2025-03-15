@@ -44,6 +44,9 @@ import ProtectedBarRoute from './ProtectedBarRoute';
 
 
 import Profile from './scenes/profile';
+import EmployeeProfile from './scenes/EmployeeProfile'
+import LawyerProfile from './scenes/LawyerProfile';
+import BarProfile from './scenes/BarProfile';
 
 function App() {
   const [currentLang, setCurrentLang] = useState(i18n.language);
@@ -92,6 +95,9 @@ function App() {
           <Route path="/apply3" element={<Apply3 />} />
           <Route path="/loader" element={<Loader />} />
           <Route path="/profile" element={<Profile/>} />
+          <Route path='/employeeProfile' element={<EmployeeProfile />} />
+          <Route path='/lawyerProfile' element={<LawyerProfile />} />
+          <Route path='/barProfile' element={<BarProfile />} />
           <Route path="/householdPopup" element={<HouseholdPopup />} />
 
 

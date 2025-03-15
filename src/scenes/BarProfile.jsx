@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "./css/profile.css";
-import { useGetAllAdminQuery } from "../slices/adminSlice";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import { useUpdateAdminMutation } from "../slices/adminSlice";
 import { useDispatch } from "react-redux";
 import { useLogoutMutation } from "../slices/authApiSlice";
 import { logout } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import AdminSideNav from "../Admin/DashboardNav";
+import BarSideNav from "../barCouncil/DashboardNav";
+import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
+import { useUpdateCouncilMutation } from "../slices/councilApiSlice";
 
-const Profile = () => {
-    const { data: admins, error } = useGetAllAdminQuery();
-    const [updatePassword] = useUpdateAdminMutation()
+const BarProfile = () => {
+    const { data: councils, error } = useGetAllCouncilQuery();
+    const [updatePassword] = useUpdateCouncilMutation()
     const { userInfo } = useSelector((state) => state.auth);
     const [user, setUser] = useState();
     const [password, setPassword] = useState("");
@@ -30,11 +30,11 @@ const Profile = () => {
                 confirmButtonColor: "#1E306D",
                 confirmButtonText: "OK",
             });
-        } else if (admins) {
-            const adm = admins.find((user) => user.cid === userInfo.user.username);
+        }else if (councils) {
+            const adm = councils.find((user) => user.cid === userInfo.user.username);
             setUser(adm);   
         }
-    }, [error, admins]);
+    }, [error, councils]);
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
@@ -108,7 +108,7 @@ const Profile = () => {
     return (
         <>
             <div className="profile-item-container">
-                <AdminSideNav/>
+                <BarSideNav/>
                 <div className="profile-container">
 
                     <h2>
@@ -194,8 +194,6 @@ const Profile = () => {
                         </form>
                     </div>
                 </div>
-
-
             </div>
 
         </>
@@ -203,4 +201,4 @@ const Profile = () => {
 }
 
 
-export default Profile;
+export default BarProfile;

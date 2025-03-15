@@ -32,7 +32,14 @@ export const lawyerApiSlice = apiSlice.injectEndpoints({
               method: 'PUT',
             }),
         }),
+        updateLawyer: builder.mutation({
+            query: ({ id, ...data }) => ({
+                url: LAWYER_URL + `/updatepass/${id}`,
+                method: 'PUT',
+                body: data,
+            }),
+        }),
     })
 })
 
-export const { useGetAllLawyerQuery, usePostLawyerMutation, useGetLawyerByIdQuery, useDisableLawyerMutation, useEnableLawyerMutation } = lawyerApiSlice;
+export const { useGetAllLawyerQuery, usePostLawyerMutation, useGetLawyerByIdQuery, useDisableLawyerMutation, useEnableLawyerMutation, useUpdateLawyerMutation } = lawyerApiSlice;
