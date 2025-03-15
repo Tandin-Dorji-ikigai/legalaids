@@ -152,6 +152,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
   });
 
   const [caseInfo, setCaseInfo] = useState({
+    registrationNo:"",
+    aDate:"",
     aLawyer: "",
     status: "",
     caseType: "",
@@ -208,6 +210,8 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
       });
 
       setCaseInfo({
+        registrationNo:cas.appid,
+        aDate:cas.aDate,
         aLawyer: cas.aLawyer,
         status: cas.status,
         caseType: cas.caseType,
@@ -372,6 +376,22 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
               </button>
               {expandedSections.caseDetails && (
                 <div className="section-content">
+                  <h4>Case Details</h4>
+                  <div className="form-grid">
+                    <div className="form-field">
+                      <label>Registration Number</label>
+                      <input type="text" readOnly value={caseInfo.registrationNo} />
+                    </div>
+                    <div className="form-field case-remark-container">
+                      <label>Case Applied</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={caseInfo.aDate}
+                      />
+                    </div>
+                  </div>
+
                   <h4>Lawyer & Employee Details</h4>
                   <div className="form-grid">
                     <div className="form-field">
@@ -414,10 +434,10 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                   <div className="form-field">
                     <label>Case Status</label>
                     <input
-                        type="text"
-                        readOnly
-                        value={caseInfo.status}
-                      />
+                      type="text"
+                      readOnly
+                      value={caseInfo.status}
+                    />
                   </div>
 
                   <div className="form-grid">

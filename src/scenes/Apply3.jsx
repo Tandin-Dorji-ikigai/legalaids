@@ -80,7 +80,7 @@ function Apply3() {
   );
 
   const renderFileInput = useCallback(
-    (fieldName, label) => (
+    (fieldName, label, isRequired = true) => (
       <div className="file-input-container" key={fieldName}>
         <label htmlFor={fieldName}>{label}</label>
         <div className="file-input-wrapper">
@@ -90,9 +90,8 @@ function Apply3() {
             className="file-input"
             accept="application/pdf"
             onChange={handleFileChange(fieldName)}
-            required
+            required={isRequired} // Only required when isRequired is true
           />
-
           <div className="file-input-placeholder">
             <FiUpload className="upload-icon" />
             <span>
@@ -160,7 +159,8 @@ function Apply3() {
               )}
               {renderFileInput(
                 "disabilityDoc",
-                t('evidenceofDisability')
+                t('evidenceofDisability'),
+                false
               )}
             </div>
             <div className="category-wrapper-third category-wrapper-thirds" style={{ fontSize: currentLang === "dz" ? '1.5rem' : "" }}>
