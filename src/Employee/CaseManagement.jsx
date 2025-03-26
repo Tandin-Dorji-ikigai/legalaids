@@ -88,7 +88,7 @@ function EmployeeCaseManagement() {
         setNatureOfCase(natureOfCase);
       }
     }
-  }, [error, cases, userInfo]);
+  }, [error, cases, userInfo, completedCases]);
 
 
   const filteredCases = completedCases

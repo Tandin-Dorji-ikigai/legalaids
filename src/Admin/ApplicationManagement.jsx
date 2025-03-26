@@ -43,7 +43,7 @@ function ApplicationManagement() {
       const referralCase = cases.filter(c => c.caseType === "Referral")
       setReferral(referralCase);
       // Dropdowns
-      if (selectedCases) {
+      if (cases) {
         const status = Array.from(
           new Set(
             selectedCases
@@ -82,7 +82,7 @@ function ApplicationManagement() {
       }
 
     }
-  }, [error, cases]);
+  }, [error, cases,selectedCases]);
 
   const filteredCases = selectedCases
     ? selectedCases.filter((caseItem) => {

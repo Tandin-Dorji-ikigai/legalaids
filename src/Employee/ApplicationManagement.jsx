@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SideNav from "./DashboardNav";
-import { Modal } from "@mui/material";
+import { Modal, selectClasses } from "@mui/material";
 import EmployeeApplicationPopup from "../components/EmployeeApplicationPopup";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
 import { useSelector } from "react-redux";
@@ -86,7 +86,7 @@ function EmployeeApplicationManagement() {
         setNatureOfCase(natureOfCase);
       }
     }
-  }, [error, cases]);
+  }, [error, cases, selectClasses]);
 
   const filteredCases = completedCases
     ? completedCases.filter((caseItem) => {

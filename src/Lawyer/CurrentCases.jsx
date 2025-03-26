@@ -71,7 +71,7 @@ const CurrentCases = () => {
       }
 
     }
-  }, [error, cases]);
+  }, [error, cases, selectedCases]);
 
   const filteredCases = selectedCases
     ? selectedCases.filter((caseItem) => {
