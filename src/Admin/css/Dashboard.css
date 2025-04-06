@@ -248,6 +248,25 @@
   font-size: 10px !important;
 }
 
+
+
+.top-lawyer-container {
+  min-width: 400px;
+  width: 50%;
+  /* height: 100%; */
+  border-radius: 10px;
+  padding: 30px 11px;
+  /* background: #FFFFEB; */
+  border: 1px solid #c9c9c9;
+  position: relative;
+  padding-top: 70px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  margin-top: 70px;
+}
+
+.top-lawyer-graph{
+  margin-top: 60px;
+}
 @media (max-width: 1537px) {
   .dashboard-stats-container {
     display: flex;

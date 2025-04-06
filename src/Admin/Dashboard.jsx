@@ -1,43 +1,82 @@
 import React, { useEffect, useState } from "react";
 import "./css/Dashboard.css";
 import SideNav from "./DashboardNav";
-import { LineChart, PieChart, BarChart } from "@mui/x-charts";
+import { LineChart, PieChart } from "@mui/x-charts";
 import { useGetAllCaseQuery } from "../slices/caseApiSlice";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 function Dashboard() {
   const [caseCount, setCaseCount] = useState({});
   const [lineGraphData, setLineGraphData] = useState({
     acquittal: [],
     sentenceReduction: [],
-    caseNegotiation: []
+    caseNegotiation: [],
   });
   const [xAxisData, setXAxisData] = useState([]);
   const [barChartData, setBarChartData] = useState({
     years: [],
     acquittal: [],
     sentenceReduction: [],
-    caseNegotiation: []
+    caseNegotiation: [],
   });
 
   const { data: cases, error } = useGetAllCaseQuery();
-
+  const [topLawyers, setTopLawyers] = useState([]);
+  console.log(cases);
+  console.log(topLawyers[0]);
   useEffect(() => {
     if (Array.isArray(cases) && cases !== null) {
-      const outcomes = cases.map(c => c.outcome).filter(outcome => outcome !== undefined && outcome !== null);
+      // Outcome Pie Chart
+      const outcomes = cases
+        .map((c) => c.outcome)
+        .filter((outcome) => outcome !== undefined && outcome !== null);
       const outcomeCount = outcomes.reduce((acc, outcome) => {
         acc[outcome] = (acc[outcome] || 0) + 1;
         return acc;
       }, {});
       setCaseCount(outcomeCount);
 
-      // Process line graph data
+      // Line Graph Data
       const processedLineData = processLineGraphData(cases);
       setLineGraphData(processedLineData.seriesData);
       setXAxisData(processedLineData.xAxis);
 
-      // Process bar chart data
+      // Bar Chart Data
       const processedBarData = processBarChartData(cases);
       setBarChartData(processedBarData);
+
+      // Top Lawyers Chart Data
+      const lawyerCountMap = {};
+
+      cases.forEach((c) => {
+        const lawyerId = c.aLawyer;
+        const caseStatus = c.status;
+
+        if (!lawyerId) return;
+
+        if (lawyerId && caseStatus === "Completed") {
+          if (!lawyerCountMap[lawyerId]) {
+            lawyerCountMap[lawyerId] = { id: lawyerId, count: 1 };
+          } else {
+            lawyerCountMap[lawyerId].count += 1;
+          }
+        }
+      });
+
+      const sortedLawyers = Object.values(lawyerCountMap).sort(
+        (a, b) => b.count - a.count
+      );
+      const top5Lawyers = sortedLawyers.slice(0, 5);
+
+      setTopLawyers(top5Lawyers);
     }
   }, [cases]);
 
@@ -46,26 +85,36 @@ function Dashboard() {
     // Group cases by month
     const monthlyData = {};
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
     // Initialize monthly data with zeros
-    monthNames.forEach(month => {
+    monthNames.forEach((month) => {
       monthlyData[month] = {
-        'Acquittal': 0,
-        'Sentence Reduction': 0,
-        'Case Negotiation': 0
+        Acquittal: 0,
+        "Sentence Reduction": 0,
+        "Case Negotiation": 0,
       };
     });
 
-    casesData.forEach(caseItem => {
+    casesData.forEach((caseItem) => {
       if (caseItem.aDate) {
         const date = new Date(caseItem.aDate);
         const monthKey = monthNames[date.getMonth()];
 
         // Safely increment the count for the specific outcome
-        const outcome = caseItem.outcome || 'Unknown';
+        const outcome = caseItem.outcome || "Unknown";
         if (monthlyData[monthKey].hasOwnProperty(outcome)) {
           monthlyData[monthKey][outcome] += 1;
         }
@@ -76,16 +125,20 @@ function Dashboard() {
     const seriesData = {
       acquittal: [],
       sentenceReduction: [],
-      caseNegotiation: []
+      caseNegotiation: [],
     };
 
     const xAxis = monthNames;
 
     // Fill in data for each series
-    xAxis.forEach(month => {
-      seriesData.acquittal.push(monthlyData[month]['Acquittal'] || 0);
-      seriesData.sentenceReduction.push(monthlyData[month]['Sentence Reduction'] || 0);
-      seriesData.caseNegotiation.push(monthlyData[month]['Case Negotiation'] || 0);
+    xAxis.forEach((month) => {
+      seriesData.acquittal.push(monthlyData[month]["Acquittal"] || 0);
+      seriesData.sentenceReduction.push(
+        monthlyData[month]["Sentence Reduction"] || 0
+      );
+      seriesData.caseNegotiation.push(
+        monthlyData[month]["Case Negotiation"] || 0
+      );
     });
 
     return { seriesData, xAxis };
@@ -96,16 +149,16 @@ function Dashboard() {
     // Group cases by year and outcome
     const yearlyData = {};
 
-    casesData.forEach(caseItem => {
+    casesData.forEach((caseItem) => {
       if (caseItem.aDate) {
         const year = new Date(caseItem.aDate).getFullYear();
-        const outcome = caseItem.outcome || 'Unknown';
+        const outcome = caseItem.outcome || "Unknown";
 
         if (!yearlyData[year]) {
           yearlyData[year] = {
-            'Acquittal': 0,
-            'Sentence Reduction': 0,
-            'Case Negotiation': 0
+            Acquittal: 0,
+            "Sentence Reduction": 0,
+            "Case Negotiation": 0,
           };
         }
 
@@ -117,29 +170,37 @@ function Dashboard() {
 
     // Prepare bar chart data
     const years = Object.keys(yearlyData).sort();
-    const acquittalData = years.map(year => yearlyData[year]['Acquittal'] || 0);
-    const sentenceReductionData = years.map(year => yearlyData[year]['Sentence Reduction'] || 0);
-    const caseNegotiationData = years.map(year => yearlyData[year]['Case Negotiation'] || 0);
+    const acquittalData = years.map(
+      (year) => yearlyData[year]["Acquittal"] || 0
+    );
+    const sentenceReductionData = years.map(
+      (year) => yearlyData[year]["Sentence Reduction"] || 0
+    );
+    const caseNegotiationData = years.map(
+      (year) => yearlyData[year]["Case Negotiation"] || 0
+    );
 
     return {
       years,
       acquittal: acquittalData,
       sentenceReduction: sentenceReductionData,
-      caseNegotiation: caseNegotiationData
+      caseNegotiation: caseNegotiationData,
     };
   };
 
   const pieData = Object.keys(caseCount).map((label, index) => ({
     id: index,
     value: caseCount[label],
-    label: label
+    label: label,
   }));
 
   const total = Object.values(caseCount).reduce((sum, count) => sum + count, 0);
 
   const percentages = Object.entries(caseCount).map(([key, value]) => ({
-    label: key.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase()),
-    percentage: ((value / total) * 100).toFixed(0) + "%"
+    label: key
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase()),
+    percentage: ((value / total) * 100).toFixed(0) + "%",
   }));
 
   return (
@@ -164,8 +225,10 @@ function Dashboard() {
           </div>
           <div className="filter-select-wrapper">
             <select className="filter-select">
-              {barChartData.years.map(year => (
-                <option key={year} value={year}>{year}</option>
+              {barChartData.years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
               ))}
             </select>
           </div>
@@ -180,14 +243,11 @@ function Dashboard() {
               </div>
             ))}
           </div>
-
           <div className="stats-graph-container">
             <div className="graph-stats-heading">
               <div className="heading-header">Case Analytics</div>
               <div className="case-data">Total Cases</div>
-              <div className="stat-change">
-                {cases?.length || 0}
-              </div>
+              <div className="stat-change">{cases?.length || 0}</div>
             </div>
             <div className="graph-legend-container">
               <div className="graph-legend">
@@ -222,7 +282,7 @@ function Dashboard() {
                     id: "zv",
                     data: lineGraphData.caseNegotiation,
                     curve: "linear",
-                  }
+                  },
                 ]}
                 xAxis={[{ scaleType: "point", data: xAxisData, line: true }]}
               />
@@ -265,22 +325,43 @@ function Dashboard() {
                 series={[
                   {
                     data: barChartData.acquittal,
-                    label: 'Acquittal'
+                    label: "Acquittal",
                   },
                   {
                     data: barChartData.sentenceReduction,
-                    label: 'Sentence Reduction'
+                    label: "Sentence Reduction",
                   },
                   {
                     data: barChartData.caseNegotiation,
-                    label: 'Case Negotiation'
-                  }
+                    label: "Case Negotiation",
+                  },
                 ]}
                 width={400}
                 height={300}
                 barLabel="value"
               />
             </div>
+          </div>
+        </div>
+        <div className="top-lawyer-container">
+          <div className="graph-stats-heading">
+            <div className="heading-header">Top Lawyer</div>
+            <div className="case-data">Total Cases</div>
+            <div className="stat-change">{topLawyers[0]?.count || 0}</div>
+          </div>
+          <div className="top-lawyer-graph">
+            {topLawyers && topLawyers.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={topLawyers}>
+                  <XAxis dataKey="id" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#4A90E2" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p> <center>No data to display</center></p>
+            )}
           </div>
         </div>
       </div>

@@ -30,6 +30,7 @@
     "react-router-dom": "^6.26.0",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
+    "recharts": "^2.15.2",
     "rsuite": "^5.69.0",
     "styled-components": "^6.1.12",
     "sweetalert2": "^11.12.4",
