@@ -4,10 +4,11 @@ import "./css/apply.css";
 import { MdExpandMore } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
 import { useGetCaseQuery } from "../slices/caseApiSlice";
+import { useGetAllCaseQuery } from "../slices/caseApiSlice";
 import Footer from "../components/Footer";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
-
+import { useSelector } from "react-redux";
 
 
 function TrackApplication() {
@@ -19,15 +20,17 @@ function TrackApplication() {
       setCurrentLang(i18n.language);
     };
 
-    i18n.on("languageChanged", handleLanguageChange); 
+    i18n.on("languageChanged", handleLanguageChange);
 
     return () => {
       i18n.off("languageChanged", handleLanguageChange);
     };
   }, []);
 
-
+  const { userInfo } = useSelector((state) => state.auth);
   const [ID, setID] = useState("");
+  const { data: cases } = useGetAllCaseQuery()
+  const [selectedCase, setSelectedCase] = useState([])
   const [formData, setFormData] = useState({
     applicationId: "",
     cid: "",
@@ -36,6 +39,12 @@ function TrackApplication() {
     dateSubmitted: "",
     assignedLawyer: "",
   });
+  useEffect(() => {
+    if (userInfo && cases) {
+      const pendingCases = cases.filter((caseItem) => caseItem.cid === userInfo.user.username);
+      setSelectedCase(pendingCases);
+    }
+  }, [userInfo, cases]);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState("");
@@ -52,7 +61,7 @@ function TrackApplication() {
           {t('invalidId')}
         </span>
       );
-    return;
+      return;
     }
 
     if (!ID) {
@@ -71,7 +80,7 @@ function TrackApplication() {
       );
       return;
     }
-    
+
 
     if (ID && !cas) {
       const errorMessage = t('noApplication') + `${ID}`;
@@ -79,7 +88,7 @@ function TrackApplication() {
       setError(<span className={errorClass}>{errorMessage}</span>);
       return;
     }
-    
+
 
     if (cas) {
       setFormData({
@@ -124,7 +133,7 @@ function TrackApplication() {
         <p className={`apply-sub ${currentLang === "dz" ? "font-small-dz" : ""}`}>{t('justice')}
         </p>
 
-        <form onSubmit={handleSearch} className="search-form-container">
+        {!userInfo && <form onSubmit={handleSearch} className="search-form-container">
           <input
             type="text"
             value={ID}
@@ -132,10 +141,52 @@ function TrackApplication() {
             placeholder={t("EnterAppId")}
           />
           <button type="submit">
-          <FaSearch />
+            <FaSearch />
           </button>
-        </form>
+        </form>}
+        {userInfo && <div className="applicationTableContainer">
+          <div className="tableWrapper">
+            <div className="tableHeader">
+              All Application
+            </div>
+            <div className="tableContent">
+              {selectedCase.map((caseItem, index) => (
+                <div key={index} className="applicationWrapper">
+                  <div className="applicationDetails">
+                    <div>
+                      <p className="appID">
+                        Registration ID : <span>{caseItem.appid}</span>
+                      </p>
+                      <p className="appDate">
+                        Date: <span>{caseItem.aDate}</span>
+                      </p>
+                    </div>
+                    <div
+                      className="application-status"
+                      style={{
+                        backgroundColor: getStatusColor(caseItem.status),
+                      }}
+                    >
+                      <p style={{ marginTop: currentLang === "dz" ? "-1em" : "" }}>
+                        {caseItem.status ? (
+                          caseItem.status
+                        ) : (
+                          <span className={`${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>
+                            {t("pending")}
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
 
+
+
+            </div>
+          </div>
+        </div>
+        }
 
         {error && <p className="error-message">{error}</p>}
 
@@ -149,10 +200,10 @@ function TrackApplication() {
                     className="application-status"
                     style={{
                       backgroundColor: getStatusColor(applicationStatus),
-                   
+
                     }}
                   >
-                    <p style={{marginTop: currentLang === "dz" ? "-1em" : ""}}>{applicationStatus ? applicationStatus : (<span className={`${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t('pending')}</span>
+                    <p style={{ marginTop: currentLang === "dz" ? "-1em" : "" }}>{applicationStatus ? applicationStatus : (<span className={`${currentLang === "dz" ? "font-xsmall-dz" : ""}`}>{t('pending')}</span>
                     )}</p>
                   </div>
 
@@ -230,7 +281,7 @@ function TrackApplication() {
             </div>
           </div>
         )}
-        <p className={`copyright-sigup ${currentLang === "dz" ? "font-xxsmall-dz" : ""}`} style={{marginBottom: "1em"}}>&copy; {t('copyRight')}</p>
+        <p className={`copyright-sigup ${currentLang === "dz" ? "font-xxsmall-dz" : ""}`} style={{ marginBottom: "1em" }}>&copy; {t('copyRight')}</p>
       </div>
       <Footer />
     </main>

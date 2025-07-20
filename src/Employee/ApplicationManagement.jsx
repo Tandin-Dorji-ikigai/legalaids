@@ -39,54 +39,58 @@ function EmployeeApplicationManagement() {
           (caseItem.status === "Pending")
       );
       setCompletedCases(filteredCases);
-      const criminalCase = cases.filter(c => c.natureOfCase === "Criminal")
+
+      const criminalCase = cases.filter(c => c.natureOfCase === "Criminal");
       setCriminal(criminalCase);
-      const civilCase = cases.filter(c => c.natureOfCase === "Civil")
+
+      const civilCase = cases.filter(c => c.natureOfCase === "Civil");
       setCivil(civilCase);
-      const walkInCase = cases.filter(c => c.caseType === "Walk In")
+
+      const walkInCase = cases.filter(c => c.caseType === "Walk In");
       setWalkIn(walkInCase);
-      const referralCase = cases.filter(c => c.caseType === "Referral")
+
+      const referralCase = cases.filter(c => c.caseType === "Referral");
       setReferral(referralCase);
-      // Dropdowns
-      if (completedCases) {
-        const status = Array.from(
-          new Set(
-            completedCases
-              .map(c => c.status)
-              .filter(status => status !== undefined && status !== null)
-          )
-        ).sort();
-        setStatuses(status);
 
-        const dzongkhag = Array.from(
-          new Set(
-            completedCases
-              .map(c => c.pdzongkhag)
-              .filter(dzongkhag => dzongkhag !== undefined && dzongkhag !== null)
-          )
-        ).sort();
-        setDzongkhags(dzongkhag);
+      // ✅ Use filteredCases directly for dropdowns instead of completedCases
+      const status = Array.from(
+        new Set(
+          filteredCases
+            .map(c => c.status)
+            .filter(status => status !== undefined && status !== null)
+        )
+      ).sort();
+      setStatuses(status);
 
-        const caseType = Array.from(
-          new Set(
-            completedCases
-              .map(c => c.caseType)
-              .filter(caseType => caseType !== undefined && caseType !== null)
-          )
-        ).sort();
-        setCaseType(caseType);
+      const dzongkhag = Array.from(
+        new Set(
+          filteredCases
+            .map(c => c.pdzongkhag)
+            .filter(dzongkhag => dzongkhag !== undefined && dzongkhag !== null)
+        )
+      ).sort();
+      setDzongkhags(dzongkhag);
 
-        const natureOfCase = Array.from(
-          new Set(
-            completedCases
-              .map(c => c.natureOfCase)
-              .filter(natureOfCase => natureOfCase !== undefined && natureOfCase !== null)
-          )
-        ).sort();
-        setNatureOfCase(natureOfCase);
-      }
+      const caseType = Array.from(
+        new Set(
+          filteredCases
+            .map(c => c.caseType)
+            .filter(caseType => caseType !== undefined && caseType !== null)
+        )
+      ).sort();
+      setCaseType(caseType);
+
+      const natureOfCase = Array.from(
+        new Set(
+          filteredCases
+            .map(c => c.natureOfCase)
+            .filter(natureOfCase => natureOfCase !== undefined && natureOfCase !== null)
+        )
+      ).sort();
+      setNatureOfCase(natureOfCase);
     }
-  }, [error, cases, selectClasses]);
+  }, [error, cases, userInfo.user.username]);
+
 
   const filteredCases = completedCases
     ? completedCases.filter((caseItem) => {

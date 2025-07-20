@@ -247,6 +247,7 @@ function DataManagement() {
                       className="selectFields"
                     >
                       <option value="" disabled>Select Case Type</option>
+                      <option value="Online">Online</option>
                       <option value="Walk In">Walk In</option>
                       <option value="Referral">Referral</option>
                     </select>
@@ -266,6 +267,12 @@ function DataManagement() {
                       <option value="" disabled>Select Nature Of Case</option>
                       <option value="Criminal">Criminal</option>
                       <option value="Civil">Civil</option>
+                      <option value="Child">Child in Conflict with the Law</option>
+                      <option value="Women">Domestic Violence</option>
+                      <option value="Domestic">Women in Difficult Circumstances</option>
+                      <option value="Matrimonial">Matrimonial </option>
+                      <option value="Family">Family</option>
+                      <option value="Inheritance">Inheritance</option>
                     </select>
                   </div>
                 </div>
@@ -513,7 +520,7 @@ function DataManagement() {
                       <input
                         type="file"
                         name={doc.name}
-                        accept=".pdf, application/pdf"
+                        accept=".pdf, .doc, .docx, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         className="document-filename"
                         required
                         onChange={(e) => handleFileUpload(e, doc.name)}

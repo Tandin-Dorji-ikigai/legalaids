@@ -16,6 +16,7 @@
     "bootstrap": "^5.3.3",
     "i18next": "^23.16.0",
     "i18next-browser-languagedetector": "^8.0.0",
+    "jwt-decode": "^4.0.0",
     "law-website": "file:",
     "lucide-react": "^0.427.0",
     "qrcode.react": "^4.2.0",

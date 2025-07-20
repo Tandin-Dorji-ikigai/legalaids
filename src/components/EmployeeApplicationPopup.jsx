@@ -44,16 +44,16 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   useEffect(() => {
     if (employees && cas) {
-        const eSelected = employees.find((emp) => emp.cid === cas.aEmployee);
-        setEmployee(eSelected);
+      const eSelected = employees.find((emp) => emp.cid === cas.aEmployee);
+      setEmployee(eSelected);
     }
-    
+
   }, [employees, cas]);
 
   const [caseInfo, setCaseInfo] = useState({
     caseType: "Walk In",
     natureOfCase: "Civil",
-    aEmployee : "",
+    aEmployee: "",
     aEmployee: "",
     aLawyer: "",
     status: "",
@@ -65,16 +65,16 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
   const handleViewPdf = async (filename) => {
     const file = filename.split('/').pop();
-    
-    try {
-        const response = await fetch(`http://localhost:8765/CASEMICROSERVICE/api/document/file/${file}`);
-        if (!response.ok) throw new Error("Failed to fetch document");
 
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
+    try {
+      const response = await fetch(`http://localhost:8765/CASEMICROSERVICE/api/document/file/${file}`);
+      if (!response.ok) throw new Error("Failed to fetch document");
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
     } catch (error) {
-        console.error("Error fetching document:", error);
+      console.error("Error fetching document:", error);
     }
   };
 
@@ -164,7 +164,7 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
   }, [cas]);
 
   const notifyCouncil = () => {
-    councils.map( async (council) => {
+    councils.map(async (council) => {
       const to = council.email;
       const subject = "New Application";
       const body = `Respected Sir/Madam, There has been a new application approved. Please check the application for further details. Thank you.`;
@@ -223,7 +223,7 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
       if (result.isConfirmed) {
         try {
           notifyCouncil();
-          
+
           await updateCase({
             id: caseId,
             cid,
@@ -435,7 +435,8 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
 
                         className="selectFields"
                       >
-                        <option value="" disabled selected>Select Case Type</option>
+                        <option value="" disabled>Select Case Type</option>
+                        <option value="Online">Online</option>
                         <option value="Walk In">Walk In</option>
                         <option value="Referral">Referral</option>
                       </select>
@@ -443,7 +444,7 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                     </div>
                     <div className="form-field">
                       <label>Nature Of Case</label>
-                      
+
                       <select
                         value={caseInfo.natureOfCase}
                         onChange={(e) =>
@@ -454,9 +455,15 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                         className="selectFields"
                       >
-                        <option value="" disabled selected>Select Nature Of Case</option>
+                        <option value="" disabled>Select Nature Of Case</option>
                         <option value="Criminal">Criminal</option>
                         <option value="Civil">Civil</option>
+                        <option value="Child">Child in Conflict with the Law</option>
+                        <option value="Women">Domestic Violence</option>
+                        <option value="Domestic">Women in Difficult Circumstances</option>
+                        <option value="Matrimonial">Matrimonial </option>
+                        <option value="Family">Family</option>
+                        <option value="Inheritance">Inheritance</option>
                       </select>
 
                     </div>
@@ -760,7 +767,7 @@ const EmployeeApplicationPopup = forwardRef(({ caseId, onClose }, ref) => {
                 </div>
               )}
             </div>
-          }
+            }
 
             <div className="section">
               <button

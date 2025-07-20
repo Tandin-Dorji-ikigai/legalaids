@@ -353,6 +353,40 @@
   font-size: clamp(14px,2vw,16px);
 }
 
+
+/* Styles for table container */
+.applicationTableContainer{
+  margin: 0 auto;
+  width: 90%;
+}
+
+.applicationTableContainer .tableWrapper{
+  border-radius: 10px;
+  overflow: hidden;
+}
+.applicationTableContainer .tableHeader{
+  padding: 1rem;
+  background-color: #15605c;
+  color: white;
+  font-size: clamp(16px, 2vw, 18px);
+}
+
+.applicationTableContainer .tableContent{
+  border: 1px solid grey;
+  display: flex;
+  flex-direction: column;
+  
+}
+.applicationTableContainer .tableContent > *:not(:last-child) {
+  border-bottom: 1px solid grey;
+}
+.applicationWrapper .applicationDetails{
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 @media (max-width: 1050px) {
   .apply-tab {
     text-align: center;
@@ -367,6 +401,10 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+  }
+  .applicationDetails{
+    flex-direction: column;
+    align-items: start !important;
   }
 }
 

@@ -469,13 +469,12 @@ const DetailsPopup = forwardRef(({ caseId, onClose }, ref) => {
                         }
                       >
                         <option disabled>Select Case Result</option>
-                        <option value="Sentence Reduction">
-                          Sentence Reduction
-                        </option>
-                        <option value="Case Negotiation">
-                          Case Negotiation
-                        </option>
-                        <option value="Acquittal">Acquittal</option>
+                        <option value="Convicted">Convicted</option>
+                        <option value="Acquittal">Acquitted</option>
+                        <option value="Sentence Reduction">Sentence Reduction</option>
+                        <option value="Differred">Differred</option>
+                        <option value="Case Negotiation">Negotiated Settlement</option>
+                        <option value="Ongoing">Ongoing</option>
                       </select>
                     </div>
                   </div>

@@ -1,197 +1,168 @@
 import React, { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import "./css/NDILogin.css";
-import Logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import {
     useGetAccessTokenQuery,
     useCreateProofRequestQuery,
-    useGetProofByThreadIdQuery,
-    useRegisterWebhookMutation,
-    useSubscribeWebhookMutation,
     useCheckloginMutation,
 } from "../slices/ndiSlice";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../slices/authSlice";
+import { useGetAllAdminQuery } from "../slices/adminSlice";
+import { useGetAllEmployeeQuery } from "../slices/employeeSlice";
+import { useGetAllLawyerQuery } from "../slices/lawyerSlice";
+import { useGetAllCouncilQuery } from "../slices/councilApiSlice";
+import Swal from "sweetalert2";
+
+import "./css/NDILogin.css";
+import NDIlogo from "../assets/ndibg.svg";
+import ndi_scan from "../assets/scaniconimg.svg";
+import google from "../assets/google.jpg";
+import apple from "../assets/apple.jpg";
+import call from "../assets/Call.svg";
+import email from "../assets/Mail.svg";
+import Play from "../assets/PlayButton.svg";
 
 const NDILogin = () => {
     const [qrValue, setQrValue] = useState("");
-    const [isPolling, setIsPolling] = useState(false); // To control the polling process
-    const navigate = useNavigate();  // For redirecting after login success
+    const [deeplink, setDeeplink] = useState("");
+    const [isPolling, setIsPolling] = useState(false);
+    const [scanned, setScanned] = useState(false);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    // Fetch the access token
-    const { data: accessToken, error: tokenError, isLoading: tokenLoading } = useGetAccessTokenQuery();
+    const { data: adminResult } = useGetAllAdminQuery();
+    const { data: employeeResult } = useGetAllEmployeeQuery();
+    const { data: lawyerResult } = useGetAllLawyerQuery();
+    const { data: councilResult } = useGetAllCouncilQuery();
 
-    // Automatically create the proof request if accessToken is available
-    const { data: proofData, error: proofError, isLoading: proofLoading } = useCreateProofRequestQuery(accessToken?.token, {
+    const { data: accessToken } = useGetAccessTokenQuery();
+    const { data: proofData, isLoading: isProofLoading } = useCreateProofRequestQuery(accessToken?.token, {
         skip: !accessToken,
     });
 
-    // Fetch proof request using threadId after proof request is created
-    const { data: proofRequestData, error: proofRequestError, isLoading: proofRequestLoading } = useGetProofByThreadIdQuery(
-        proofData?.proofRequestThreadId,
-        { skip: !proofData?.proofRequestThreadId }
-    );
+    const [checklogin, { data: loginResponse }] = useCheckloginMutation();
 
-    // Webhook mutations    
-    const [registerWebhook, { isSuccess: isRegisterSuccess, error: registerError }] = useRegisterWebhookMutation();
-    const [subscribeWebhook, { isSuccess: isSubscribeSuccess, error: subscribeError }] = useSubscribeWebhookMutation();
-    const [checklogin, { data: loginResponse, error: loginError }] = useCheckloginMutation();
-
-    // Handling the login response and setting the cookie after login is successful
     useEffect(() => {
-        // Check if the user is already logged in and verified by looking for the cookie and 'verified' key
-        const userVerified = localStorage.getItem("verified");
-        const userCookie = document.cookie.split(";").find(cookie => cookie.trim().startsWith("userID="));
-    
-        // If the user is verified and the cookie is set, stop polling and skip login handling
-        if (userVerified && userCookie) {
-            console.log("User is already logged in, stopping polling.");
-            setIsPolling(false); // Stop polling
-            return; // Skip further processing as user is already logged in
-        }
-    
-        // If the login response is received
-        if (loginResponse) {
-            console.log("Login Response:", loginResponse);
-            if (loginResponse?.message && loginResponse.message.includes("Login successful")) {
-                const userId = loginResponse.message.split(": ")[1]; // Assuming format: "Login successful for user: userID"
-    
-                // Set the cookie with the user ID
-                document.cookie = `userID=${userId}; path=/; max-age=3600`; // Cookie valid for 1 hour
-    
-                // Set the same "verified" key to indicate NDI login
-                localStorage.setItem('verified', 'true'); // Use the same key as in the NavBar component
-    
-                // Redirect to the homepage
-                navigate("/");
-    
-                // Stop polling once login is successful
+        if (loginResponse?.message?.startsWith("Login successful for user:")) {
+            setScanned(true);
+            const cid = loginResponse.message.split(":")[1].trim();
+            let role = "User";
+            let record;
+
+            if (adminResult?.find(entry => entry.cid === cid)) {
+                role = "Admin";
+                record = adminResult.find(entry => entry.cid === cid);
+            } else if (employeeResult?.find(entry => entry.cid === cid)) {
+                role = "Employee";
+                record = employeeResult.find(entry => entry.cid === cid);
+            } else if (lawyerResult?.find(entry => entry.cid === cid)) {
+                role = "Lawyer";
+                record = lawyerResult.find(entry => entry.cid === cid);
+            } else if (councilResult?.find(entry => entry.cid === cid)) {
+                role = "Bar Council";
+                record = councilResult.find(entry => entry.cid === cid);
+            }
+
+            if (role === "User" || record?.enabled) {
+                dispatch(setCredentials({ user: { username: cid, authorities: [{ authority: role }] } }));
+                localStorage.setItem("verified", "true");
+                navigate(
+                    role === "Admin" ? "/dashboard" :
+                    role === "Employee" ? "/employeeCaseManagement" :
+                    role === "Lawyer" ? "/currentcases" :
+                    role === "Bar Council" ? "/caseOverview" :
+                    "/"
+                );
+            } else {
+                Swal.fire({
+                    icon: "info",
+                    title: "Not Registered",
+                    text: "You are not registered in the system. Please sign up first.",
+                });
                 setIsPolling(false);
             }
         }
-    }, [loginResponse, navigate]);
-    
+    }, [loginResponse, navigate, adminResult, employeeResult, lawyerResult, councilResult, dispatch]);
 
     useEffect(() => {
-        if (tokenLoading) {
-            console.log("Fetching access token...");
-        }
-
-        if (tokenError) {
-            console.error("Failed to fetch access token:", tokenError);
-        }
-
-        if (accessToken) {
-            console.log("Access token fetched:", accessToken);
-        }
-    }, [accessToken, tokenError, tokenLoading]);
-
-    useEffect(() => {
-        if (proofLoading) {
-            console.log("Creating proof request...");
-        }
-
-        if (proofError) {
-            console.error("Failed to create proof request:", proofError);
-        }
-
         if (proofData) {
-            console.log("Proof request created:", proofData);
             setQrValue(proofData.proofRequestURL);
+            setDeeplink(proofData.deepLinkURL);
+            setIsPolling(true);
         }
-    }, [proofData, proofError, proofLoading]);
+    }, [proofData]);
 
     useEffect(() => {
-        if (proofRequestData) {
-            console.log("Fetched proof request data:", proofRequestData);
+        if (!isPolling) return;
 
-            // Register the webhook after fetching proof request
-            registerWebhook()
-                .unwrap()
-                .then(() => {
-                    console.log("Webhook registration successful.");
+        const intervalId = setInterval(() => {
+            checklogin();
+        }, 5000);
 
-                    // Subscribe to the webhook after registration
-                    subscribeWebhook()
-                        .unwrap()
-                        .then(() => {
-                            console.log("Webhook subscription successful.");
-                        })
-                        .catch((err) => {
-                            console.error("Failed to subscribe to webhook:", err);
-                        });
-                })
-                .catch((err) => {
-                    if (err?.data?.message?.includes("Duplicate webhookId or webhookURL")) {
-                        console.warn("Webhook already exists. Skipping registration.");
-
-                        // Directly subscribe to the existing webhook
-                        subscribeWebhook()
-                            .unwrap()
-                            .then(() => {
-                                console.log("Webhook subscription successful.");
-                            })
-                            .catch((err) => {
-                                console.error("Failed to subscribe to webhook:", err);
-                            });
-                    } else {
-                        console.error("Failed to register webhook:", err);
-                    }
-                });
-        }
-
-        if (proofRequestError) {
-            console.error("Failed to fetch proof request by thread ID:", proofRequestError);
-        }
-    }, [proofRequestData, proofRequestError, registerWebhook, subscribeWebhook]);
-
-    // Polling logic: repeatedly call the login mutation at intervals
-    useEffect(() => {
-        if (isPolling) {
-            console.log("Polling started...");
-            const intervalId = setInterval(() => {
-                console.log("Checking login status...");
-                checklogin(); // Call the checklogin mutation
-            }, 5000); // Call every 5 seconds
-
-            return () => clearInterval(intervalId); // Clear the interval when the component unmounts or polling stops
-        }
+        return () => clearInterval(intervalId);
     }, [isPolling, checklogin]);
-
-    // Start polling when the component mounts or when webhook subscription succeeds
-    useEffect(() => {
-        if (proofRequestData && !isPolling) {
-            console.log("Starting polling for login status...");
-            setIsPolling(true); // Start polling for login status
-        }
-    }, [proofRequestData, isPolling]);
 
     return (
         <>
-            <div className="signup-nav">
-                <Link to="/home">
-                    <img src={Logo} alt="Logo" />
-                </Link>
-            </div>
-            <div className="signup-wrapper login-wrapper">
-                <div>
-                    <h3>Scan the QR code with your Bhutan NDI Wallet</h3>
-                    <div className="qr-container">
-                        {qrValue ? (
-                            <QRCodeCanvas
-                                value={qrValue}
-                                size={200}
-                                bgColor="#ffffff"
-                                fgColor="#000000"
-                                level="Q"
-                                includeMargin={true}
-                            />
-                        ) : (
-                            <p>Loading QR Code...</p>
-                        )}
-                    </div>
+            <button className="ndi-back-btn" onClick={() => navigate(-1)}>← Back</button>
+            <div className="ndi-login-container">
+                <h3 className="ndi-login-title">
+                    <span className="ndi-text-desktop">Scan with <span className="ndi-branding-color">Bhutan NDI</span> Wallet</span>
+                    <span className="ndi-text-mobile">Login with <span className="ndi-branding-color">Bhutan NDI</span> Wallet</span>
+                </h3>
+
+                <div className="open-wallet-btn-wrapper">
+                    <a className="open-wallet-btn" href={deeplink} target="_blank" rel="noopener noreferrer">
+                        Open Bhutan NDI Wallet
+                    </a>
+                    <div className="divider-or">OR</div>
+                </div>
+
+                <div className="qr-container">
+                    {isProofLoading || !qrValue ? (
+                        <p>Generating QR...</p>
+                    ) : !scanned ? (
+                        <>
+                            <QRCodeCanvas value={qrValue} size={185} bgColor="#ffffff" fgColor="#000000" level="H" includeMargin={false} />
+                            <img src={NDIlogo} alt="Center Logo" className="qr-center-logo" />
+                        </>
+                    ) : (
+                        <p>Authenticating... Please wait.</p>
+                    )}
+                </div>
+
+                <div className="ndi-step-direct">
+                    <ol>
+                        <li>Open Bhutan NDI Wallet on your phone</li>
+                        <li>Tap the scan button <img src={ndi_scan} alt="Scan" className="ndi-scan-btn" /> and scan the QR code</li>
+                    </ol>
+                </div>
+
+                <div className="ndi-btn-play-container">
+                    <Link to="https://www.youtube.com/watch?v=hzBgpzzot7w" className="video-btn" target="_blank" rel="noopener noreferrer">
+                        <div>Watch video guide</div>
+                        <img className="ndi-yt-play" src={Play} alt="play youtube" />
+                    </Link>
+                </div>
+
+                <div className="ndi-download-now">Don't have the Bhutan NDI Wallet? <span className="ndi-branding-color">Download Now!</span></div>
+
+                <div className="ndi-download-btn-container">
+                    <Link to="https://play.google.com/store/apps/details?id=com.bhutanndi" target="_blank">
+                        <img src={google} alt="Google Play" className="store-badge" />
+                    </Link>
+                    <Link to="https://apps.apple.com/au/app/bhutan-ndi/id1645493166" target="_blank">
+                        <img src={apple} alt="App Store" className="store-badge" />
+                    </Link>
+                </div>
+
+                <p className="support-title">Get Support</p>
+                <div className="ndi-support">
+                    <p><img className="support-logo" src={email} alt="Email" /><span>ndifeedback@dhi.bt</span></p>
+                    <p><img className="support-logo" src={call} alt="Call" /><span>1199</span></p>
                 </div>
             </div>
-            <p className="copyright-login">&copy; 2024 Bhutan Legal Aid Center</p>
         </>
     );
 };

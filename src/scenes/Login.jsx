@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import "./css/signup.css";
-import { Link } from "react-router-dom";
-import Ndi from "../assets/ndi.jpeg";
+import { Link, useNavigate } from "react-router-dom";
+import Ndi from "../assets/ndi_logo.png";
 import Logo from "../assets/logo.png";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../slices/authSlice";
-import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../slices/authApiSlice";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
@@ -23,121 +22,57 @@ function Login() {
   const [login] = useLoginMutation();
   const navigate = useNavigate();
 
-  const {data: adminResult} = useGetAllAdminQuery();
-  const {data: employeeResult} = useGetAllEmployeeQuery();
-  const {data: lawyerResult} = useGetAllLawyerQuery();
-  const {data: councilResult} = useGetAllCouncilQuery();
-
-  const handleCidChange = (e) => {
-    setCID(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
+  const { data: adminResult } = useGetAllAdminQuery();
+  const { data: employeeResult } = useGetAllEmployeeQuery();
+  const { data: lawyerResult } = useGetAllLawyerQuery();
+  const { data: councilResult } = useGetAllCouncilQuery();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await login({ cid, password }).unwrap();
+      const res = await login({ cid, password }, { withCredentials: true }).unwrap();
 
-      if (res.user.authorities[0].authority === "User") {
-        localStorage.setItem("verified", JSON.stringify(res));
+      const role = res.user.authorities[0].authority;
+      const username = res.user.username;
+
+      const routeMap = {
+        "User": "/",
+        "Admin": "/dashboard",
+        "Lawyer": "/currentcases",
+        "Employee": "/employeeCaseManagement",
+        "Bar Council": "/caseOverview"
+      };
+
+      const datasetMap = {
+        "Admin": adminResult,
+        "Lawyer": lawyerResult,
+        "Employee": employeeResult,
+        "Bar Council": councilResult
+      };
+
+      if (role === "User") {
         dispatch(setCredentials({ ...res }));
-        Swal.fire({
-          icon: "success",
-          title: "Login",
-          text: "Login Successful",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        navigate("/");
-      } else if (res.user.authorities[0].authority === "Admin") {
-        const admin = adminResult.find((adm) => adm.cid === res.user.username);
-        if (admin.enabled === true) {
+        Swal.fire({ icon: "success", title: "Login", text: "Login Successful", timer: 1500, showConfirmButton: false });
+        navigate(routeMap[role]);
+      } else {
+        const record = datasetMap[role]?.find((entry) => entry.cid === username);
+        if (record?.enabled) {
           dispatch(setCredentials({ ...res }));
-          Swal.fire({
-            icon: "success",
-            title: "Login",
-            text: "Login Successful",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          navigate("/dashboard");
+          Swal.fire({ icon: "success", title: "Login", text: "Login Successful", timer: 1500, showConfirmButton: false });
+          navigate(routeMap[role]);
         } else {
           Swal.fire({
             icon: "info",
             title: "Login Failed",
-            text: "Your account is disabled. Please contact customer service for further details!",
+            text: "Your account is disabled. Please contact customer service for further details!"
           });
         }
-      } else if (res.user.authorities[0].authority === "Lawyer") {
-        const lawyer = lawyerResult.find((lyr) => lyr.cid === res.user.username);
-        if (lawyer.enabled === true) {
-          dispatch(setCredentials({ ...res }));
-          Swal.fire({
-            icon: "success",
-            title: "Login",
-            text: "Login Successful",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          navigate("/currentcases");
-        } else {
-          Swal.fire({
-            icon: "info",
-            title: "Login Failed",
-            text: "Your account is disabled. Please contact customer service for further details!",
-          });
-        }
-      } else if (res.user.authorities[0].authority === "Employee") {
-        const employee = employeeResult.find((emp) => emp.cid === res.user.username);
-        if (employee.enabled === true) {
-          dispatch(setCredentials({ ...res }));
-          Swal.fire({
-            icon: "success",
-            title: "Login",
-            text: "Login Successful",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          navigate("/employeeCaseManagement");
-        } else {
-          Swal.fire({
-            icon: "info",
-            title: "Login Failed",
-            text: "Your account is disabled. Please contact customer service for further details!",
-          });
-        }
-      } else if (res.user.authorities[0].authority === "Bar Council") {
-        const council = councilResult.find((cnl) => cnl.cid === res.user.username);
-        if (council.enabled === true) {
-          dispatch(setCredentials({ ...res }));
-          Swal.fire({
-            icon: "success",
-            title: "Login",
-            text: "Login Successful",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          navigate("/caseOverview");
-        } else {
-          Swal.fire({
-            icon: "info",
-            title: "Login Failed",
-            text: "Your account is disabled. Please contact customer service for further details!",
-          });
-        }
-      } 
+      }
     } catch (err) {
       Swal.fire({
         icon: "error",
         title: "Login Failed",
-        text: err.data?.message || "Invalid credentials. Please try again.",
+        text: err.data?.message || "Invalid credentials. Please try again."
       });
     }
   };
@@ -158,7 +93,7 @@ function Login() {
                 <div className="ndi-cotainer">
                   <img src={Ndi} alt="NDI logo" />
                 </div>
-                Register With Bhutan NDI
+                Scan with Bhutan NDI Wallet
               </div>
             </Link>
             <div className="signup-or">OR</div>
@@ -170,7 +105,7 @@ function Login() {
                   type="text"
                   name="cid"
                   value={cid}
-                  onChange={handleCidChange}
+                  onChange={(e) => setCID(e.target.value)}
                   placeholder="Enter Your CID"
                   required
                 />
@@ -179,34 +114,27 @@ function Login() {
             <div>
               <label className="form-label">
                 Password
-                <div
-                  className="password-container"
-                  style={{ position: "relative", height: "50px" }}
-                >
+                <div className="password-container" style={{ position: "relative", height: "50px" }}>
                   <input
                     className="form-input"
                     type={isPasswordVisible ? "text" : "password"}
                     name="password"
                     value={password}
-                    onChange={handlePasswordChange}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                     required
                   />
                   <span
-                    onClick={togglePasswordVisibility}
+                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
                     style={{
                       position: "absolute",
                       right: "10px",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      cursor: "pointer",
+                      cursor: "pointer"
                     }}
                   >
-                    {isPasswordVisible ? (
-                      <EyeOff size={16} />
-                    ) : (
-                      <Eye size={16} />
-                    )}
+                    {isPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
                   </span>
                 </div>
               </label>

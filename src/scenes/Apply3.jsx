@@ -88,7 +88,7 @@ function Apply3() {
             type="file"
             id={fieldName}
             className="file-input"
-            accept="application/pdf"
+            accept=".pdf, .doc, .docx, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             onChange={handleFileChange(fieldName)}
             required={isRequired} // Only required when isRequired is true
           />

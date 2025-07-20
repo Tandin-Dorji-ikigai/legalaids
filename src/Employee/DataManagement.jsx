@@ -15,8 +15,8 @@ function DataManagement() {
     caseDetails: true
   });
   const [caseInfo, setCaseInfo] = useState({
-    caseType :"",
-    natureOfCase : ""
+    caseType: "",
+    natureOfCase: ""
   })
 
   const [applicantInfo, setApplicantInfo] = useState({
@@ -190,9 +190,11 @@ function DataManagement() {
                         })
                       }
 
-                      class = "selectFields"
+                      class="selectFields"
                     >
-                      
+
+                      <option value="" disabled>Select Case Type</option>
+                      <option value="Online">Online</option>
                       <option value="Walk In">Walk In</option>
                       <option value="Referral">Referral</option>
                     </select>
@@ -208,11 +210,17 @@ function DataManagement() {
                           natureOfCase: e.target.value,
                         })
                       }
-                      class = "selectFields"
+                      class="selectFields"
                     >
-                     
+                      <option value="" disabled>Select Nature Of Case</option>
                       <option value="Criminal">Criminal</option>
                       <option value="Civil">Civil</option>
+                      <option value="Child">Child in Conflict with the Law</option>
+                      <option value="Women">Domestic Violence</option>
+                      <option value="Domestic">Women in Difficult Circumstances</option>
+                      <option value="Matrimonial">Matrimonial </option>
+                      <option value="Family">Family</option>
+                      <option value="Inheritance">Inheritance</option>
                     </select>
 
                   </div>
@@ -275,7 +283,7 @@ function DataManagement() {
                   <div className="form-field">
                     <label>Contact Number</label>
                     <input
-                      type="text"
+                      type="number"
                       value={applicantInfo.contactNumber}
                       onChange={(e) =>
                         setApplicantInfo({
@@ -458,17 +466,17 @@ function DataManagement() {
                 <div className="document-list">
                   {expandedDocuments.map((doc, index) => (
                     <div key={index} className="document-item-submit">
-                    <label className="document-label">{doc.label}</label>
-                    <input
-                      type="file"
-                      name={doc.name}
-                      accept=".pdf, application/pdf"
-                      className="document-filename"
-                      required
-                      onChange={(e) => handleFileUpload(e, doc.name)}
-                      maxsize={5 * 1024 * 1024}
-                    />
-                  </div>
+                      <label className="document-label">{doc.label}</label>
+                      <input
+                        type="file"
+                        name={doc.name}
+                        accept=".pdf, .doc, .docx, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        className="document-filename"
+                        required
+                        onChange={(e) => handleFileUpload(e, doc.name)}
+                        maxsize={5 * 1024 * 1024}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>

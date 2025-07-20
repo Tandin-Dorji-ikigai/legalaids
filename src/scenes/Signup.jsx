@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./css/signup.css";
 import { Link } from "react-router-dom";
-import Ndi from "../assets/ndi.jpeg";
 import { usePostUserMutation } from "../slices/userApiSlice";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -25,6 +24,9 @@ function Signup() {
 
   const { data: rolesData } = useGetAllRoleQuery();
   const [roles, setRoles] = useState([]);
+
+  const today = new Date().toISOString().split("T")[0];
+
 
   useEffect(() => {
     if (rolesData) {
@@ -140,15 +142,7 @@ function Signup() {
         <div className="signup-form-container">
           <form onSubmit={handleSubmit}>
             <p className="signup-title">Sign Up</p>
-            <Link to="#" className="signup-top-btn">
-              <div className="sign-up-ndi">
-                <div className="ndi-cotainer">
-                  <img src={Ndi} alt="ndi logo" />
-                </div>
-                Register With Bhutan NDI
-              </div>
-            </Link>
-            <div className="signup-or">OR</div>
+          
             <div>
               <label className="form-label">
                 Citizenship ID/Passport No/Route Permit *
@@ -165,12 +159,14 @@ function Signup() {
             </div>
             <div>
               <label className="form-label">
-                Date Of Birth (YYYY-MM-DD) *
+                Date Of Birth (MM-DD-YYYY) *
                 <input
                   className="form-input"
                   type="date"
                   name="dob"
                   value={dob}
+                  min="1960-01-01"
+                  max={today}
                   onChange={handleDobChange}
                   required
                 />
@@ -218,7 +214,7 @@ function Signup() {
                       cursor: "pointer",
                     }}
                   >
-                    {isPasswordVisible ? <EyeOff size = {16}/> : <Eye size = {16}/>}
+                    {isPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
                   </span>
                 </div>
               </label>
@@ -246,7 +242,7 @@ function Signup() {
                       cursor: "pointer",
                     }}
                   >
-                    {isCPasswordVisible ? <EyeOff size = {16}/> : <Eye size = {16}/>}
+                    {isCPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
                   </span>
                 </div>
                 {password !== cPassword && (

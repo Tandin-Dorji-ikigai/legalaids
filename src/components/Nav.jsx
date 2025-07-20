@@ -145,8 +145,7 @@ function NavBar({ currentPage }) {
           </div>
           <div></div>
           {userInfo &&
-          userInfo.user.authorities[0].authority === "User" &&
-          verified || verified ? (
+          userInfo.user.authorities[0].authority === "User" ? (
             <div className="navBtns">
               <LanguageSelector />
               <Link onClick={handleLogout} className="logoutLink">
